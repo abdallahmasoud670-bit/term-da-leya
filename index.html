@@ -358,6 +358,7 @@ main#main{position:relative;z-index:1}
 .syncpill[data-st="error"] i{background:var(--bad)}
 .syncpill[data-st="checking"] i{animation:pulse 1.2s ease-in-out infinite}
 @media(max-width:560px){.syncpill .t{display:none}.syncpill{padding:6px}}
+@media(max-width:560px){.top .brand{font-size:0;gap:0}.top .xpbar{display:none}.top .wrap{gap:6px}}
 .wxpill{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 11px;font:inherit;font-size:.8rem;font-weight:700;white-space:nowrap;cursor:default}
 .wxpill[hidden]{display:none}
 @media(max-width:560px){.wxpill .t{display:none}}
@@ -425,7 +426,7 @@ main#main{position:relative;z-index:1}
     <a class="pill-timer" id="pill" href="#home"><i></i><span id="pillT">25:00</span></a>
     <button class="syncpill" id="syncBtn" data-st="checking" aria-label="حالة المزامنة"><i></i><span class="t">بتأكد...</span></button>
     <div class="xp" id="xp" title="نقاط الإنجاز" role="button" tabindex="0"></div>
-        <button class="iconbtn hide-s" id="gearBtn" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+        <button class="iconbtn" id="gearBtn" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     <button class="iconbtn" id="themeBtn" aria-label="تغيير المظهر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/></svg></button>
   </div></header>
   <main class="wrap" id="main"></main>
@@ -1133,17 +1134,44 @@ function wxApply(d){
   const sky=document.getElementById('sky'); if(sky) sky.className='sky '+k; wxEnv(k);
   const p=document.getElementById('wxPill'); if(p){ p.hidden=false; p.querySelector('.e').textContent=L[0]; p.querySelector('.t').textContent=Math.round(d.temp)+'° '+L[1]; p.title='الجو عند جامعة القاهرة (الجيزة): '+L[1]+'، '+Math.round(d.temp)+'°. '+L[2]; p.dataset.k=k; }
 }
-async function loadWeather(){
-  try{ const c=JSON.parse(localStorage.getItem('tm-wx')||'null'); if(c&&Date.now()-c.t<30*60*1000){ wxApply(c.d); return; } }catch(e){}
+const WXDIAG={err:'',last:0};
+async function wxFetchOM(ms){
+  const ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),ms);
   try{
-    const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),6000);
-    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+WX.lat+'&longitude='+WX.lon+'&current=temperature_2m,weather_code,is_day&timezone=Africa%2FCairo',{signal:ctl.signal}); clearTimeout(to);
-    if(!r.ok) return; const j=await r.json(); const c=j&&j.current; if(!c) return;
-    const d={temp:c.temperature_2m,code:c.weather_code,day:c.is_day===1,src:'net'};
-    try{ localStorage.setItem('tm-wx',JSON.stringify({t:Date.now(),d})); }catch(e){}
-    wxApply(d);
-  }catch(e){}
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+WX.lat+'&longitude='+WX.lon+'&current=temperature_2m,weather_code,is_day&timezone=Africa%2FCairo',{signal:ctl.signal});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json(), c=j&&j.current; if(!c) throw new Error('no data');
+    return {temp:c.temperature_2m,code:c.weather_code,day:c.is_day===1,src:'net'};
+  } finally { clearTimeout(to); }
 }
+/* second provider (wttr.in, WWO codes mapped to WMO) in case the first one is blocked or rate-limited on the viewer's network */
+function wxWwo(c){ c=+c; if(c===113) return 0; if(c===116) return 2; if(c===119||c===122) return 3; if([143,248,260].indexOf(c)>=0) return 45; if([200,386,389,392,395].indexOf(c)>=0) return 95; if([179,227,230,323,326,329,332,335,338,368,371].indexOf(c)>=0) return 71; return 61; }
+async function wxFetchWttr(ms){
+  const ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),ms);
+  try{
+    const r=await fetch('https://wttr.in/'+WX.lat+','+WX.lon+'?format=j1',{signal:ctl.signal});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json(), c=j&&j.current_condition&&j.current_condition[0]; if(!c) throw new Error('no data');
+    const h=+new Date().toLocaleString('en-GB',{hour:'numeric',hour12:false,timeZone:'Africa/Cairo'});
+    return {temp:+c.temp_C,code:wxWwo(c.weatherCode),day:h>=6&&h<18,src:'net'};
+  } finally { clearTimeout(to); }
+}
+async function loadWeather(force){
+  let stale=null;
+  try{ const c=JSON.parse(localStorage.getItem('tm-wx')||'null'); if(c){ stale=c; if(!force&&Date.now()-c.t<30*60*1000){ wxApply(c.d); return; } } }catch(e){}
+  WXDIAG.last=Date.now();
+  const tries=!ID_HASH?[['om',6000]]:[['om',8000],['wttr',9000],['om',12000]];
+  for(const t of tries){
+    try{
+      const d=t[0]==='om'?await wxFetchOM(t[1]):await wxFetchWttr(t[1]);
+      try{ localStorage.setItem('tm-wx',JSON.stringify({t:Date.now(),d})); }catch(e){}
+      WXDIAG.err=''; wxApply(d); return;
+    }catch(e){ WXDIAG.err=t[0]+': '+(e&&e.name==='AbortError'?'timeout':(e&&e.message)||'error'); }
+  }
+  if(stale&&Date.now()-stale.t<12*3600*1000) wxApply(stale.d);
+}
+window.addEventListener('online',()=>{ if(!WX.data) loadWeather(true); });
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&!WX.data&&Date.now()-WXDIAG.last>120000) loadWeather(true); });
 
 /* Manual fallback: some hosts block outside requests, so the student can pick the weather by tapping the pill. */
 const WXM=[['sun','☀','مشمس'],['partly','⛅','غيوم خفيفة'],['cloud','☁','غيم'],['rain','🌧','مطر'],['fog','🌫','شبورة'],['storm','⛈','عاصفة']];
@@ -1152,7 +1180,7 @@ function wxManualInit(){
   let saved=null; try{ saved=JSON.parse(localStorage.getItem('tm-wxm')||'null'); }catch(e){}
   if(!WX.data){ p.hidden=false; if(saved&&saved.d===dayKey()) wxSetManual(saved.k,true); else { p.querySelector('.e').textContent='🌤'; p.querySelector('.t').textContent='الجو؟'; p.dataset.k=''; } }
   p.style.cursor='pointer';
-  p.addEventListener('click',()=>{ sfx('open'); openSheet('<div class="row" style="justify-content:space-between"><h2>الجو عندك النهارده؟</h2><button class="iconbtn" data-act="close" aria-label="إغلاق">×</button></div><p class="sub">مش قادرين نجيب الطقس تلقائي دلوقتي، فاختار إنت وهي تغيّر الخلفية.</p><div class="filters" style="margin-top:12px">'+WXM.map(m=>'<button data-act="wxset" data-k="'+m[0]+'">'+m[1]+' '+m[2]+'</button>').join('')+'<button data-act="wxset" data-k="">بدون</button></div><div class="row" style="margin-top:12px"><button class="btn soft sm" data-act="wxsnd">'+(S.wxsnd?'🔊 صوت الجو شغال':'🔈 شغّل صوت الجو (هادي)')+'</button></div><p class="sub" style="margin-top:6px">صوت مطر وعاصفة وهوا هادي. بيشتغل بس لو صوت الصفحة مفتوح من الإعدادات.</p>'); });
+  p.addEventListener('click',()=>{ sfx('open'); openSheet('<div class="row" style="justify-content:space-between"><h2>الجو عندك النهارده؟</h2><button class="iconbtn" data-act="close" aria-label="إغلاق">×</button></div><p class="sub">مش قادرين نجيب الطقس تلقائي دلوقتي ('+esc(WXDIAG.err||'النت')+'). فاختار إنت وهي تغيّر الخلفية، أو <button class="btn soft sm" data-pub="wxretry">جرّب تاني</button></p><div class="filters" style="margin-top:12px">'+WXM.map(m=>'<button data-act="wxset" data-k="'+m[0]+'">'+m[1]+' '+m[2]+'</button>').join('')+'<button data-act="wxset" data-k="">بدون</button></div><div class="row" style="margin-top:12px"><button class="btn soft sm" data-act="wxsnd">'+(S.wxsnd?'🔊 صوت الجو شغال':'🔈 شغّل صوت الجو (هادي)')+'</button></div><p class="sub" style="margin-top:6px">صوت مطر وعاصفة وهوا هادي. بيشتغل بس لو صوت الصفحة مفتوح من الإعدادات.</p>'); });
 }
 function wxSetManual(k,quiet){
   const sky=document.getElementById('sky'), p=document.getElementById('wxPill');
@@ -3554,7 +3582,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.1.1';
+const APP_VERSION='1.1.2';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -3705,6 +3733,7 @@ window.addEventListener('appinstalled',()=>{ PWA_EVT=null; toast('اتثبّت �
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)) window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 function pubInstallCard(){ return '<div class="card rise"><h3>ثبّته على موبايلك أو جهازك</h3><p>بيتفتح زي تطبيق من أيقونة على الشاشة الرئيسية، وبيشتغل من غير نت بعد أول فتح. الطقس والتحديثات بس محتاجين نت.</p><p style="margin-top:8px">'+(PWA_EVT?'<button class="btn sm" data-pub="install">ثبّت دلوقتي</button>':'<span class="sub">من قايمة المتصفح اختار «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق».</span>')+'</p></div>'; }
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-pub=install]'); if(!b||!PWA_EVT) return; PWA_EVT.prompt(); PWA_EVT.userChoice.then(()=>{ PWA_EVT=null; render(); }).catch(()=>{}); });
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-pub=wxretry]'); if(!b) return; closeModal(); toast('بحاول أجيب الطقس...'); loadWeather(true).then(()=>{ if(!WX.data) toast('لسه مش قادر. اختار الجو بإيدك'); }); });
 
 /* =====================================================================
    APP — render, navigation, events, init
