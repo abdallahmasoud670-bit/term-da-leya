@@ -3582,7 +3582,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.1.5';
+const APP_VERSION='1.1.6';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -3699,13 +3699,14 @@ render=function(a){ if(!S.pub){ pubWelcome(false); return; } _render(a); };
 function pubHi(){ return S.pub&&S.pub.name?' يا '+esc(S.pub.name):''; }
 function pubFoot(){ return esc(TERM.name)+' · موقع غير رسمي عمله طالب لزمايله: راجع كل حاجة مع السلايدات والكتب وإعلانات الكلية. · '+pubDevice()+' · نسخة '+APP_VERSION+' · <a href="#about">عن الموقع</a>'; }
 function pubSettingsHTML(){ return '<h3 style="margin:16px 0 6px">بياناتي وموادي</h3><div class="row"><button class="btn soft sm" data-pub="edit">تعديل بياناتي وموادي</button><a class="btn soft sm" href="#about" data-act="close">عن الموقع</a></div>'; }
-function viewAbout(){
-  return '<section class="sec guide"><h2>عن الموقع</h2><div class="grid g2">'+
+function pubAboutCards(){
+  return ''+
    '<div class="card rise"><h3>إيه ده؟</h3><p>«الترم ده ليا» أداة مذاكرة لطلبة كلية الحاسبات والذكاء الاصطناعي جامعة القاهرة: مواضيع بتتتبع، كروت مراجعة، أسئلة وأمثلة محلولة، جدول، حضور، وحاسبة معدل ومستشار. غير رسمي وملوش علاقة بإدارة الكلية.</p></div>'+
    '<div class="card rise"><h3>بياناتك</h3><p>'+pubDevice()+'</p><p class="sub" style="margin-top:8px">الموقع بيعدّ عدد الزيارات فقط (بخدمة GoatCounter، من غير كوكيز ومن غير أي بيانات شخصية) عشان أعرف كام واحد بيستفيد منه.</p><p style="margin-top:8px"><button class="btn soft sm" data-act="export">تصدير نسخة احتياطية</button></p></div>'+
    pubInstallCard()+'<div class="card rise"><h3>المصادر</h3><p>الأمثلة والتمارين مأخوذة من كتب Lay (Linear Algebra) وTaylor (Management Science)، ومن شيتات ومعامل الكلية وامتحانات سابقة، وبتتستخدم للمذاكرة بشكل غير تجاري وعلى مسؤولية صاحب الموقع. الحقوق لأصحابها. أي ملخص أو حل ممكن يكون فيه غلط، راجعه مع السلايدات والكتاب.</p></div>'+
-   '<div class="card rise"><h3>صاحب الموقع</h3><p><a href="author.html" target="_blank" rel="noopener"><b>عبدالله مسعود</b></a></p><p class="sub" style="margin-top:6px">© عبدالله مسعود. كل الحقوق محفوظة للمحتوى الأصلي في الموقع.</p><p class="sub" style="margin-top:6px">النسخة '+APP_VERSION+'</p></div></div></section>';
+   '<div class="card rise"><h3>صاحب الموقع</h3><p><a href="author.html" target="_blank" rel="noopener"><b>عبدالله مسعود</b></a></p><p class="sub" style="margin-top:6px">© عبدالله مسعود. كل الحقوق محفوظة للمحتوى الأصلي في الموقع.</p><p class="sub" style="margin-top:6px">النسخة '+APP_VERSION+'</p></div>';
 }
+function viewAbout(){ return '<section class="sec guide"><h2>عن الموقع</h2><div class="grid g2">'+pubAboutCards()+'</div></section>'; }
 function viewGuide(){
   const pts=[['إنهاء مهمة','+10'],['موضوع: شفته','5'],['موضوع: فهمته','15 (إجمالي)'],['موضوع: حليت عليه','30 (إجمالي)'],['جلسة تركيز','نقطة لكل دقيقة، و+10 لو كمّلتها'],['حضور محاضرة','+5'],['كارت اختبار «عرفتها»','+3 (أول مرتين بس لكل كارت)']];
   return '<section class="sec guide"><h2>الدليل</h2><div class="grid g2">'+
@@ -3714,7 +3715,8 @@ function viewGuide(){
    '<div class="card rise"><h3>الحضور والمعدل</h3><ul><li>علّم حضورك من الرئيسية. تحت 75% الكلية بتحرمك من الفاينل.</li><li>تاب <b>المعدل</b>: احسب المعدل التراكمي والدرجة المطلوبة وهل التحسين يفيد. استرشادي حسب لائحة 2024.</li></ul></div>'+
    '<div class="card rise"><h3>النقط والمستويات</h3><p class="sub" style="margin-bottom:8px">كل 100 نقطة = مستوى جديد: '+LVN.join('، ')+'.</p>'+pts.map(p=>'<div class="logrow"><span>'+p[0]+'</span><b>'+p[1]+'</b></div>').join('')+'<p style="margin-top:10px"><button class="btn soft sm" data-act="xp">سجل نقطك</button></p></div>'+
    '<div class="card rise"><h3>نسخة احتياطية</h3><ul><li>الإعدادات: <b>تصدير</b> بيحفظ تقدمك في ملف، و<b>استيراد</b> بيرجّعه (حتى على جهاز تاني).</li><li>'+pubDevice()+'</li></ul></div>'+
-   '<div class="card rise"><h3>تواصل مع صاحب الموقع</h3><ul><li>لو لقيت غلط أو عندك اقتراح، ابعتلي على أي حساب من صفحتي: <a href="author.html" target="_blank" rel="noopener"><b>عبدالله مسعود</b></a> (فيسبوك، إنستجرام، تيك توك، GitHub).</li><li>نفس اللينك موجود في «عن الموقع» تحت «صاحب الموقع».</li></ul></div></div></section>';
+   '<div class="card rise"><h3>تواصل مع صاحب الموقع</h3><ul><li>لو لقيت غلط أو عندك اقتراح، ابعتلي على أي حساب من صفحتي: <a href="author.html" target="_blank" rel="noopener"><b>عبدالله مسعود</b></a> (فيسبوك، إنستجرام، تيك توك، GitHub).</li><li>تفاصيل أكتر عن الموقع وصاحبه تحت في «عن الموقع».</li></ul></div></div>'+
+   '<h2 id="about-in-guide" style="margin-top:32px">عن الموقع</h2><div class="grid g2" style="margin-top:12px">'+pubAboutCards()+'</div></section>';
 }
 
 /* ---------- "new version available" notice ---------- */
