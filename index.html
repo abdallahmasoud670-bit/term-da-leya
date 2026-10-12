@@ -3613,7 +3613,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.2.1';
+const APP_VERSION='1.2.2';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -3735,6 +3735,7 @@ function pubAboutCards(){
    '<div class="card rise"><h3>إيه ده؟</h3><p>«الترم ده ليا» أداة مذاكرة لطلبة كلية الحاسبات والذكاء الاصطناعي جامعة القاهرة: مواضيع بتتتبع، كروت مراجعة، أسئلة وأمثلة محلولة، جدول، حضور، وحاسبة معدل ومستشار. غير رسمي وملوش علاقة بإدارة الكلية.</p></div>'+
    '<div class="card rise"><h3>بياناتك</h3><p>'+pubDevice()+'</p><p class="sub" style="margin-top:8px">الموقع بيعدّ عدد الزيارات فقط (بخدمة GoatCounter، من غير كوكيز ومن غير أي بيانات شخصية) عشان أعرف كام واحد بيستفيد منه.</p><p style="margin-top:8px"><button class="btn soft sm" data-act="export">تصدير نسخة احتياطية</button></p></div>'+
    pubInstallCard()+'<div class="card rise"><h3>المصادر</h3><p>الأمثلة والتمارين مأخوذة من كتب Lay (Linear Algebra) وTaylor (Management Science)، ومن شيتات ومعامل الكلية وامتحانات سابقة، وبتتستخدم للمذاكرة بشكل غير تجاري وعلى مسؤولية صاحب الموقع. الحقوق لأصحابها. أي ملخص أو حل ممكن يكون فيه غلط، راجعه مع السلايدات والكتاب.</p></div>'+
+   '<div class="card rise"><h3>شكر</h3><p>فكرة مساعد المعدل (حاسبة المعدل ونصايح التحسين) جت من زميلنا <b>أحمد وليد</b>. شكرًا يا أحمد على الفكرة.</p></div>'+
    '<div class="card rise"><h3>صاحب الموقع</h3><p><a href="author.html" target="_blank" rel="noopener"><b>عبدالله مسعود</b></a></p><p class="sub" style="margin-top:6px">© عبدالله مسعود. كل الحقوق محفوظة للمحتوى الأصلي في الموقع.</p><p class="sub" style="margin-top:6px">النسخة '+APP_VERSION+'</p></div>';
 }
 function viewAbout(){ return '<section class="sec guide"><h2>عن الموقع</h2><div class="grid g2">'+pubAboutCards()+'</div></section>'; }
@@ -3774,6 +3775,11 @@ function newsFor(u){
   const a=NEWS.filter(n=>u?n.u===u:ORDER.indexOf(n.u)>=0).concat(S.my.news.filter(n=>!u||n.u===u).map(n=>Object.assign({mine:1},n)));
   return a.filter(x=>SHOWHID||!S.hide[x.id]).sort((a,b)=>b.d.localeCompare(a.d));
 }
+
+/* credit: the GPA assistant idea came from a classmate */
+const PUB_THANKS='<div class="card" style="margin:10px 0;border-inline-start:6px solid var(--sun)"><b>شكر خاص:</b> فكرة مساعد المعدل (حاسبة المعدل ونصايح التحسين) جت من زميلنا <b>أحمد وليد</b>. شكرًا يا أحمد على الفكرة.</div>';
+const _viewGpa=viewGpa;
+viewGpa=function(){ return _viewGpa().replace('<h2>حاسبة المعدل</h2>','<h2>حاسبة المعدل</h2>'+PUB_THANKS); };
 
 /* =====================================================================
    APP — render, navigation, events, init
