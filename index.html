@@ -3926,7 +3926,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.3.3';
+const APP_VERSION='1.3.4';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -4076,7 +4076,7 @@ setSync();
 
 /* ---------- installable + offline (PWA): sw.js + manifest.webmanifest ---------- */
 let PWA_EVT=null;
-window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); PWA_EVT=e; });
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); PWA_EVT=e; if(/^#(guide|about)$/.test(location.hash)&&S.pub){ try{ render(); }catch(x){} } });   /* the browser fires this a few seconds after load: show the button without waiting for the next navigation */
 window.addEventListener('appinstalled',()=>{ PWA_EVT=null; toast('اتثبّت على جهازك'); });
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)) window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 function pubInstallCard(){ return '<div class="card rise"><h3>ثبّته على موبايلك أو جهازك</h3><p>بيتفتح زي تطبيق من أيقونة على الشاشة الرئيسية، وبيشتغل من غير نت بعد أول فتح. الطقس والتحديثات بس محتاجين نت.</p><p style="margin-top:8px">'+(PWA_EVT?'<button class="btn sm" data-pub="install">ثبّت دلوقتي</button>':'<span class="sub">من قايمة المتصفح اختار «إضافة إلى الشاشة الرئيسية» أو «تثبيت التطبيق».</span>')+'</p></div>'; }
