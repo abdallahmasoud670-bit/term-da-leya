@@ -1397,7 +1397,7 @@ function viewNews(){
   let arr=newsFor(null).filter(n=>(NF.u==='all'||n.u===NF.u)&&(NF.k==='all'||n.k===NF.k));
   const fu=['all'].concat(ORDER).map(u=>'<button data-act="nfu" data-u="'+u+'" aria-pressed="'+(NF.u===u)+'">'+(u==='all'?'كل المواد':SUBJ[u].n)+'</button>').join('');
   const fk=['all','deadline','change','todo','note'].map(k=>'<button data-act="nfk" data-k="'+k+'" aria-pressed="'+(NF.k===k)+'">'+(k==='all'?'كل الأنواع':KIND[k])+'</button>').join('');
-  return '<section class="sec"><div class="row" style="justify-content:space-between"><h2 style="margin:0">لوحة الأخبار</h2><div class="row"><button class="btn sm" data-act="addnews" data-u="">+ خبر</button><button class="btn soft sm" data-act="intake">ضيف بالذكاء الاصطناعي</button></div></div><div class="filters" style="margin-top:12px">'+fu+'</div><div class="filters">'+fk+'</div>'+(arr.length?newsList(arr,true):'<div class="empty">مفيش أخبار بالفلتر ده.</div>')+'</section>';
+  return '<section class="sec"><div class="row" style="justify-content:space-between"><h2 style="margin:0">لوحة الأخبار</h2><div class="row"><button class="btn sm" data-act="addnews" data-u="">+ خبر</button></div></div><div class="filters" style="margin-top:12px">'+fu+'</div><div class="filters">'+fk+'</div>'+(arr.length?newsList(arr,true):'<div class="empty">مفيش أخبار بالفلتر ده.</div>')+'</section>';
 }
 
 function viewSubject(u){
@@ -3926,7 +3926,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.3.5';
+const APP_VERSION='1.3.6';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -4025,6 +4025,11 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-pub]'); if(!b) return; const a=b.dataset.pub;
   if(a==='edit'){ closeModal(); pubWelcome(true); }
   else if(a==='cancel'){ const w=document.getElementById('welcome'); if(w) w.hidden=true; }
+  else if(a==='rename'){
+    openSheet('<div class="row" style="justify-content:space-between"><h2>تعديل الاسم</h2><button class="iconbtn" data-act="close" aria-label="إغلاق">×</button></div><p class="sub" style="margin:8px 0 12px">الاسم بيظهر في التحية بس، واكتبه بأي لغة عايزها.</p><label class="fld">اسمك<input class="in" id="rn-name" maxlength="30" value="'+esc((S.pub&&S.pub.name)||'')+'"></label><div class="row" style="margin-top:12px"><button class="btn" data-pub="renamesave">حفظ</button></div>');
+    setTimeout(()=>{ const i=document.getElementById('rn-name'); if(i){ i.focus(); i.select(); i.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ const b=document.querySelector('[data-pub=renamesave]'); if(b) b.click(); } }); } },60);
+  }
+  else if(a==='renamesave'){ const i=document.getElementById('rn-name'); S.pub=S.pub||{}; S.pub.name=i?i.value.trim():''; save(); closeModal(); render(); }
   else if(a==='update'){ location.href=location.pathname+'?v='+encodeURIComponent(b.dataset.v||Date.now()); }
   else if(a==='save'){
     const courses=Array.from(PW_SEL), custom=parseCustom(document.getElementById('pw-custom').value);
@@ -4040,7 +4045,7 @@ const _render=render;
 render=function(a){ if(!S.pub){ pubWelcome(false); return; } _render(a); };
 
 /* ---------- text helpers used by the patched views ---------- */
-function pubHi(){ return S.pub&&S.pub.name?' يا '+esc(S.pub.name):''; }
+function pubHi(){ return (S.pub&&S.pub.name?' يا '+esc(S.pub.name):'')+'<button type="button" class="namebtn" data-pub="rename" aria-label="تعديل الاسم" title="تعديل الاسم">✎</button>'; }
 function pubFoot(){ return esc(TERM.name)+' · موقع غير رسمي عمله طالب لزمايله: راجع كل حاجة مع السلايدات والكتب وإعلانات الكلية. · '+pubDevice()+' · نسخة '+APP_VERSION+' · <a href="#about">عن الموقع</a>'; }
 function pubSettingsHTML(){ return '<h3 style="margin:16px 0 6px">بياناتي وموادي</h3><div class="row"><button class="btn soft sm" data-pub="edit">تعديل بياناتي وموادي</button><a class="btn soft sm" href="#about" data-act="close">عن الموقع</a></div>'; }
 function pubAboutCards(){
@@ -4328,6 +4333,7 @@ const EN_DICT={
 "الأسبوع":"Week",
 "الاستراحة خلصت. نكمّل؟":"Break is over. Shall we continue?",
 "الاسم":"Name",
+"الاسم بيظهر في التحية بس، واكتبه بأي لغة عايزها.":"Your name only appears in the greeting, and you can write it in any language.",
 "الأسئلة بتظهر على المواضيع المعلّمة بس. نفس التعليم في تاب \"المواضيع\".":"Questions appear only for the topics you marked. The same marking as in the \"Topics\" tab.",
 "الإعدادات":"Settings",
 "الإعدادات:":"Settings:",
@@ -4503,6 +4509,7 @@ const EN_DICT={
 "ترم {0}":"Term {0}",
 "تصدير":"Export",
 "تصدير نسخة احتياطية":"Export a backup",
+"تعديل الاسم":"Edit name",
 "تعديل الجدول":"Edit schedule",
 "تعديل بياناتي وموادي":"Edit my details and courses",
 "تعريفات visual (د. أحمد مرسي)":"Visual definitions (Dr. Ahmed Morsy)",
@@ -5033,7 +5040,7 @@ const LANG_BTN='<button type="button" class="langbtn" data-l="'+LANG+'" data-lan
  '.langbtn.pop .thumb{filter:saturate(1.35)}'+
  '#root,#welcome{transition:opacity .19s ease,filter .19s ease}#root.langswap,#welcome.langswap{opacity:0;filter:blur(5px)}'+
  '#welcome .langbtn.fl-top{z-index:130}'+
- '.top .xpbar,.top .xp .lv{display:none}.top .nav{margin-inline:auto}.top .spacer{display:none}@media (min-width:960px){.top .spacer{display:block}.top .wrap{position:relative}.top .nav{position:absolute;left:50%;transform:translateX(-50%);margin:0}}.syncpill .t{display:none}.syncpill{padding:6px}@media (max-width:1280px){.top .xpbar,.top .xp .lv{display:none}.top .nav a{padding:7px 11px}}@media (max-width:1100px){.top .brand{font-size:0;gap:0}}@media (max-width:900px){.top .nav a{padding:7px 8px;font-size:.88rem}.top .wxpill .t{display:none}}@media (max-width:800px){.top .nav a{padding:7px 5px;font-size:.84rem}.top .xp{padding:6px 8px}.top .wrap{gap:6px}}.top .xpbar,.top .xp .lv{display:none}.top .nav{margin-inline:auto}.top .spacer{display:none}@media (min-width:960px){.top .spacer{display:block}.top .wrap{position:relative}.top .nav{position:absolute;left:50%;transform:translateX(-50%);margin:0}}.syncpill .t{display:none}.syncpill{padding:6px}@media (max-width:1280px){.top .xpbar,.top .xp .lv{display:none}.top .nav a{padding:7px 11px}}@media (max-width:1100px){.top .brand{font-size:0;gap:0}}@media (max-width:900px){.top .nav a{padding:7px 8px;font-size:.88rem}.top .wxpill .t{display:none}}@media (max-width:800px){.top .nav a{padding:7px 5px;font-size:.84rem}.top .xp{padding:6px 8px}.top .wrap{gap:6px}}body.en{overflow-x:clip}body.en .top .wrap{gap:8px}body.en .nav{margin-inline-start:4px;flex:none}body.en .syncpill .t{display:none}body.en .syncpill{padding:6px}body.en .nav a{padding:7px 10px;font-size:.9rem;white-space:nowrap}body.en .xp .lv{display:none}'+
+ '.namebtn{display:inline-grid;place-items:center;width:28px;height:28px;margin-inline-start:8px;vertical-align:middle;border-radius:50%;border:1.5px solid color-mix(in srgb,currentColor 45%,transparent);background:color-mix(in srgb,currentColor 12%,transparent);color:inherit;font-size:.8rem;line-height:1;cursor:pointer;opacity:.85;transition:transform .25s,opacity .25s}.namebtn:hover{opacity:1;transform:rotate(-12deg) scale(1.08)}.top .xpbar,.top .xp .lv{display:none}.top .nav{margin-inline:auto}.top .spacer{display:none}@media (min-width:960px){.top .spacer{display:block}.top .wrap{position:relative}.top .nav{position:absolute;left:50%;transform:translateX(-50%);margin:0}}.syncpill .t{display:none}.syncpill{padding:6px}@media (max-width:1280px){.top .xpbar,.top .xp .lv{display:none}.top .nav a{padding:7px 11px}}@media (max-width:1100px){.top .brand{font-size:0;gap:0}}@media (max-width:900px){.top .nav a{padding:7px 8px;font-size:.88rem}.top .wxpill .t{display:none}}@media (max-width:800px){.top .nav a{padding:7px 5px;font-size:.84rem}.top .xp{padding:6px 8px}.top .wrap{gap:6px}}.namebtn{display:inline-grid;place-items:center;width:28px;height:28px;margin-inline-start:8px;vertical-align:middle;border-radius:50%;border:1.5px solid color-mix(in srgb,currentColor 45%,transparent);background:color-mix(in srgb,currentColor 12%,transparent);color:inherit;font-size:.8rem;line-height:1;cursor:pointer;opacity:.85;transition:transform .25s,opacity .25s}.namebtn:hover{opacity:1;transform:rotate(-12deg) scale(1.08)}.top .xpbar,.top .xp .lv{display:none}.top .nav{margin-inline:auto}.top .spacer{display:none}@media (min-width:960px){.top .spacer{display:block}.top .wrap{position:relative}.top .nav{position:absolute;left:50%;transform:translateX(-50%);margin:0}}.syncpill .t{display:none}.syncpill{padding:6px}@media (max-width:1280px){.top .xpbar,.top .xp .lv{display:none}.top .nav a{padding:7px 11px}}@media (max-width:1100px){.top .brand{font-size:0;gap:0}}@media (max-width:900px){.top .nav a{padding:7px 8px;font-size:.88rem}.top .wxpill .t{display:none}}@media (max-width:800px){.top .nav a{padding:7px 5px;font-size:.84rem}.top .xp{padding:6px 8px}.top .wrap{gap:6px}}body.en{overflow-x:clip}body.en .top .wrap{gap:8px}body.en .nav{margin-inline-start:4px;flex:none}body.en .syncpill .t{display:none}body.en .syncpill{padding:6px}body.en .nav a{padding:7px 10px;font-size:.9rem;white-space:nowrap}body.en .xp .lv{display:none}'+
  '@media (max-width:1280px){body.en .top .brand{font-size:0;gap:0}body.en .xpbar{display:none}}'+
  '@media (max-width:1040px){body.en .syncpill{display:none}body.en .nav a{padding:7px 8px;font-size:.86rem}}'+
  'body.en{--f-d:"Baloo Bhaijaan 2","Segoe UI",Tahoma,sans-serif;--f-b:"Segoe UI","Tajawal",Tahoma,sans-serif}'+
