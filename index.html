@@ -3719,7 +3719,8 @@ The matrix is nonzero, so the all-zero matrix is excluded. In each one the leadi
   N('ent','2026-10-13','deadline',`واحد بس من كل تيم يملا الفورم، لأنه لو اتقفل مش هيتفتح تاني. ومسموح تغيّر الموضوع.`,`Only one member per team should fill the form, because once it closes it will not reopen. Changing the topic is allowed.`),
   N('ent','2026-10-16','note',`مناقشات المشاريع بدأت السبت 17/10 من 11 لـ 2 في غرفة المعيد/ة. المعيد/ة بتكتب على الشيت مين دوره، فاستنوا تحت. ومعيدة واحدة (م. نسمة) مفيش عندها مناقشة 17/10.`,`Project discussions started on Saturday 17/10 from 11:00 to 2:00 in the TA's room. The TA writes on the sheet whose turn it is, so wait downstairs. One TA (Eng. Nasma) had no discussion on 17/10.`),
   N('ent','2026-10-17','todo',`لو عندك عذر عن مناقشة النهارده ابعته للمعيدة قبل الميعاد، وهي هتحدد وقت تاني للتيم كله.`,`If you have an excuse for missing today's discussion, send it to your TA before the slot; she will schedule another time for the whole team.`),
-  N('ent','2026-10-17','note',`الدكتور: الدرجات اللي راحت في المناقشات اللي فاتت راحت ومحدش قال كام بالظبط. في الآخر بيعمل scaling ويوزع الدرجات.`,`The doctor: marks lost in earlier discussions are gone, without saying exactly how many. At the end he applies scaling and distributes the grades.`)
+  N('ent','2026-10-17','note',`الدكتور: الدرجات اللي راحت في المناقشات اللي فاتت راحت ومحدش قال كام بالظبط. في الآخر بيعمل scaling ويوزع الدرجات.`,`The doctor: marks lost in earlier discussions are gone, without saying exactly how many. At the end he applies scaling and distributes the grades.`),
+N('math','2026-10-18','change',`باقي Chapter 1 (الأقسام اللي بعد 1.5) ملغي ومش في المنهج. الدكتور انتقل على Chapter 2 (Matrix Operations).`,`The rest of Chapter 1 (the sections after 1.5) is cancelled and not in the syllabus. The doctor moved on to Chapter 2 (Matrix Operations).`)
  );
  NEWS.forEach((n,i)=>{ if(!n.id) n.id='n'+i; });
 
@@ -4067,7 +4068,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.4.3';
+const APP_VERSION='1.4.4';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -5299,7 +5300,7 @@ const WN_TXT={
 const WN_UPD={
  ar:{b:'جديد',h:'اتحدّث الموقع (20 أكتوبر)',p:'نزلت مهام وأخبار وكروت وأسئلة جديدة. ده اللي حصل في موادك:',x:'افتح الرئيسية',o:'فهمت',
   c:{oop:'OOP: Assignment 2 (Part 1 يوم 26/10 وPart 2 يوم 6/11). مناقشات Assignment 1: احجز ميعاد تيمك في شيت معيدك وجيب اللابتوب والكارنيه. بعض المناقشات اتأجلت، فتابع شيتك. المنهج وصل Set 7 (Virtual Functions).',
-     math:'Math 3: الأسايمنت 1 و2 مع م. زينب (Hard وSoft والميعاد لسه). بدأنا Chapter 2 (ضرب المصفوفات). اللي اتأخر عن أسايمنت م. محمد خالد يرفعه على فورم المتأخرين.',
+     math:'Math 3: باقي Chapter 1 ملغي والمنهج انتقل لـ Chapter 2. الأسايمنت 1 و2 مع م. زينب (Hard وSoft والميعاد لسه). بدأنا Chapter 2 (ضرب المصفوفات). اللي اتأخر عن أسايمنت م. محمد خالد يرفعه على فورم المتأخرين.',
      or:'OR & DS: فعّل Solver في Excel (مهم جدًا حسب الدكتورة). خلصنا 3 شباتر وآخرهم Simplex.',
      stat:'Stat 2: المحاضرة الجاية Sampling Distribution، والدكتور بيقول مهمة جدًا لباقي المنهج، فذاكرها قبلها.',
      net:'Networks: مفيش محاضرة الأربع 21/10.',
@@ -5307,7 +5308,7 @@ const WN_UPD={
   n:'المهام الجديدة في الرئيسية، والأخبار في تاب الأخبار. الكروت والأسئلة الجديدة مكتوبة من قايمة المواضيع ومعرفة عامة، فراجعها مع سلايدات الدكتور.'},
  en:{b:'New',h:'The site was updated (20 October)',p:'New tasks, news, cards and questions were added. Here is what happened in your courses:',x:'Open Home',o:'Got it',
   c:{oop:'OOP: Assignment 2 (Part 1 due 26/10, Part 2 due 6/11). Assignment 1 discussions: book your team\'s slot in your TA\'s sheet and bring your laptop and ID. Some discussions were postponed, so check your sheet. The syllabus reached Set 7 (Virtual Functions).',
-     math:'Math 3: Assignments 1 and 2 with Eng. Zeinab (Hard and Soft copy, deadline not set yet). Chapter 2 started (matrix multiplication). If you were late with Eng. Mohamed Khaled\'s assignment, upload it through the late-submission form.',
+     math:'Math 3: the rest of Chapter 1 is cancelled and the course moved to Chapter 2. Assignments 1 and 2 with Eng. Zeinab (Hard and Soft copy, deadline not set yet). Chapter 2 started (matrix multiplication). If you were late with Eng. Mohamed Khaled\'s assignment, upload it through the late-submission form.',
      or:'OR & DS: activate Solver in Excel (very important according to the doctor). We finished 3 chapters, the last one being Simplex.',
      stat:'Stat 2: the next lecture is Sampling Distribution, which the doctor says is extremely important for the rest of the course, so study it before the lecture.',
      net:'Networks: no lecture on Wednesday 21/10.',
