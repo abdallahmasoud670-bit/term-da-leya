@@ -1075,7 +1075,7 @@ function attHTML(){
   }).join('');
   return '<div style="margin-top:14px"><b>حضورك</b> <span class="sub">(غياب أكتر من '+(100-ATT_MIN)+'% بيحرمك من الفاينل)</span>'+rows+'</div>';
 }
-const allTasks = () => TASKS0.concat(S.ctasks);
+const allTasks = () => TASKS0.filter(t=>!t.u||ORDER.indexOf(t.u)>=0).concat(S.ctasks);
 const WEEKMS = 7*864e5;
 const lvl = k => (S.topics[k]||0);
 const topId = (u,i) => sidAt('t',u,i,SUBJ[u].topics,t=>t,u+':'+i);
@@ -3689,6 +3689,122 @@ The matrix is nonzero, so the all-zero matrix is excluded. In each one the leadi
 [0 ■ ; 0 0 ; 0 0]   (one pivot, in column 2)`)
  );
 })();
+/* Update 2026-10-20. Source: the 6 WhatsApp class chats read from 13/10/2026 6:11 pm to 20/10/2026 (text only: attached slides/pictures were NOT in the export).
+   News + tasks come from the chats. Cards and MCQs below are written from the topic lists the class posted, using standard C++/linear algebra/statistics knowledge (NOT from the doctors' slides), so each is marked "check against the slides". */
+(function(){
+ const N=(u,d,k,t,en)=>({u,d,k,t,en});
+ NEWS.push(
+  N('or','2026-10-14','note',`خلصنا 3 شباتر في المادة (Chapter 1 وChapter 2 وModule A: The Simplex Method). قايمة المواضيع اللي اتغطت اتنزلت متثبتة على الجروب.`,`We finished 3 chapters in the course (Chapter 1, Chapter 2 and Module A: The Simplex Method). The list of covered topics is pinned in the group.`),
+  N('or','2026-10-15','todo',`فعّل أداة Solver في Excel (فيديو الشرح على الجروب). الدكتورة قالت إنها مهمة جدًا في تطبيق الـLinear Programming.`,`Activate the Solver tool in Excel (the how-to video is in the group). The doctor said it is very important for applying Linear Programming.`),
+  N('or','2026-10-17','note',`اتنزل على الجروب شرح لـSimplex Method بطريقة الدكتورة.`,`An explanation of the Simplex Method in the doctor's way was posted in the group.`),
+  N('math','2026-10-14','change',`ميعاد رفع الأسايمنت اتمد لحد الساعة 12 ظهرًا يوم 14/10 بعد موافقة د. طارق.`,`The assignment upload deadline was extended to 12:00 noon on 14/10 after Dr. Tarek's approval.`),
+  N('math','2026-10-15','todo',`م. زينب: ابدأوا في الأسايمنت 1 و2، وهيتسلموا Hard وSoft، وميعاد التسليم لسه متحددش. مفيش أسئلة معينة، فحلّوا الأسئلة كلها وخلّي معاك نسخة Hard.`,`Eng. Zeinab: start Assignments 1 and 2. They are submitted as both Hard and Soft copy and the deadline is not set yet. No specific questions were named, so solve all of them and keep a Hard copy.`),
+  N('math','2026-10-15','note',`اتنزل لينك كلاس روم تاني للمادة لأن الأول اتملى. الدخول بإيميل الكلية.`,`A second Classroom link for the course was posted because the first one is full. Sign in with your college email.`),
+  N('math','2026-10-16','note',`بلاي ليست يوتيوب شبه مواضيع الدكتور بالظبط، وصلنا فيها لحد الفيديو الخامس. اتفرج عليها مع الكتاب مش بدله.`,`A YouTube playlist that closely follows the doctor's topics (the class is at video 5). Watch it together with the book, not instead of it.`),
+  N('math','2026-10-18','note',`بدأنا Chapter 2: Matrix Operations وProperties of Matrices وMatrix Multiplication وPowers of Matrix وTranspose. وChapter 1 اتغطى كله.`,`Chapter 2 started: Matrix Operations, Properties of Matrices, Matrix Multiplication, Powers of a Matrix and Transpose. Chapter 1 is fully covered.`),
+  N('math','2026-10-20','change',`الدكتور: لو سكشنك اتعارض مع مواعيدك تقدر تحضر مع معيد تاني بس لازم تبلّغه. والدكتور مرضيش إن م. زينب تبعت ملف السكشن، لكن مسموح تصوّره.`,`The doctor: if your section clashes with your schedule you may attend with another TA, but you must tell that TA. The doctor did not agree that Eng. Zeinab sends the section file, but you may photograph it.`),
+  N('math','2026-10-20','deadline',`م. محمد خالد: اللي اتأخر عن تسليم أول أسايمنت يرفعه على الفورم اللي على الجروب.`,`Eng. Mohamed Khaled: anyone who was late with the first assignment should upload it through the form posted in the group.`),
+  N('net','2026-10-20','change',`مفيش محاضرة Networks بكرة (الأربع 21/10).`,`There is no Networks lecture tomorrow (Wednesday 21/10).`),
+  N('stat','2026-10-14','note',`اللي اتغطى لحد دلوقتي: قياسات المركز (Mean وMedian وMode والموزون)، Percentiles وQuartiles وBox plot، قياسات التشتت، وGrouped Data (جدول التكرار وHistogram وPolygon وOgive وأشكال التوزيعات وقياسات الـgrouped data).`,`Covered so far: measures of central tendency (mean, median, mode, weighted), percentiles, quartiles and the box plot, measures of variability, and Grouped Data (frequency table, histogram, polygon, ogive, distribution shapes and the grouped-data measures).`),
+  N('stat','2026-10-18','todo',`المحاضرة الجاية موضوع جديد خالص: Sampling Distribution. الدكتور بيقول مهمة جدًا جدًا عشان كل اللي بعدها، ولو ماتفهمتهاش بيقول الأحسن تعمل drop للمادة. ذاكر قبلها.`,`The next lecture is a completely new topic: Sampling Distribution. The doctor says it is extremely important for everything that follows, and that if you do not understand it you had better drop the course. Prepare before it.`),
+  N('oop','2026-10-17','note',`المنهج وصل Set 7 سلايد 27 (يوم 17/10): بدأنا Constructor Rules for Derived Class وDefault Class Functions وPreventing Inheritance وVirtual Functions. وكان آخر حاجة يوم 14/10 هي Set 6 سلايد 55.`,`The syllabus reached Set 7 slide 27 (on 17/10): Constructor Rules for Derived Class, Default Class Functions, Preventing Inheritance and Virtual Functions started. On 14/10 the last point was Set 6 slide 55.`),
+  N('oop','2026-10-14','deadline',`آخر ميعاد لتصحيح أخطاء التيمز كان 14/10 الساعة 7 م. ود. الرملي قال اللي لسه ماسلّمش يحاول لحد منتصف الليل.`,`The last time to fix team errors was 14/10 at 7 PM. Dr. El-Ramly said those who have not submitted yet may try until midnight.`),
+  N('oop','2026-10-15','todo',`مناقشة Assignment 1: كل معيد/ة نزّل شيت مواعيده. سجّل تيمك في شيت المعيد/ة بتاعك بإيميل الكلية، وماتعدّلش خلية تيم تاني ولا أوقات المناقشة (بيتراجع تاريخ الشيت وفيه عقاب كبير). لو معيدك نزّل جدولين: الأول التيمات اللي بتناقشه، والتاني الأوقات المتاحة، واختار وقت واكتب رقم تيمك والـIDs. لو مفيش وقت مناسب ابعتله إيميل.`,`Assignment 1 discussion: each TA posted a schedule sheet. Book your team in your own TA's sheet using your college email, and do not edit another team's cell or the discussion times (the sheet history is checked and the penalty is heavy). If your TA posted two tables: the first lists the teams they will discuss with, the second the free times; pick a time and write your team number and IDs. If no time suits you, email the TA.`),
+  N('oop','2026-10-15','note',`قواعد المناقشة: كل عضو هيتسأل ولازم يفهم المشروع ويعرف يشغّله. هات اللابتوب والمشروع شغّال والكارنيه الجامعي. اللي يغيب من غير عذر مقبول بياخد صفر، والعذر يتبعت بالإيميل قبل الميعاد ومش مقبول إلا لما تاخد رد بالتأكيد. المشروع لازم يكون شغّال قبل دورك وإلا دورك بيعدي.`,`Discussion rules: every member is questioned and must understand the project and be able to run it. Bring your laptop with the project running, and your university ID. Anyone absent without an accepted excuse gets zero; the excuse must be emailed before the slot and counts only after you get a confirming reply. The program must already be running when your turn comes, or your turn passes.`),
+  N('oop','2026-10-17','note',`الأسبوع ده مفيش لابات، فيه مناقشات Assignment 1 بس.`,`There are no labs this week, only the Assignment 1 discussions.`),
+  N('oop','2026-10-18','change',`بعض المعيدين أجّلوا مناقشات لتيمات (بعضها للسبت 24/10) أو غيّروا الأوقات والمكان (مكتب المعيد في المبنى الجديد). تابع شيت معيدك باستمرار.`,`Some TAs postponed discussions for some teams (some to Saturday 24/10) or changed the times and place (the TA's room in the new building). Check your TA's sheet regularly.`),
+  N('oop','2026-10-16','note',`Assignment 2: التيمات لازم تكون من نفس السكشن. اللي عايز يكمل مع ناس من سكشن تاني عند نفس المعيد/ة يستأذن المعيد/ة ويبلّغه، والدكتور لسه مارد.`,`Assignment 2: teams must come from the same section. If you want to continue with people from another section of the same TA, ask the TA's permission and inform them; the doctor had not replied yet.`),
+  N('oop','2026-10-20','deadline',`Assignment 2 اتنزل يوم 17/10 (اقراه وهات أسئلتك): Part 1 تسليم 26/10 وPart 2 تسليم 6/11.`,`Assignment 2 was released on 17/10 (read it and bring your questions): Part 1 is due on 26/10 and Part 2 on 6/11.`),
+  N('oop','2026-10-17','note',`اتنزل تلخيص لكل فلاتر Assignment 1 (الفكرة الرئيسية وإزاي تنفذ كل فلتر، وشرح أعمق مع كود للصعبة)، شكرًا لأحمد خالد عيسى.`,`A summary of all Assignment 1 filters was shared (main idea and how to implement each filter, with deeper explanation and code for the hard ones), thanks to Ahmed Khaled Essa.`),
+  N('ent','2026-10-13','deadline',`واحد بس من كل تيم يملا الفورم، لأنه لو اتقفل مش هيتفتح تاني. ومسموح تغيّر الموضوع.`,`Only one member per team should fill the form, because once it closes it will not reopen. Changing the topic is allowed.`),
+  N('ent','2026-10-16','note',`مناقشات المشاريع بدأت السبت 17/10 من 11 لـ 2 في غرفة المعيد/ة. المعيد/ة بتكتب على الشيت مين دوره، فاستنوا تحت. ومعيدة واحدة (م. نسمة) مفيش عندها مناقشة 17/10.`,`Project discussions started on Saturday 17/10 from 11:00 to 2:00 in the TA's room. The TA writes on the sheet whose turn it is, so wait downstairs. One TA (Eng. Nasma) had no discussion on 17/10.`),
+  N('ent','2026-10-17','todo',`لو عندك عذر عن مناقشة النهارده ابعته للمعيدة قبل الميعاد، وهي هتحدد وقت تاني للتيم كله.`,`If you have an excuse for missing today's discussion, send it to your TA before the slot; she will schedule another time for the whole team.`),
+  N('ent','2026-10-17','note',`الدكتور: الدرجات اللي راحت في المناقشات اللي فاتت راحت ومحدش قال كام بالظبط. في الآخر بيعمل scaling ويوزع الدرجات.`,`The doctor: marks lost in earlier discussions are gone, without saying exactly how many. At the end he applies scaling and distributes the grades.`)
+ );
+ NEWS.forEach((n,i)=>{ if(!n.id) n.id='n'+i; });
+
+ /* tasks reach every student who picked the course (public build filters by chosen courses in allTasks) */
+ const T=(id,u,t,due,hi)=>({id,u,t,due:due||null,hi:hi||0});
+ TASKS0.push(
+  T('p20-oop-a2p1','oop',`OOP: Assignment 2 Part 1 (اقراه واكتب أسئلتك)`,'2026-10-26',1),
+  T('p20-oop-a2p2','oop',`OOP: Assignment 2 Part 2`,'2026-11-06'),
+  T('p20-oop-a2team','oop',`OOP: كوّن تيم Assignment 2 من نفس السكشن (أو استأذن المعيد/ة لو من سكشن تاني)`,null,1),
+  T('p20-oop-slot','oop',`OOP: احجز ميعاد مناقشة Assignment 1 في شيت معيدك بإيميل الكلية ومن غير ما تلمس خلايا غيرك`,null,1),
+  T('p20-oop-prep','oop',`OOP: جهّز مناقشة Assignment 1: لابتوب والمشروع شغّال والكارنيه، وافهم كود كل فلاتر التيم`,null,1),
+  T('p20-oop-set7','oop',`OOP: ذاكر Set 7 لحد سلايد 27 (Virtual Functions وDefault Class Functions)`,null),
+  T('p20-or-solver','or',`OR: فعّل Solver في Excel (فيديو الشرح على الجروب)`,null),
+  T('p20-or-simplex','or',`OR: حل مثال Beaver Creek بالـSimplex بإيدك من غير ما تبص على الحل`,null),
+  T('p20-math-assign','math',`Math 3: حل الأسايمنت 1 و2 كله وخلّي نسخة Hard (التسليم Hard وSoft والميعاد لسه)`,null,1),
+  T('p20-math-ex34','math',`Math 3: Exercises 3 و4 (Lay 1.3 و1.4)`,null),
+  T('p20-math-late','math',`Math 3: لو اتأخرت عن أول أسايمنت مع م. محمد خالد ارفعه على فورم المتأخرين`,null),
+  T('p20-math-ch2','math',`Math 3: ابدأ Chapter 2 في الكتاب (Matrix Operations)`,null),
+  T('p20-stat-samp','stat',`Stat 2: ذاكر الأول فكرة Sampling Distribution قبل المحاضرة الجاية (مهمة جدًا لباقي المنهج)`,null,1),
+  T('p20-stat-grouped','stat',`Stat 2: راجع Grouped Data (جدول التكرار وHistogram وPolygon وOgive والمتوسط والوسيط والمنوال)`,null),
+  T('p20-net-lab','net',`Networks: حضور اللاب إجباري (غياب أكتر من 25% يحرمك من الفاينل)`,null),
+  T('p20-net-ch2','net',`Networks: ذاكر Chapter 2 من السلايدات لحد آخر اللي اتشرح`,null),
+  T('p20-ent-disc','ent',`ريادة الأعمال: حضّر مناقشة المشروع مع المعيد/ة، ولو عندك عذر ابعته قبل الميعاد`,null)
+ );
+
+ /* cards (rescue): plain Arabic text only, so the English dictionary can match each card as one string */
+ SUBJ.oop.rescue.push(
+  ['Virtual functions',`الـvirtual function بتخلي C++ تختار الدالة حسب نوع الكائن الحقيقي وقت التشغيل مش حسب نوع المؤشر. لو مؤشر Base بيشاور على كائن Derived وناديت دالة virtual هتتنفذ نسخة Derived، ومن غير virtual هتتنفذ نسخة Base. اكتب كلمة virtual في الـbase، وخلّي الـdestructor بتاع الـbase virtual لو هتمسح كائن derived من خلال مؤشر base. راجعه مع سلايدات Set 7.`],
+  ['Constructors and destructors in inheritance',`الترتيب: constructor الـbase الأول وبعده constructor الـderived، والـdestructors بالعكس (derived الأول وبعده base). لو الـbase مالوش default constructor لازم تناديه بنفسك في الـinitializer list. راجعه مع سلايدات Set 6 و7.`],
+  ['Default class functions (Rule of 3)',`لو ما كتبتهمش المترجم بيعملهم لوحده: default constructor (لو مفيش constructor خالص)، وcopy constructor، وcopy assignment operator، وdestructor. النسخ الافتراضي بينسخ المؤشرات نفسها فالكائنين يشاوروا على نفس الذاكرة (shallow copy). لو الـclass فيه new لازم تكتب destructor وcopy constructor وoperator= بنفسك. راجعه مع سلايدات Set 7.`],
+  ['Preventing inheritance',`كلمة final بعد اسم الـclass بتمنع أي حد يورّث منه. وfinal بعد توقيع دالة virtual بتمنع إعادة تعريفها (override) في الـclasses اللي تحت. راجعه مع سلايدات Set 7.`]
+ );
+ SUBJ.oop.topics.push('Virtual functions','Constructor and destructor order in inheritance','Default class functions (Rule of 3)','Preventing inheritance (final)');
+ TOPIC_RX.oop.push(/virtual|override|dynamic binding|polymorphi|vtable/i,/constructor.*(base|derived|order)|destructor.*(order|base|derived)|initializer list/i,/rule of (3|three)|copy constructor|assignment operator|shallow|deep copy|default (class )?function/i,/\bfinal\b|prevent.*inherit/i);
+ MCQB.oop.push(
+  ['Base has a virtual function f() that Derived overrides. Base *p = new Derived; p->f(); Which version runs?','Derived::f, chosen at run time',['Base::f because the pointer type is Base','Both versions, Base first','Compile error'],'Virtual functions use dynamic binding: the real object type decides, not the pointer type. General C++ (check against Set 7).'],
+  ['When a Derived object is created, the constructors run in this order:','Base constructor, then Derived constructor',['Derived constructor, then Base constructor','Only the Derived constructor','Base constructor twice'],'The base part must exist before the derived part is built. Destructors run in the reverse order. General C++.'],
+  ['When a Derived object is destroyed, the destructors run in this order:','Derived destructor, then Base destructor',['Base destructor, then Derived destructor','Only the Base destructor','Order is random'],'Destruction is the reverse of construction. General C++.'],
+  ['Why should the destructor of a class meant for inheritance be virtual?','So deleting a Derived object through a Base pointer also runs the Derived destructor',['So the class can be copied','So the class cannot be inherited','So constructors run faster'],'Without it, delete on a Base pointer is undefined behavior and the derived part may not be cleaned up. General C++.'],
+  ['Base only has the constructor Base(int x). Derived has Derived() {} with no initializer list. What happens?','Compile error: Base has no default constructor to call',['It compiles and x is 0','It compiles and Base is skipped','It compiles and x is random'],'If the base has no default constructor, the derived constructor must call Base(x) in its initializer list. General C++.'],
+  ['What does class A final { }; do?','It prevents any class from inheriting from A',['It makes A abstract','It makes all members of A static','It prevents creating objects of A'],'final stops inheritance. General C++ (check against Set 7).'],
+  ['A class has an int* member allocated with new and no user-written copy constructor. After B = A (copy), what is true?','Both objects point to the same memory (shallow copy)',['B gets its own separate copy of the data','The compiler refuses to copy','The pointer in B is set to nullptr'],'The default copy copies the pointer value only. That is why such a class needs the Rule of 3. General C++.'],
+  ['The Rule of 3 says that if a class needs one of these, it usually needs all three:','Destructor, copy constructor, copy assignment operator',['Constructor, destructor, main','Getter, setter, constructor','Virtual function, template, friend'],'All three deal with owning resources (for example memory from new). General C++.']
+ );
+
+ SUBJ.math.rescue.push(['Matrix operations (Chapter 2)',`الجمع والطرح بين مصفوفتين بنفس الحجم عنصر بعنصر، وضرب مصفوفة في رقم بيضرب كل عنصر. حاصل ضرب AB موجود بس لو عدد أعمدة A = عدد صفوف B، وحجم الناتج (صفوف A) × (أعمدة B). الضرب مش تبادلي: AB غالبًا مش BA. وtranspose الضرب بيتعكس: (AB)^T = B^T A^T. راجعه مع Lay Section 2.1.`]);
+ SUBJ.math.topics.push('Matrix operations (Chapter 2)');
+ TOPIC_RX.math.push(/matrix (product|multiplication|operations?)|\bAB\b|transpose|power of a matrix|product is (not )?defined/i);
+ MCQB.math.push(
+  ['If A is 2×3 and B is 3×4, the product AB is:','Defined, and it is 2×4',['Defined, and it is 3×3','Not defined','Defined, and it is 4×2'],'Columns of A (3) equal rows of B (3), and the result has the rows of A and the columns of B. Lay 2.1 (check against the book).'],
+  ['If A is 2×3 and B is 2×3, the product AB is:','Not defined, because columns of A (3) differ from rows of B (2)',['Defined, and it is 2×3','Defined, and it is 3×3','Defined, and it is 2×2'],'The inner sizes must match.'],
+  ['A = rows (1, 2) and (3, 4); B = rows (0, 1) and (1, 0). Then AB equals:','rows (2, 1) and (4, 3)',['rows (3, 4) and (1, 2)','rows (0, 2) and (3, 0)','rows (1, 3) and (2, 4)'],'Row 1 of A times the columns of B gives (1·0+2·1, 1·1+2·0) = (2, 1); row 2 gives (4, 3). BA would be rows (3, 4) and (1, 2), so AB is not equal to BA.'],
+  ['(AB)^T equals:','B^T A^T',['A^T B^T','AB','BA'],'The transpose of a product reverses the order.'],
+  ['A = rows (1, 1) and (0, 1). Then A² = A·A equals:','rows (1, 2) and (0, 1)',['rows (1, 1) and (0, 1)','rows (2, 2) and (0, 2)','rows (1, 2) and (2, 1)'],'Row 1: (1·1+1·0, 1·1+1·1) = (1, 2). Row 2: (0, 1). Squaring a matrix is a matrix product, not squaring each entry.']
+ );
+
+ SUBJ.stat.rescue.push(['Sampling distribution (preview)',`توزيع المعاينة هو توزيع قيمة إحصائية (زي المتوسط x̄) لو سحبنا عينات كتير بنفس الحجم من نفس المجتمع. متوسط x̄ بيساوي μ، والانحراف المعياري له (الـstandard error) بيساوي σ على جذر n، فكل ما زادت n قل الـstandard error. ولو n كبيرة (30 أو أكتر) بيبقى x̄ تقريبًا طبيعي حتى لو المجتمع مش طبيعي (Central Limit Theorem). ده تمهيد من معرفة عامة قبل المحاضرة، راجعه مع سلايدات الدكتور.`]);
+ SUBJ.stat.topics.push('Sampling distribution and standard error');
+ TOPIC_RX.stat.push(/sampling distribution|standard error of|central limit|\bCLT\b|σ ?\/ ?√n/i);
+ MCQB.stat.push(
+  ['A population has σ = 12. For samples of size n = 36, the standard error of the sample mean is:','2',['12','6','0.33'],'σ/√n = 12/6 = 2. General statistics (check against the doctor\'s slides).'],
+  ['If the sample size grows from 25 to 100, the standard error of the mean:','Is halved',['Is doubled','Stays the same','Is divided by four'],'σ/√n: the square root of 4 is 2, so it is divided by 2.'],
+  ['The Central Limit Theorem says that for large n the sampling distribution of x̄ is:','Approximately normal, whatever the shape of the population',['Always exactly uniform','Always skewed like the population','Equal to the population distribution'],'This is why the normal distribution is used for means.'],
+  ['The mean of the sampling distribution of x̄ equals:','The population mean μ',['The sample size n','The population variance','Zero'],'x̄ is an unbiased estimator of μ.']
+ );
+
+ SUBJ.or.rescue.push(['Excel Solver',`فعّل الأداة من File ثم Options ثم Add-ins ثم Manage Excel Add-ins ثم Go وعلّم على Solver Add-in. هتلاقيها بعد كده في تاب Data. بتحدد الـobjective cell وتختار Max أو Min، وتحدد الـvariable cells، وتضيف الـconstraints، وتختار الطريقة Simplex LP، وتدوس Solve. الدكتورة قالت الأداة دي مهمة جدًا في تطبيق الـLP.`]);
+ SUBJ.or.topics.push('Excel Solver');
+ TOPIC_RX.or.push(/solver|excel/i);
+ MCQB.or.push(
+  ['Which Excel add-in is used to solve linear programming models?','Solver',['Analysis ToolPak only','Power Query','Goal Seek only'],'The doctor said Solver is very important for applying LP (chat, 15/10).'],
+  ['Which solving method should you choose in Solver for a linear model?','Simplex LP',['GRG Nonlinear','Evolutionary','Newton'],'A linear model uses the Simplex LP method. General knowledge.']
+ );
+
+ /* Arabic resource: the playlist the class group shared */
+ SUBJ.math.res.push(['بلاي ليست شبه مواضيع الدكتور (وصلنا الفيديو 5)',yt('PLPaI27DWrVexgRqNsjOYbFyNDq4RwANlQ'),'مع الكتاب مش بدله']);
+
+ WHATS_NEW.unshift({d:'20 أكتوبر 2026',de:'20 October 2026',items:[
+  'مهام جديدة لكل المواد في قايمة المهام (Assignment 2 في OOP، Solver في OR، الأسايمنتات في Math 3، Sampling Distribution في Stat 2...).',
+  'أخبار من 14 لـ 20 أكتوبر لكل المواد الست: مناقشات الأسايمنت، تعديل مواعيد، وتنبيه مهم عن Sampling Distribution.',
+  'كروت وأسئلة جديدة: Virtual functions وRule of 3 في OOP، ضرب المصفوفات في Math 3، تمهيد Sampling Distribution في Stat 2، وExcel Solver في OR. دي مكتوبة من معرفة عامة ومن قايمة المواضيع، فراجعها مع سلايدات الدكتور.'],
+  en:['New tasks for every course in the task list (Assignment 2 in OOP, Solver in OR, the assignments in Math 3, Sampling Distribution in Stat 2...).',
+  'News from 14 to 20 October for all six courses: assignment discussions, schedule changes and an important warning about Sampling Distribution.',
+  'New cards and questions: virtual functions and the Rule of 3 in OOP, matrix multiplication in Math 3, a Sampling Distribution preview in Stat 2 and Excel Solver in OR. They are written from general knowledge and the posted topic lists, so check them against the doctors\' slides.']});
+})();
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
    ===================================================================== */
@@ -3951,7 +4067,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.4.1';
+const APP_VERSION='1.4.2';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -3963,7 +4079,7 @@ PUB_CATALOG.forEach(k=>{ const s=SUBJ[k];
   s.covered='لسه ما اتسجلش لحد فين وصلتوا. اكتب ده في «ملاحظاتي» تحت.';
   s.res=(s.res||[]).filter(r=>!/drive\.google|classroom\.google/.test(r[1]||'')); });
 delete SUBJ.gd;
-TASKS0.length=0; DEFAULT_TT.length=0;
+DEFAULT_TT.length=0;
 OOPF.forEach(f=>{ f[2]=''; f[3]=0; });
 
 /* ---------- saved-state schema + merge-not-replace migration ---------- */
@@ -4181,6 +4297,20 @@ const EN_DICT={
 "{0}. اختار اللي ذاكرته":"{0}. Choose what you studied",
 "{0}. نوع الأسئلة":"{0}. Question type",
 "{0}/ساعة":"{0}/hour",
+"{0}: Assignment {1} Part {2}":"{0}: Assignment {1} Part {2}",
+"{0}: Assignment {1} Part {2} (اقراه واكتب أسئلتك)":"{0}: Assignment {1} Part {2} (read it and write down your questions)",
+"{0}: Exercises {1} و{2} (Lay {3} و{4})":"{0}: Exercises {1} and {2} (Lay {3} and {4})",
+"{0}: ابدأ Chapter {1} في الكتاب (Matrix Operations)":"{0}: start Chapter {1} in the book (Matrix Operations)",
+"{0}: احجز ميعاد مناقشة Assignment {1} في شيت معيدك بإيميل الكلية ومن غير ما تلمس خلايا غيرك":"{0}: book your Assignment {1} discussion slot in your TA\u0027s sheet with your college email, without touching anyone else\u0027s cells",
+"{0}: جهّز مناقشة Assignment {1}: لابتوب والمشروع شغّال والكارنيه، وافهم كود كل فلاتر التيم":"{0}: prepare for the Assignment {1} discussion: laptop with the project running, your ID, and understand the code of all the team\u0027s filters",
+"{0}: حضور اللاب إجباري (غياب أكتر من {1}% يحرمك من الفاينل)":"{0}: lab attendance is mandatory (missing more than {1}% bars you from the final)",
+"{0}: حل الأسايمنت {1} و{2} كله وخلّي نسخة Hard (التسليم Hard وSoft والميعاد لسه)":"{0}: solve all of Assignments {1} and {2} and keep a Hard copy (submission is Hard and Soft, deadline not set yet)",
+"{0}: ذاكر Chapter {1} من السلايدات لحد آخر اللي اتشرح":"{0}: study Chapter {1} from the slides up to the last point explained",
+"{0}: ذاكر Set {1} لحد سلايد {2} (Virtual Functions وDefault Class Functions)":"{0}: study Set {1} up to slide {2} (Virtual Functions and Default Class Functions)",
+"{0}: ذاكر الأول فكرة Sampling Distribution قبل المحاضرة الجاية (مهمة جدًا لباقي المنهج)":"{0}: first study the idea of Sampling Distribution before the next lecture (very important for the rest of the course)",
+"{0}: راجع Grouped Data (جدول التكرار وHistogram وPolygon وOgive والمتوسط والوسيط والمنوال)":"{0}: review Grouped Data (frequency table, histogram, polygon, ogive, mean, median and mode)",
+"{0}: كوّن تيم Assignment {1} من نفس السكشن (أو استأذن المعيد/ة لو من سكشن تاني)":"{0}: form your Assignment {1} team from the same section (or ask your TA\u0027s permission if from another section)",
+"{0}: لو اتأخرت عن أول أسايمنت مع م. محمد خالد ارفعه على فورم المتأخرين":"{0}: if you were late with the first assignment with Eng. Mohamed Khaled, upload it through the late-submission form",
 "{0}° برد شديد":"{0}° very cold",
 "{0}° سما صافية":"{0}° clear sky",
 "{0}° شبورة":"{0}° fog",
@@ -4255,19 +4385,33 @@ const EN_DICT={
 "La / R: لو قريبة من {0} الـqueueing صغير، قريبة من {1} كبير، وأكبر من {2} التأخير لا نهائي. (من ملف مراجعة الـAI وطابق شرح Kurose.)":"La / R: if it is close to {0} queueing is small, close to {1} it is large, and greater than {2} the delay is infinite. (From the AI review file, and it matches Kurose\u0027s explanation.)",
 "Linear Algebra · فيه محتوى جاهز":"Linear Algebra · content ready",
 "Linear Combination و Span":"Linear Combination and Span",
+"Math 3: Exercises 3 و4 (Lay 1.3 و1.4)":"Math 3: Exercises 3 and 4 (Lay 1.3 and 1.4)",
+"Math 3: ابدأ Chapter 2 في الكتاب (Matrix Operations)":"Math 3: start Chapter 2 in the book (Matrix Operations)",
+"Math 3: حل الأسايمنت 1 و2 كله وخلّي نسخة Hard (التسليم Hard وSoft والميعاد لسه)":"Math 3: solve all of Assignments 1 and 2 and keep a Hard copy (submission is Hard and Soft, deadline not set yet)",
+"Math 3: لو اتأخرت عن أول أسايمنت مع م. محمد خالد ارفعه على فورم المتأخرين":"Math 3: if you were late with the first assignment with Eng. Mohamed Khaled, upload it through the late-submission form",
 "Mean = المجموع ÷ العدد. Median = الرقم اللي في النص بعد الترتيب (لو العدد زوجي: متوسط الرقمين اللي في النص). Mode = الأكثر تكراراً. القيم الشاذة بتأثر في Mean أكتر من Median.":"Mean = sum ÷ count. Median = the middle number after sorting (if the count is even: the average of the two middle numbers). Mode = the most frequent value. Outliers affect the Mean more than the Median.",
 "Mean وMedian وMode":"Mean, Median and Mode",
 "Multiple optimal: خط الهدف موازي لقيد. Infeasible: مفيش منطقة مسموحة (كل نقطة بتكسر قيد). Unbounded: الهدف بيكبر بلا نهاية، غالباً غلط في النموذج.":"Multiple optimal: the objective line is parallel to a constraint. Infeasible: there is no feasible region (every point breaks a constraint). Unbounded: the objective grows without limit, usually a mistake in the model.",
 "n={0} وQ{1} مكانه {2} فبيبقى المكان {3}":"n={0}, and Q{1} is at {2}, so the position is {3}",
 "Nested Structs وPointers to Structs":"Nested Structs and Pointers to Structs",
 "Network security (آخر اللي اتشرح)":"Network security (the last topic covered)",
+"Networks: حضور اللاب إجباري (غياب أكتر من 25% يحرمك من الفاينل)":"Networks: lab attendance is mandatory (missing more than 25% bars you from the final)",
+"Networks: ذاكر Chapter 2 من السلايدات لحد آخر اللي اتشرح":"Networks: study Chapter 2 from the slides up to the last point explained",
 "new بيحجز في الـheap وdelete بيحرر. لو نسيت delete بيحصل memory leak. الـsmart pointers بتحرر لوحدها.":"new reserves memory in the heap and delete frees it. If you forget delete you get a memory leak. Smart pointers free it on their own.",
 "Nominal ثم Ordinal ثم Interval ثم Ratio (الفرق: الصفر الحقيقي في Ratio). Discrete = عدّ، Continuous = قياس. Time series = متغير واحد عبر الزمن، Cross-sectional = لحظة واحدة. Systematic: k = N / n وتختار عشوائي من أول k وبعدين كل k.":"Nominal, then Ordinal, then Interval, then Ratio (the difference: a true zero in Ratio). Discrete = counted, Continuous = measured. Time series = one variable over time, Cross-sectional = a single moment. Systematic: k = N / n, and you pick randomly from the first k and then every k-th.",
 "Object-Oriented Programming · فيه محتوى جاهز":"Object-Oriented Programming · content ready",
 "Observation ثم Problem Definition ثم Model Construction ثم Model Solution ثم Implementation. الـModel عبارة عن variables وparameters ومعادلات. الـdecision variable قيمته توصية للمدير مش قرار فعلي.":"Observation, then Problem Definition, then Model Construction, then Model Solution, then Implementation. The model consists of variables, parameters and equations. The value of a decision variable is a recommendation to the manager, not an actual decision.",
 "Oil Painting (بونص)":"Oil Painting (bonus)",
 "One Population Estimation وSample Size":"One Population Estimation and Sample Size",
+"OOP: Assignment 2 Part 1 (اقراه واكتب أسئلتك)":"OOP: Assignment 2 Part 1 (read it and write down your questions)",
+"OOP: Assignment 2 Part 2":"OOP: Assignment 2 Part 2",
+"OOP: احجز ميعاد مناقشة Assignment 1 في شيت معيدك بإيميل الكلية ومن غير ما تلمس خلايا غيرك":"OOP: book your Assignment 1 discussion slot in your TA\u0027s sheet with your college email, without touching anyone else\u0027s cells",
+"OOP: جهّز مناقشة Assignment 1: لابتوب والمشروع شغّال والكارنيه، وافهم كود كل فلاتر التيم":"OOP: prepare for the Assignment 1 discussion: laptop with the project running, your ID, and understand the code of all the team\u0027s filters",
+"OOP: ذاكر Set 7 لحد سلايد 27 (Virtual Functions وDefault Class Functions)":"OOP: study Set 7 up to slide 27 (Virtual Functions and Default Class Functions)",
+"OOP: كوّن تيم Assignment 2 من نفس السكشن (أو استأذن المعيد/ة لو من سكشن تاني)":"OOP: form your Assignment 2 team from the same section (or ask your TA\u0027s permission if from another section)",
 "Operations Research and Decision Support · فيه محتوى جاهز":"Operations Research and Decision Support · content ready",
+"OR: حل مثال Beaver Creek بالـSimplex بإيدك من غير ما تبص على الحل":"OR: solve the Beaver Creek example with the Simplex method by hand without looking at the solution",
+"OR: فعّل Solver في Excel (فيديو الشرح على الجروب)":"OR: activate Solver in Excel (the how-to video is in the group)",
 "Part {0} · تسليم {1}":"Part {0} · due {1}",
 "Pass by value و by reference":"Pass by value and by reference",
 "Pass-by-value وPass-by-reference":"Pass-by-value and Pass-by-reference",
@@ -4284,6 +4428,8 @@ const EN_DICT={
 "Skew (بونص)":"Skew (bonus)",
 "Slack بيتضاف لقيد ≤ وبيمثل مورد ما اتستخدمش. Surplus بيتشال من قيد ≥ وبيمثل زيادة فوق الحد الأدنى. الاتنين ≥ {0} وملهمش مساهمة في دالة الهدف.":"Slack is added to a ≤ constraint and represents an unused resource. Surplus is subtracted from a ≥ constraint and represents an excess above the minimum. Both are ≥ {0} and contribute nothing to the objective function.",
 "Slack و Surplus":"Slack and Surplus",
+"Stat 2: ذاكر الأول فكرة Sampling Distribution قبل المحاضرة الجاية (مهمة جدًا لباقي المنهج)":"Stat 2: first study the idea of Sampling Distribution before the next lecture (very important for the rest of the course)",
+"Stat 2: راجع Grouped Data (جدول التكرار وHistogram وPolygon وOgive والمتوسط والوسيط والمنوال)":"Stat 2: review Grouped Data (frequency table, histogram, polygon, ogive, mean, median and mode)",
 "SWOT و PEST":"SWOT and PEST",
 "SWOT: Strengths وWeaknesses (داخلية) وOpportunities وThreats (خارجية). PEST: Political وEconomic وSocial وTechnological (عوامل البيئة الخارجية).":"SWOT: Strengths and Weaknesses (internal), Opportunities and Threats (external). PEST: Political, Economic, Social and Technological (external environment factors).",
 "Throughput و Bottleneck":"Throughput and Bottleneck",
@@ -4357,6 +4503,8 @@ const EN_DICT={
 "الـpivot position مكان الـleading {0} في الـReduced.":"The pivot position is the place of the leading {0} in the Reduced form.",
 "الـQR بتاع الحضور بيفتح دقيقتين بعد ما المحاضرة تخلص. ممنوع تبعته لحد مش حاضر.":"The attendance QR opens for two minutes after the lecture ends. Never send it to someone who is not present.",
 "الـthroughput من طرف لطرف محدود بأبطأ وصلة في المسار. لو {0} اتصالات بتتشارك وصلة R: min(Rc, Rs, R/{1}).":"End-to-end throughput is limited by the slowest link on the path. If {0} connections share a link R: min(Rc, Rs, R/{1}).",
+"الـvirtual function بتخلي C++ تختار الدالة حسب نوع الكائن الحقيقي وقت التشغيل مش حسب نوع المؤشر. لو مؤشر Base بيشاور على كائن Derived وناديت دالة virtual هتتنفذ نسخة Derived، ومن غير virtual هتتنفذ نسخة Base. اكتب كلمة virtual في الـbase، وخلّي الـdestructor بتاع الـbase virtual لو هتمسح كائن derived من خلال مؤشر base. راجعه مع سلايدات Set {0}.":"A virtual function makes C++ choose the function by the real object type at run time, not by the pointer type. If a Base pointer points to a Derived object and you call a virtual function, the Derived version runs; without virtual, the Base version runs. Write the word virtual in the base, and make the base destructor virtual if you will delete a derived object through a base pointer. Check it against the Set {0} slides.",
+"الـvirtual function بتخلي C++ تختار الدالة حسب نوع الكائن الحقيقي وقت التشغيل مش حسب نوع المؤشر. لو مؤشر Base بيشاور على كائن Derived وناديت دالة virtual هتتنفذ نسخة Derived، ومن غير virtual هتتنفذ نسخة Base. اكتب كلمة virtual في الـbase، وخلّي الـdestructor بتاع الـbase virtual لو هتمسح كائن derived من خلال مؤشر base. راجعه مع سلايدات Set 7.":"A virtual function makes C++ choose the function by the real object type at run time, not by the pointer type. If a Base pointer points to a Derived object and you call a virtual function, the Derived version runs; without virtual, the Base version runs. Write the word virtual in the base, and make the base destructor virtual if you will delete a derived object through a base pointer. Check it against the Set 7 slides.",
 "الأجهزة والـlayers":"Devices and layers",
 "الاحتمالات والإحصاء {0}":"Probability and Statistics {0}",
 "الاحتمالات والإحصاء {0} · فيه محتوى جاهز":"Probability and Statistics {0} · content ready",
@@ -4380,6 +4528,8 @@ const EN_DICT={
 "التاريخ":"Date",
 "التاني (قريبًا)":"Second (coming soon)",
 "التباين والانحراف المعياري":"Variance and standard deviation",
+"الترتيب: constructor الـbase الأول وبعده constructor الـderived، والـdestructors بالعكس (derived الأول وبعده base). لو الـbase مالوش default constructor لازم تناديه بنفسك في الـinitializer list. راجعه مع سلايدات Set {0} و{1}.":"The order: the base constructor first, then the derived constructor, and destructors in reverse (derived first, then base). If the base has no default constructor you must call it yourself in the initializer list. Check it against the Set {0} and {1} slides.",
+"الترتيب: constructor الـbase الأول وبعده constructor الـderived، والـdestructors بالعكس (derived الأول وبعده base). لو الـbase مالوش default constructor لازم تناديه بنفسك في الـinitializer list. راجعه مع سلايدات Set 6 و7.":"The order: the base constructor first, then the derived constructor, and destructors in reverse (derived first, then base). If the base has no default constructor you must call it yourself in the initializer list. Check it against the Set 6 and 7 slides.",
 "الترم":"Term",
 "الترم الحالي":"Current term",
 "الترم الحالي:":"Current term:",
@@ -4394,6 +4544,8 @@ const EN_DICT={
 "الجدول بيبدأ فاضي: ضيف محاضراتك وسكاشنك من تاب «الجدول» ثم «تعديل الجدول».":"The schedule starts empty: add your lectures and sections from the \"Schedule\" tab, then \"Edit schedule\".",
 "الجروب":"Group",
 "الجلسة دي:":"This session:",
+"الجمع والطرح بين مصفوفتين بنفس الحجم عنصر بعنصر، وضرب مصفوفة في رقم بيضرب كل عنصر. حاصل ضرب AB موجود بس لو عدد أعمدة A = عدد صفوف B، وحجم الناتج (صفوف A) × (أعمدة B). الضرب مش تبادلي: AB غالبًا مش BA. وtranspose الضرب بيتعكس: (AB)^T = B^T A^T. راجعه مع Lay Section {0}.":"Addition and subtraction of two matrices of the same size is entry by entry, and multiplying a matrix by a number multiplies every entry. The product AB exists only if the number of columns of A equals the number of rows of B, and the result has size (rows of A) × (columns of B). Multiplication is not commutative: AB is usually not BA. The transpose of a product reverses: (AB)^T = B^T A^T. Check it against Lay Section {0}.",
+"الجمع والطرح بين مصفوفتين بنفس الحجم عنصر بعنصر، وضرب مصفوفة في رقم بيضرب كل عنصر. حاصل ضرب AB موجود بس لو عدد أعمدة A = عدد صفوف B، وحجم الناتج (صفوف A) × (أعمدة B). الضرب مش تبادلي: AB غالبًا مش BA. وtranspose الضرب بيتعكس: (AB)^T = B^T A^T. راجعه مع Lay Section 2.1.":"Addition and subtraction of two matrices of the same size is entry by entry, and multiplying a matrix by a number multiplies every entry. The product AB exists only if the number of columns of A equals the number of rows of B, and the result has size (rows of A) × (columns of B). Multiplication is not commutative: AB is usually not BA. The transpose of a product reverses: (AB)^T = B^T A^T. Check it against Lay Section 2.1.",
 "الجو عند جامعة القاهرة (الجيزة)":"Weather at Cairo University (Giza)",
 "الجو عند جامعة القاهرة (الجيزة): برد شديد، {0}°. غير معتاد في القاهرة.":"Weather at Cairo University (Giza): very cold, {0}°. Unusual for Cairo.",
 "الجو عند جامعة القاهرة (الجيزة): سما صافية، {0}°. ليل هادي.":"Weather at Cairo University (Giza): clear sky, {0}°. A calm night.",
@@ -4529,6 +4681,8 @@ const EN_DICT={
 "بلاي ليست د. أحمد حجاج":"Dr. Ahmed Hagag\u0027s playlist",
 "بلاي ليست د. شيري (تسجيلات الكورونا)":"Dr. Sherry\u0027s playlist (COVID recordings)",
 "بلاي ليست د. شيري (تسجيلات الكورونا)↗":"Dr. Sherry\u0027s playlist (COVID recordings)↗",
+"بلاي ليست شبه مواضيع الدكتور (وصلنا الفيديو {0})":"A playlist that follows the doctor\u0027s topics (the class is at video {0})",
+"بلاي ليست شبه مواضيع الدكتور (وصلنا الفيديو 5)":"A playlist that follows the doctor\u0027s topics (the class is at video 5)",
 "بلاي ليست من الجروب":"Playlist from the group",
 "بياناتك":"Your data",
 "بياناتك على الجهاز ده بس":"Your data stays on this device only",
@@ -4568,6 +4722,8 @@ const EN_DICT={
 "تمام":"OK",
 "تهديدات: packet sniffing (Wireshark)، IP spoofing، DoS (botnet). دفاعات: authentication، encryption للسرية، digital signatures للـintegrity، VPN وaccess restrictions، firewalls.":"Threats: packet sniffing (Wireshark), IP spoofing, DoS (botnet). Defenses: authentication, encryption for confidentiality, digital signatures for integrity, VPN and access restrictions, firewalls.",
 "تواصل مع صاحب الموقع":"Contact the site owner",
+"توزيع المعاينة هو توزيع قيمة إحصائية (زي المتوسط x̄) لو سحبنا عينات كتير بنفس الحجم من نفس المجتمع. متوسط x̄ بيساوي μ، والانحراف المعياري له (الـstandard error) بيساوي σ على جذر n، فكل ما زادت n قل الـstandard error. ولو n كبيرة ({0} أو أكتر) بيبقى x̄ تقريبًا طبيعي حتى لو المجتمع مش طبيعي (Central Limit Theorem). ده تمهيد من معرفة عامة قبل المحاضرة، راجعه مع سلايدات الدكتور.":"A sampling distribution is the distribution of a statistic (such as the mean x̄) if we draw many samples of the same size from the same population. The mean of x̄ equals μ, and its standard deviation (the standard error) equals σ divided by the square root of n, so the larger n is, the smaller the standard error. And if n is large ({0} or more), x̄ is approximately normal even if the population is not (Central Limit Theorem). This is a general-knowledge preview before the lecture, so check it against the doctor\u0027s slides.",
+"توزيع المعاينة هو توزيع قيمة إحصائية (زي المتوسط x̄) لو سحبنا عينات كتير بنفس الحجم من نفس المجتمع. متوسط x̄ بيساوي μ، والانحراف المعياري له (الـstandard error) بيساوي σ على جذر n، فكل ما زادت n قل الـstandard error. ولو n كبيرة (30 أو أكتر) بيبقى x̄ تقريبًا طبيعي حتى لو المجتمع مش طبيعي (Central Limit Theorem). ده تمهيد من معرفة عامة قبل المحاضرة، راجعه مع سلايدات الدكتور.":"A sampling distribution is the distribution of a statistic (such as the mean x̄) if we draw many samples of the same size from the same population. The mean of x̄ equals μ, and its standard deviation (the standard error) equals σ divided by the square root of n, so the larger n is, the smaller the standard error. And if n is large (30 or more), x̄ is approximately normal even if the population is not (Central Limit Theorem). This is a general-knowledge preview before the lecture, so check it against the doctor\u0027s slides.",
 "ثبّت دلوقتي":"Install now",
 "ثبّته على موبايلك أو جهازك":"Install it on your phone or device",
 "جاوب في دماغك واعرض الإجابة":"Answer in your head, then reveal the answer",
@@ -4626,6 +4782,7 @@ const EN_DICT={
 "رقم سكشنك":"Your section number",
 "روابطك":"Your links",
 "ريادة الأعمال":"Entrepreneurship",
+"ريادة الأعمال: حضّر مناقشة المشروع مع المعيد/ة، ولو عندك عذر ابعته قبل الميعاد":"Entrepreneurship: prepare for the project discussion with your TA, and if you have an excuse send it before the slot",
 "ريبو الأسايمنت":"Assignment repo",
 "زينب هشام":"Zeinab Hesham",
 "ساعات":"Hours",
@@ -4699,6 +4856,7 @@ const EN_DICT={
 "فاضل كام للميد؟":"How long until the midterm?",
 "فاهمه":"understood",
 "فاينل":"Final",
+"فعّل الأداة من File ثم Options ثم Add-ins ثم Manage Excel Add-ins ثم Go وعلّم على Solver Add-in. هتلاقيها بعد كده في تاب Data. بتحدد الـobjective cell وتختار Max أو Min، وتحدد الـvariable cells، وتضيف الـconstraints، وتختار الطريقة Simplex LP، وتدوس Solve. الدكتورة قالت الأداة دي مهمة جدًا في تطبيق الـLP.":"Activate it from File, then Options, then Add-ins, then Manage Excel Add-ins, then Go, and tick Solver Add-in. After that you will find it in the Data tab. You set the objective cell and choose Max or Min, set the variable cells, add the constraints, choose the Simplex LP method and press Solve. The doctor said this tool is very important for applying LP.",
 "فهمته":"understood it",
 "فولدر الامتحانات القديمة فاضي (الكود جديد MA{0})، فالمرجع هو كتاب Lay والشيتات.":"The past exams folder is empty (the course code is new, MA{0}), so the reference is the Lay book and the sheets.",
 "في C++ الاتنين شبه بعض، والفرق الوحيد إن الـmembers في struct هي public افتراضياً وفي class هي private. بنستخدم class لما عايزين نخفي البيانات ونتحكم فيها.":"In C++ the two are similar, and the only difference is that the members in a struct are public by default and in a class they are private. We use a class when we want to hide the data and control it.",
@@ -4723,6 +4881,8 @@ const EN_DICT={
 "كل الأنواع":"All types",
 "كل المهام خلصت. استمتع بالراحة وراجع كروت «أنا مزنوق».":"All tasks are done. Enjoy the rest and review the \"I\u0027m stuck\" cards.",
 "كل المواد":"All courses",
+"كلمة final بعد اسم الـclass بتمنع أي حد يورّث منه. وfinal بعد توقيع دالة virtual بتمنع إعادة تعريفها (override) في الـclasses اللي تحت. راجعه مع سلايدات Set {0}.":"The word final after a class name stops anyone from inheriting from it. And final after a virtual function\u0027s signature stops it being overridden in the classes below. Check it against the Set {0} slides.",
+"كلمة final بعد اسم الـclass بتمنع أي حد يورّث منه. وfinal بعد توقيع دالة virtual بتمنع إعادة تعريفها (override) في الـclasses اللي تحت. راجعه مع سلايدات Set 7.":"The word final after a class name stops anyone from inheriting from it. And final after a virtual function\u0027s signature stops it being overridden in the classes below. Check it against the Set 7 slides.",
 "كلمة تانية":"Another line",
 "كويز في كل محاضرة على اللي اتشرح قبلها.":"A quiz in every lecture on what was covered before it.",
 "كويزين":"Two quizzes",
@@ -4751,6 +4911,8 @@ const EN_DICT={
 "لو خدت نص الباقي ({0} من {1}): الفاينل محتاج {2} من {3} ({4}%)":"If you get half of the rest ({0} of {1}): the final needs {2} of {3} ({4}%)",
 "لو غيرت الجهاز أو مسحت بيانات المتصفح استخدم «تصدير» من الإعدادات":"If you change devices or clear browser data, use \"Export\" in Settings",
 "لو لقيت غلط أو عندك اقتراح، ابعتلي على أي حساب من صفحتي:":"If you find a mistake or have a suggestion, message me on any account from my page:",
+"لو ما كتبتهمش المترجم بيعملهم لوحده: default constructor (لو مفيش constructor خالص)، وcopy constructor، وcopy assignment operator، وdestructor. النسخ الافتراضي بينسخ المؤشرات نفسها فالكائنين يشاوروا على نفس الذاكرة (shallow copy). لو الـclass فيه new لازم تكتب destructor وcopy constructor وoperator= بنفسك. راجعه مع سلايدات Set {0}.":"If you do not write them, the compiler makes them: a default constructor (if there is no constructor at all), a copy constructor, a copy assignment operator and a destructor. The default copy copies the pointers themselves, so both objects point to the same memory (shallow copy). If the class uses new you must write the destructor, copy constructor and operator= yourself. Check it against the Set {0} slides.",
+"لو ما كتبتهمش المترجم بيعملهم لوحده: default constructor (لو مفيش constructor خالص)، وcopy constructor، وcopy assignment operator، وdestructor. النسخ الافتراضي بينسخ المؤشرات نفسها فالكائنين يشاوروا على نفس الذاكرة (shallow copy). لو الـclass فيه new لازم تكتب destructor وcopy constructor وoperator= بنفسك. راجعه مع سلايدات Set 7.":"If you do not write them, the compiler makes them: a default constructor (if there is no constructor at all), a copy constructor, a copy assignment operator and a destructor. The default copy copies the pointers themselves, so both objects point to the same memory (shallow copy). If the class uses new you must write the destructor, copy constructor and operator= yourself. Check it against the Set 7 slides.",
 "لو ممكن خليك في البيت.":"If you can, stay home.",
 "لوحة الأخبار":"News board",
 "ليل غائم.":"A cloudy night.",
@@ -4794,6 +4956,7 @@ const EN_DICT={
 "مطر":"Rain",
 "مطلوب":"To do",
 "مطلوب مع Part {0}:":"Required with Part {0}:",
+"مع الكتاب مش بدله":"Together with the book, not instead of it",
 "معاك {0} نقطة، مستوى «متحمس». فاضل {1} نقطة للمستوى اللي بعده.":"You have {0} points, level \"Enthusiast\". {1} points to the next level.",
 "معاك لحد دلوقتي {0}. للـB محتاج مجموع {1} من {2} (باقي {3}).":"So far you have {0}. For B you need a total of {1} out of {2} ({3} remaining).",
 "معدل الترم":"Term GPA",
