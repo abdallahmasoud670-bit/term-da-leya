@@ -3690,7 +3690,7 @@ The matrix is nonzero, so the all-zero matrix is excluded. In each one the leadi
  );
 })();
 /* Update 2026-10-20. Source: the 6 WhatsApp class chats read from 13/10/2026 6:11 pm to 20/10/2026 (text only: attached slides/pictures were NOT in the export).
-   News + tasks come from the chats. Cards and MCQs below are written from the topic lists the class posted, using standard C++/linear algebra/statistics knowledge (NOT from the doctors' slides), so each is marked "check against the slides". */
+   News and tasks come from the chats only. No questions or cards were added (no files were available; the owner does not allow questions written from my own knowledge). */
 (function(){
  const N=(u,d,k,t,en)=>({u,d,k,t,en});
  NEWS.push(
@@ -3746,65 +3746,14 @@ N('math','2026-10-18','change',`باقي Chapter 1 (الأقسام اللي بع
   T('p20-ent-disc','ent',`ريادة الأعمال: حضّر مناقشة المشروع مع المعيد/ة، ولو عندك عذر ابعته قبل الميعاد`,null)
  );
 
- /* cards (rescue): plain Arabic text only, so the English dictionary can match each card as one string */
- SUBJ.oop.rescue.push(
-  ['Virtual functions',`الـvirtual function بتخلي C++ تختار الدالة حسب نوع الكائن الحقيقي وقت التشغيل مش حسب نوع المؤشر. لو مؤشر Base بيشاور على كائن Derived وناديت دالة virtual هتتنفذ نسخة Derived، ومن غير virtual هتتنفذ نسخة Base. اكتب كلمة virtual في الـbase، وخلّي الـdestructor بتاع الـbase virtual لو هتمسح كائن derived من خلال مؤشر base. راجعه مع سلايدات Set 7.`],
-  ['Constructors and destructors in inheritance',`الترتيب: constructor الـbase الأول وبعده constructor الـderived، والـdestructors بالعكس (derived الأول وبعده base). لو الـbase مالوش default constructor لازم تناديه بنفسك في الـinitializer list. راجعه مع سلايدات Set 6 و7.`],
-  ['Default class functions (Rule of 3)',`لو ما كتبتهمش المترجم بيعملهم لوحده: default constructor (لو مفيش constructor خالص)، وcopy constructor، وcopy assignment operator، وdestructor. النسخ الافتراضي بينسخ المؤشرات نفسها فالكائنين يشاوروا على نفس الذاكرة (shallow copy). لو الـclass فيه new لازم تكتب destructor وcopy constructor وoperator= بنفسك. راجعه مع سلايدات Set 7.`],
-  ['Preventing inheritance',`كلمة final بعد اسم الـclass بتمنع أي حد يورّث منه. وfinal بعد توقيع دالة virtual بتمنع إعادة تعريفها (override) في الـclasses اللي تحت. راجعه مع سلايدات Set 7.`]
- );
- SUBJ.oop.topics.push('Virtual functions','Constructor and destructor order in inheritance','Default class functions (Rule of 3)','Preventing inheritance (final)');
- TOPIC_RX.oop.push(/virtual|override|dynamic binding|polymorphi|vtable/i,/constructor.*(base|derived|order)|destructor.*(order|base|derived)|initializer list/i,/rule of (3|three)|copy constructor|assignment operator|shallow|deep copy|default (class )?function/i,/\bfinal\b|prevent.*inherit/i);
- MCQB.oop.push(
-  ['Base has a virtual function f() that Derived overrides. Base *p = new Derived; p->f(); Which version runs?','Derived::f, chosen at run time',['Base::f because the pointer type is Base','Both versions, Base first','Compile error'],'Virtual functions use dynamic binding: the real object type decides, not the pointer type. General C++ (check against Set 7).'],
-  ['When a Derived object is created, the constructors run in this order:','Base constructor, then Derived constructor',['Derived constructor, then Base constructor','Only the Derived constructor','Base constructor twice'],'The base part must exist before the derived part is built. Destructors run in the reverse order. General C++.'],
-  ['When a Derived object is destroyed, the destructors run in this order:','Derived destructor, then Base destructor',['Base destructor, then Derived destructor','Only the Base destructor','Order is random'],'Destruction is the reverse of construction. General C++.'],
-  ['Why should the destructor of a class meant for inheritance be virtual?','So deleting a Derived object through a Base pointer also runs the Derived destructor',['So the class can be copied','So the class cannot be inherited','So constructors run faster'],'Without it, delete on a Base pointer is undefined behavior and the derived part may not be cleaned up. General C++.'],
-  ['Base only has the constructor Base(int x). Derived has Derived() {} with no initializer list. What happens?','Compile error: Base has no default constructor to call',['It compiles and x is 0','It compiles and Base is skipped','It compiles and x is random'],'If the base has no default constructor, the derived constructor must call Base(x) in its initializer list. General C++.'],
-  ['What does class A final { }; do?','It prevents any class from inheriting from A',['It makes A abstract','It makes all members of A static','It prevents creating objects of A'],'final stops inheritance. General C++ (check against Set 7).'],
-  ['A class has an int* member allocated with new and no user-written copy constructor. After B = A (copy), what is true?','Both objects point to the same memory (shallow copy)',['B gets its own separate copy of the data','The compiler refuses to copy','The pointer in B is set to nullptr'],'The default copy copies the pointer value only. That is why such a class needs the Rule of 3. General C++.'],
-  ['The Rule of 3 says that if a class needs one of these, it usually needs all three:','Destructor, copy constructor, copy assignment operator',['Constructor, destructor, main','Getter, setter, constructor','Virtual function, template, friend'],'All three deal with owning resources (for example memory from new). General C++.']
- );
-
- SUBJ.math.rescue.push(['Matrix operations (Chapter 2)',`الجمع والطرح بين مصفوفتين بنفس الحجم عنصر بعنصر، وضرب مصفوفة في رقم بيضرب كل عنصر. حاصل ضرب AB موجود بس لو عدد أعمدة A = عدد صفوف B، وحجم الناتج (صفوف A) × (أعمدة B). الضرب مش تبادلي: AB غالبًا مش BA. وtranspose الضرب بيتعكس: (AB)^T = B^T A^T. راجعه مع Lay Section 2.1.`]);
- SUBJ.math.topics.push('Matrix operations (Chapter 2)');
- TOPIC_RX.math.push(/matrix (product|multiplication|operations?)|\bAB\b|transpose|power of a matrix|product is (not )?defined/i);
- MCQB.math.push(
-  ['If A is 2×3 and B is 3×4, the product AB is:','Defined, and it is 2×4',['Defined, and it is 3×3','Not defined','Defined, and it is 4×2'],'Columns of A (3) equal rows of B (3), and the result has the rows of A and the columns of B. Lay 2.1 (check against the book).'],
-  ['If A is 2×3 and B is 2×3, the product AB is:','Not defined, because columns of A (3) differ from rows of B (2)',['Defined, and it is 2×3','Defined, and it is 3×3','Defined, and it is 2×2'],'The inner sizes must match.'],
-  ['A = rows (1, 2) and (3, 4); B = rows (0, 1) and (1, 0). Then AB equals:','rows (2, 1) and (4, 3)',['rows (3, 4) and (1, 2)','rows (0, 2) and (3, 0)','rows (1, 3) and (2, 4)'],'Row 1 of A times the columns of B gives (1·0+2·1, 1·1+2·0) = (2, 1); row 2 gives (4, 3). BA would be rows (3, 4) and (1, 2), so AB is not equal to BA.'],
-  ['(AB)^T equals:','B^T A^T',['A^T B^T','AB','BA'],'The transpose of a product reverses the order.'],
-  ['A = rows (1, 1) and (0, 1). Then A² = A·A equals:','rows (1, 2) and (0, 1)',['rows (1, 1) and (0, 1)','rows (2, 2) and (0, 2)','rows (1, 2) and (2, 1)'],'Row 1: (1·1+1·0, 1·1+1·1) = (1, 2). Row 2: (0, 1). Squaring a matrix is a matrix product, not squaring each entry.']
- );
-
- SUBJ.stat.rescue.push(['Sampling distribution (preview)',`توزيع المعاينة هو توزيع قيمة إحصائية (زي المتوسط x̄) لو سحبنا عينات كتير بنفس الحجم من نفس المجتمع. متوسط x̄ بيساوي μ، والانحراف المعياري له (الـstandard error) بيساوي σ على جذر n، فكل ما زادت n قل الـstandard error. ولو n كبيرة (30 أو أكتر) بيبقى x̄ تقريبًا طبيعي حتى لو المجتمع مش طبيعي (Central Limit Theorem). ده تمهيد من معرفة عامة قبل المحاضرة، راجعه مع سلايدات الدكتور.`]);
- SUBJ.stat.topics.push('Sampling distribution and standard error');
- TOPIC_RX.stat.push(/sampling distribution|standard error of|central limit|\bCLT\b|σ ?\/ ?√n/i);
- MCQB.stat.push(
-  ['A population has σ = 12. For samples of size n = 36, the standard error of the sample mean is:','2',['12','6','0.33'],'σ/√n = 12/6 = 2. General statistics (check against the doctor\'s slides).'],
-  ['If the sample size grows from 25 to 100, the standard error of the mean:','Is halved',['Is doubled','Stays the same','Is divided by four'],'σ/√n: the square root of 4 is 2, so it is divided by 2.'],
-  ['The Central Limit Theorem says that for large n the sampling distribution of x̄ is:','Approximately normal, whatever the shape of the population',['Always exactly uniform','Always skewed like the population','Equal to the population distribution'],'This is why the normal distribution is used for means.'],
-  ['The mean of the sampling distribution of x̄ equals:','The population mean μ',['The sample size n','The population variance','Zero'],'x̄ is an unbiased estimator of μ.']
- );
-
- SUBJ.or.rescue.push(['Excel Solver',`فعّل الأداة من File ثم Options ثم Add-ins ثم Manage Excel Add-ins ثم Go وعلّم على Solver Add-in. هتلاقيها بعد كده في تاب Data. بتحدد الـobjective cell وتختار Max أو Min، وتحدد الـvariable cells، وتضيف الـconstraints، وتختار الطريقة Simplex LP، وتدوس Solve. الدكتورة قالت الأداة دي مهمة جدًا في تطبيق الـLP.`]);
- SUBJ.or.topics.push('Excel Solver');
- TOPIC_RX.or.push(/solver|excel/i);
- MCQB.or.push(
-  ['Which Excel add-in is used to solve linear programming models?','Solver',['Analysis ToolPak only','Power Query','Goal Seek only'],'The doctor said Solver is very important for applying LP (chat, 15/10).'],
-  ['Which solving method should you choose in Solver for a linear model?','Simplex LP',['GRG Nonlinear','Evolutionary','Newton'],'A linear model uses the Simplex LP method. General knowledge.']
- );
-
  /* Arabic resource: the playlist the class group shared */
  SUBJ.math.res.push(['بلاي ليست شبه مواضيع الدكتور (وصلنا الفيديو 5)',yt('PLPaI27DWrVexgRqNsjOYbFyNDq4RwANlQ'),'مع الكتاب مش بدله']);
 
  WHATS_NEW.unshift({d:'20 أكتوبر 2026',de:'20 October 2026',items:[
   'مهام جديدة لكل المواد في قايمة المهام (Assignment 2 في OOP، Solver في OR، الأسايمنتات في Math 3، Sampling Distribution في Stat 2...).',
-  'أخبار من 14 لـ 20 أكتوبر لكل المواد الست: مناقشات الأسايمنت، تعديل مواعيد، وتنبيه مهم عن Sampling Distribution.',
-  'كروت وأسئلة جديدة: Virtual functions وRule of 3 في OOP، ضرب المصفوفات في Math 3، تمهيد Sampling Distribution في Stat 2، وExcel Solver في OR. دي مكتوبة من معرفة عامة ومن قايمة المواضيع، فراجعها مع سلايدات الدكتور.'],
+  'أخبار من 14 لـ 20 أكتوبر لكل المواد الست: مناقشات الأسايمنت، تعديل مواعيد، وتنبيه مهم عن Sampling Distribution.'],
   en:['New tasks for every course in the task list (Assignment 2 in OOP, Solver in OR, the assignments in Math 3, Sampling Distribution in Stat 2...).',
-  'News from 14 to 20 October for all six courses: assignment discussions, schedule changes and an important warning about Sampling Distribution.',
-  'New cards and questions: virtual functions and the Rule of 3 in OOP, matrix multiplication in Math 3, a Sampling Distribution preview in Stat 2 and Excel Solver in OR. They are written from general knowledge and the posted topic lists, so check them against the doctors\' slides.']});
+  'News from 14 to 20 October for all six courses: assignment discussions, schedule changes and an important warning about Sampling Distribution.']});
 })();
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
@@ -4068,7 +4017,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.4.4';
+const APP_VERSION='1.4.5';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -5298,22 +5247,22 @@ const WN_TXT={
   s:['Open the site in <b>Chrome</b> or <b>Safari</b>, not inside Facebook, Instagram or WhatsApp.','Install the site on your phone: in the browser menu choose <b>"Add to Home Screen"</b> (very important on iPhone).','Press <b>"Export my copy now"</b> below and keep the file somewhere safe (Drive, or send it to yourself on WhatsApp). Repeat every two weeks.','If your progress was reset: <b>Settings → Automatic backups on this device → Restore</b>. If you have an exported file: <b>Settings → Import</b>.','Do not clear your browser data and do not use private (<bdi>Incognito</bdi>) mode.'],
   x:'Export my copy now',o:'Got it',n:'Also: the site is available in English with the EN switch at the top.'}};
 const WN_UPD={
- ar:{b:'جديد',h:'اتحدّث الموقع (20 أكتوبر)',p:'نزلت مهام وأخبار وكروت وأسئلة جديدة. ده اللي حصل في موادك:',x:'افتح الرئيسية',o:'فهمت',
+ ar:{b:'جديد',h:'اتحدّث الموقع (20 أكتوبر)',p:'نزلت مهام وأخبار جديدة. ده اللي حصل في موادك:',x:'افتح الرئيسية',o:'فهمت',
   c:{oop:'OOP: Assignment 2 (Part 1 يوم 26/10 وPart 2 يوم 6/11). مناقشات Assignment 1: احجز ميعاد تيمك في شيت معيدك وجيب اللابتوب والكارنيه. بعض المناقشات اتأجلت، فتابع شيتك. المنهج وصل Set 7 (Virtual Functions).',
      math:'Math 3: باقي Chapter 1 ملغي والمنهج انتقل لـ Chapter 2. الأسايمنت 1 و2 مع م. زينب (Hard وSoft والميعاد لسه). بدأنا Chapter 2 (ضرب المصفوفات). اللي اتأخر عن أسايمنت م. محمد خالد يرفعه على فورم المتأخرين.',
      or:'OR & DS: فعّل Solver في Excel (مهم جدًا حسب الدكتورة). خلصنا 3 شباتر وآخرهم Simplex.',
      stat:'Stat 2: المحاضرة الجاية Sampling Distribution، والدكتور بيقول مهمة جدًا لباقي المنهج، فذاكرها قبلها.',
      net:'Networks: مفيش محاضرة الأربع 21/10.',
      ent:'ريادة الأعمال: مناقشات المشاريع شغالة، ومن عنده عذر يبعته للمعيدة قبل الميعاد. الدكتور هيعمل scaling على الدرجات في الآخر.'},
-  n:'المهام الجديدة في الرئيسية، والأخبار في تاب الأخبار. الكروت والأسئلة الجديدة مكتوبة من قايمة المواضيع ومعرفة عامة، فراجعها مع سلايدات الدكتور.'},
- en:{b:'New',h:'The site was updated (20 October)',p:'New tasks, news, cards and questions were added. Here is what happened in your courses:',x:'Open Home',o:'Got it',
+  n:'المهام الجديدة في الرئيسية، والأخبار في تاب الأخبار.'},
+ en:{b:'New',h:'The site was updated (20 October)',p:'New tasks and news were added. Here is what happened in your courses:',x:'Open Home',o:'Got it',
   c:{oop:'OOP: Assignment 2 (Part 1 due 26/10, Part 2 due 6/11). Assignment 1 discussions: book your team\'s slot in your TA\'s sheet and bring your laptop and ID. Some discussions were postponed, so check your sheet. The syllabus reached Set 7 (Virtual Functions).',
      math:'Math 3: the rest of Chapter 1 is cancelled and the course moved to Chapter 2. Assignments 1 and 2 with Eng. Zeinab (Hard and Soft copy, deadline not set yet). Chapter 2 started (matrix multiplication). If you were late with Eng. Mohamed Khaled\'s assignment, upload it through the late-submission form.',
      or:'OR & DS: activate Solver in Excel (very important according to the doctor). We finished 3 chapters, the last one being Simplex.',
      stat:'Stat 2: the next lecture is Sampling Distribution, which the doctor says is extremely important for the rest of the course, so study it before the lecture.',
      net:'Networks: no lecture on Wednesday 21/10.',
      ent:'Entrepreneurship: project discussions are running; if you have an excuse send it to your TA before the slot. The doctor will apply scaling to the grades at the end.'},
-  n:'New tasks are on Home and the news is in the News tab. The new cards and questions are written from the topic list and general knowledge, so check them against the doctors\' slides.'}};
+  n:'New tasks are on Home and the news is in the News tab.'}};
 function pubWhatsNew(){
   let seen=''; try{ seen=localStorage.getItem(WN_KEY)||''; }catch(e){}
   if(seen===WN_ID||document.getElementById('whatsnew')) return;
