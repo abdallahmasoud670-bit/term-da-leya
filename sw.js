@@ -3,7 +3,7 @@
    - same-origin files: cache first
    - Google Fonts: stale-while-revalidate
    - version.json and weather requests are never cached (update notice and live weather need the network) */
-const CACHE='tm-1.4.0', FONTS='tm-fonts';
+const CACHE='tm-1.4.1', FONTS='tm-fonts';
 const SHELL=['./','index.html','author.html','manifest.webmanifest','icon-192.png','icon-512.png','og.jpg'];
 self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())); });
 self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE&&k!==FONTS).map(k=>caches.delete(k)))).then(()=>self.clients.claim())); });

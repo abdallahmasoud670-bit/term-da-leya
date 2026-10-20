@@ -969,6 +969,42 @@ function saveFail(e){
   if(!SAFE_NOTED){ SAFE_NOTED=true; try{ toast(SAVEERR==='full'?'مساحة التخزين في المتصفح مليانة، تقدمك مش بيتحفظ. اعمل تصدير من الإعدادات.':'المتصفح مش سامح بالحفظ (وضع خاص أو متصفح داخل تطبيق). تقدمك مش هيفضل. افتح الموقع في Chrome أو Safari.'); }catch(x){} } }
 window.addEventListener('storage',ev=>{ if(ev.key!==KEY||!ev.newValue) return; try{ const o=JSON.parse(ev.newValue); if(o&&typeof o==='object'&&(o.t||0)>(S.t||0)){ adoptState(o); applyTheme(); render(); } }catch(e){} });
 try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+/* second copy of the state in IndexedDB (a different storage than localStorage: survives when localStorage writes fail or only it is cleared) */
+const IDB={db:null,t:null,pending:null};
+function idbOpen(){ return new Promise(res=>{ try{ const r=indexedDB.open('tm-safe-'+KEY,1); r.onupgradeneeded=()=>r.result.createObjectStore('s'); r.onsuccess=()=>res(r.result); r.onerror=r.onblocked=()=>res(null); }catch(e){ res(null); } }); }
+async function idbPut(str){ try{ const db=IDB.db||(IDB.db=await idbOpen()); if(!db) return; db.transaction('s','readwrite').objectStore('s').put({at:Date.now(),s:str},'cur'); }catch(e){} }
+function idbQueue(str){ IDB.pending=str; clearTimeout(IDB.t); IDB.t=setTimeout(()=>{ const s=IDB.pending; IDB.pending=null; if(s) idbPut(s); },800); }
+async function idbGet(){ try{ const db=await idbOpen(); if(!db) return null; return await new Promise(res=>{ const q=db.transaction('s').objectStore('s').get('cur'); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }catch(e){ return null; } }
+async function idbRecover(){
+  try{
+    const w=await idbGet();
+    if(!w||!w.s){ if(HADLOCAL) idbPut(JSON.stringify(S)); return; }
+    const o=JSON.parse(w.s); if(!o||typeof o!=='object') return;
+    if(!HADLOCAL||(o.t||0)>(S.t||0)+1000){ if(S.t){ try{ bkPush(JSON.stringify(S)); }catch(e){} } adoptState(o); HADLOCAL=true; try{ localStorage.setItem(KEY,w.s); }catch(e){} LOADNOTE='restored'; applyTheme(); render(true); bootSafety(); }
+    else if(JSON.stringify(S)!==w.s) idbPut(JSON.stringify(S));
+  }catch(e){}
+}
+/* restore from an automatic copy (settings screen) */
+let CLOUD=null;
+function restoreFrom(o){ try{ bkPush(JSON.stringify(S)); adoptState(o); ALLOWSHRINK=true; save(); ALLOWSHRINK=false; applyTheme(); closeModal(); render(true); toast('اتسترجعت النسخة'); }catch(e){ toast('الاسترجاع مشتغلش'); } }
+function bakHTML(){
+  const L=bkList(), cl=CLOUD?'<p style="margin-top:8px"><button class="btn soft sm" data-bak="cloud">نسخ السحابة</button></p>':''; if(!L.length&&!cl) return '';
+  const fmt=t=>new Date(t).toLocaleString(window.LANG_EN?'en-GB':(window.LANG_EN?'en-GB':'ar-EG-u-nu-latn'),{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
+  return '<h3 style="margin:16px 0 6px">نسخ تلقائية على الجهاز ده</h3><p class="sub" style="margin-bottom:6px">لو تقدمك اتصفّر أو رجع لورا، الموقع بيحتفظ بآخر نسخ. اختار واحدة ترجّعها (الحالية بتتحفظ قبل ما تتبدل).</p><div style="display:grid;gap:6px">'+L.map(b=>'<div class="row" style="justify-content:space-between"><span><span>آخر حفظ</span> <bdi>'+fmt(b.o.t||b.at)+'</bdi> · <span>نقاط</span> <bdi>'+(b.o.xp||0)+'</bdi></span><button class="btn soft sm" data-bak="restore" data-k="'+esc(b.k)+'">استرجاع</button></div>').join('')+'</div>'+cl;
+}
+let CLOUD_LIST=[];
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-bak]'); if(!b) return; const a=b.dataset.bak;
+  if(a==='restore'){ const x=bkRead(b.dataset.k); if(!x){ toast('النسخة دي مش سليمة'); return; } restoreFrom(x.o); }
+  else if(a==='cloud'){
+    toast('بجيب نسخ السحابة...'); CLOUD_LIST=[];
+    const names=[['hub','الحالية على السحابة'],['hubbest','أعلى تقدم وصلتله'],['hubbak1','نسخة 1'],['hubbak2','نسخة 2'],['hubbak3','نسخة 3']];
+    for(const n of names){ try{ const s=await CLOUD.db.doc(CLOUD.base+'/'+n[0]).get(); if(s.exists){ const d=s.data(), o=JSON.parse(d.json); CLOUD_LIST.push({n:n[1],o}); } }catch(x){} }
+    const fmt=t=>new Date(t).toLocaleString((window.LANG_EN?'en-GB':'ar-EG-u-nu-latn'),{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
+    openSheet('<div class="row" style="justify-content:space-between"><h2>نسخ السحابة</h2><button class="iconbtn" data-act="close" aria-label="إغلاق">×</button></div><p class="sub" style="margin:8px 0">اختار نسخة ترجّعها. الحالية بتتحفظ على الجهاز قبل ما تتبدل.</p>'+(CLOUD_LIST.length?CLOUD_LIST.map((c,i)=>'<div class="row" style="justify-content:space-between;margin:6px 0"><span>'+esc(c.n)+' · <bdi>'+fmt(c.o.t||0)+'</bdi> · نقاط <bdi>'+(c.o.xp||0)+'</bdi></span><button class="btn soft sm" data-bak="crestore" data-i="'+i+'">استرجاع</button></div>').join(''):'<p>مفيش نسخ على السحابة لسه.</p>'));
+  }
+  else if(a==='crestore'){ const c=CLOUD_LIST[+b.dataset.i]; if(c) restoreFrom(c.o); }
+});
 let saveT=null, remote=null, pushing=false, pushAgain=false;
 const SYNC={st:'checking',t:0}; let WXDB=null;
 function setSync(st){ SYNC.st=st; if(st==='on') SYNC.t=Date.now(); const b=document.getElementById('syncBtn'); if(!b) return; b.dataset.st=st; const l=b.querySelector('.t'); if(l) l.textContent=({checking:'بتأكد...',on:'متزامن',local:'الجهاز ده بس',error:'مشكلة في المزامنة'})[st]; b.setAttribute('aria-label','حالة المزامنة: '+(l?l.textContent:st)); }
@@ -980,8 +1016,8 @@ function save(){
       if(!ALLOWSHRINK&&old.length>3000&&js.length<old.length*0.4) bkPush(old,true);   /* sudden big shrink that was not a reset/import: keep the old copy */
       else if(Date.now()-lastBak>BAKEVERY) bkPush(old);
     }
-    localStorage.setItem(KEY,js); SAVEERR='';
-  }catch(e){ saveFail(e); }
+    localStorage.setItem(KEY,js); SAVEERR=''; idbQueue(js);
+  }catch(e){ saveFail(e); try{ idbQueue(JSON.stringify(S)); }catch(x){} }
   clearTimeout(saveT); saveT=setTimeout(push,1200);
 }
 window.addEventListener('pagehide',()=>{ try{ const old=localStorage.getItem(KEY); const b=bkRead(bkKey(1)); if(old&&old.length>1500&&(!b||b.s!==old)&&Date.now()-lastBak>60*1000) bkPush(old); }catch(e){} });
@@ -1542,7 +1578,7 @@ function openSettings(){
    '<h3 style="margin:16px 0 6px">الترم</h3><div class="grid g2"><label class="fld">أول سبت في الترم (الأسبوع 1)<input type="date" class="in" data-act-in="week1" value="'+S.week1+'"></label></div>'+
    '<h3 style="margin:16px 0 6px">مواعيد الميد (لما تتحدد)</h3><div class="grid g3">'+mids+'</div>'+
    '<h3 style="margin:16px 0 6px">مواعيد السلوتات</h3><div class="grid g3">'+sl+'</div><p style="margin-top:6px"><button class="x" data-act="resetslots">رجّع المواعيد الأصلية</button></p>'+
-   pubSettingsHTML()+'<h3 style="margin:16px 0 6px">نسخة احتياطية</h3><div class="row"><button class="btn sm" data-act="export">تصدير</button><label class="btn soft sm" style="cursor:pointer">استيراد<input type="file" accept=".json" data-act-in="import" hidden></label><button class="btn bad sm" data-act="resetall">مسح كل بياناتي</button></div><p class="sub" style="margin-top:6px">بياناتك محفوظة في المتصفح ده بس. صدّرها لملف قبل ما تمسح بيانات المتصفح أو تغيّر الجهاز. الاستيراد بيستبدل بياناتك الحالية.</p>');
+   pubSettingsHTML()+'<h3 style="margin:16px 0 6px">نسخة احتياطية</h3><div class="row"><button class="btn sm" data-act="export">تصدير</button><label class="btn soft sm" style="cursor:pointer">استيراد<input type="file" accept=".json" data-act-in="import" hidden></label><button class="btn bad sm" data-act="resetall">مسح كل بياناتي</button></div><p class="sub" style="margin-top:6px">بياناتك محفوظة في المتصفح ده بس. صدّرها لملف قبل ما تمسح بيانات المتصفح أو تغيّر الجهاز. الاستيراد بيستبدل بياناتك الحالية.</p>'+bakHTML());
 }
 function fieldCell(c){
   const d=c||{}; const opts=(arr,sel)=>arr.map(([v,l])=>'<option value="'+v+'"'+(String(v)===String(sel)?' selected':'')+'>'+l+'</option>').join('');
@@ -3915,7 +3951,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.4.0';
+const APP_VERSION='1.4.1';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -4036,14 +4072,7 @@ render=function(a){ if(!S.pub){ pubWelcome(false); return; } _render(a); };
 /* ---------- text helpers used by the patched views ---------- */
 function pubHi(){ return (S.pub&&S.pub.name?' يا '+esc(S.pub.name):'')+'<button type="button" class="namebtn" data-pub="rename" aria-label="تعديل الاسم" title="تعديل الاسم">✎</button>'; }
 function pubFoot(){ return esc(TERM.name)+' · موقع غير رسمي عمله طالب لزمايله: راجع كل حاجة مع السلايدات والكتب وإعلانات الكلية. · '+pubDevice()+' · نسخة '+APP_VERSION+' · <a href="#about">عن الموقع</a>'; }
-function pubBakHTML(){
-  const L=bkList(); if(!L.length) return '';
-  const fmt=t=>new Date(t).toLocaleString(window.LANG_EN?'en-GB':'ar-EG-u-nu-latn',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
-  return '<h3 style="margin:16px 0 6px">نسخ تلقائية على الجهاز ده</h3><p class="sub" style="margin-bottom:6px">لو تقدمك اتصفّر أو رجع لورا، الموقع بيحتفظ بآخر نسخ. اختار واحدة ترجّعها (الحالية بتتحفظ قبل ما تتبدل).</p><div style="display:grid;gap:6px">'+L.map((b,i)=>'<div class="row" style="justify-content:space-between"><span><span>آخر حفظ</span> <bdi>'+fmt(b.o.t||b.at)+'</bdi> · <span>نقاط</span> <bdi>'+(b.o.xp||0)+'</bdi></span><button class="btn soft sm" data-pub="bakrestore" data-k="'+esc(b.k)+'">استرجاع</button></div>').join('')+'</div>';
-}
-function pubSettingsHTML(){ return '<h3 style="margin:16px 0 6px">بياناتي وموادي</h3><div class="row"><button class="btn soft sm" data-pub="edit">تعديل بياناتي وموادي</button><a class="btn soft sm" href="#about" data-act="close">عن الموقع</a></div>'+pubBakHTML(); }
-document.addEventListener('click',e=>{ const b=e.target.closest('[data-pub=bakrestore]'); if(!b) return; const x=bkRead(b.dataset.k); if(!x){ toast('النسخة دي مش سليمة'); return; }
-  try{ bkPush(JSON.stringify(S)); S=migrateState(x.o); ALLOWSHRINK=true; save(); ALLOWSHRINK=false; applyTheme(); closeModal(); render(true); toast('اتسترجعت النسخة'); }catch(err){ toast('الاسترجاع مشتغلش'); } });
+function pubSettingsHTML(){ return '<h3 style="margin:16px 0 6px">بياناتي وموادي</h3><div class="row"><button class="btn soft sm" data-pub="edit">تعديل بياناتي وموادي</button><a class="btn soft sm" href="#about" data-act="close">عن الموقع</a></div>'; }
 function pubAboutCards(){
   return ''+
    '<div class="card rise"><h3>إيه ده؟</h3><p>«الترم ده ليا» أداة مذاكرة لطلبة كلية الحاسبات والذكاء الاصطناعي جامعة القاهرة: مواضيع بتتتبع، كروت مراجعة، أسئلة وأمثلة محلولة، جدول، حضور، وحاسبة معدل. غير رسمي وملوش علاقة بإدارة الكلية.</p></div>'+
@@ -5303,7 +5332,7 @@ $('#gearBtn').addEventListener('click',()=>{ sfx('open'); openSettings(); });
 $('#xp').addEventListener('click',()=>{ sfx('open'); openXP(); animateRings(false); });
 
 /* ---------- boot ---------- */
-load(); applyTheme(); buildNav(); render(true); bootSafety(); initRemote(); loadWeather().then(()=>wxFromDb()).then(()=>wxManualInit());
+load(); applyTheme(); buildNav(); render(true); bootSafety(); idbRecover().then(()=>initRemote()); loadWeather().then(()=>wxFromDb()).then(()=>wxManualInit());
 setInterval(()=>{ const ae=document.activeElement; if(route()==='home'&&T.st==='idle'&&!$('#modal').classList.contains('on')&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))) render(); },60000);
 </script>
 </body></html>
