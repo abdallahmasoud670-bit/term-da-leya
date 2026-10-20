@@ -921,11 +921,70 @@ const fresh = () => ({v:2,t:0,xp:0,xpMap:{},log:[],topics:{},cards:{},done:{},ct
   goal:90,theme:'auto',focusMin:25,breakMin:5,sound:true,week1:TERM.week1,mid:{},tt:null,slots:null,cancel:{},att:{},attFrom:'',
   my:{cards:{},quiz:{},links:{},news:[]},hide:{},seen:[],pomo:0});
 let S = fresh();
-function load(){ try{ const r=localStorage.getItem(KEY); if(r){ const o=JSON.parse(r); S=migrateState(o); } }catch(e){} }
+/* ---------- safety net: progress must never be overwritten by an empty/broken state ----------
+   - load() never swallows an error silently: a broken main copy is kept aside and the newest valid backup is used
+   - save() snapshots the old copy before it would be shrunk a lot, and every 10 minutes (3 rolling backups)
+   - failed writes (full/blocked storage) are reported instead of ignored
+   - other tabs: a newer copy written by another tab is adopted instead of being overwritten */
+const BAKN=3, BAKEVERY=10*60*1000;
+let HADLOCAL=false, LOADNOTE='', SAVEERR='', ALLOWSHRINK=false, lastBak=0, SAFE_NOTED=false;
+const bkKey=i=>KEY+'-bak'+i;
+function bkRead(k){ try{ const r=localStorage.getItem(k); if(!r) return null; const w=JSON.parse(r); if(w&&typeof w.s==='string'){ const o=JSON.parse(w.s); if(o&&typeof o==='object') return {k,at:w.at||0,s:w.s,o}; } }catch(e){} return null; }
+function bkList(){ const a=[]; for(let i=1;i<=BAKN;i++){ const b=bkRead(bkKey(i)); if(b) a.push(b); } const g=bkRead(KEY+'-guard'); if(g) a.push(g); return a.sort((x,y)=>(y.o.t||0)-(x.o.t||0)); }
+function bkPush(str,keep){
+  try{
+    const wrap=JSON.stringify({at:Date.now(),s:str});
+    if(keep){ localStorage.setItem(KEY+'-guard',wrap); return; }
+    if(str.length<1500) return;
+    const l=bkRead(bkKey(1)); if(l&&l.s===str){ lastBak=Date.now(); return; }
+    for(let i=BAKN;i>1;i--){ const p=localStorage.getItem(bkKey(i-1)); if(p) localStorage.setItem(bkKey(i),p); }
+    localStorage.setItem(bkKey(1),wrap); lastBak=Date.now();
+  }catch(e){}
+}
+function adoptState(o){ S=migrateState(o); }
+function load(){
+  let raw=null; try{ raw=localStorage.getItem(KEY); }catch(e){}
+  if(raw){
+    try{ const o=JSON.parse(raw); if(!o||typeof o!=='object') throw 0; adoptState(o); HADLOCAL=true; const l=bkRead(bkKey(1)); if(!l||l.s!==raw) bkPush(raw); return; }
+    catch(e){ try{ localStorage.setItem(KEY+'-corrupt',raw); }catch(x){} LOADNOTE='corrupt'; }
+  }
+  const b=bkList()[0];   /* main copy empty or unreadable: fall back to the newest valid backup instead of starting from zero */
+  if(b){ try{ adoptState(b.o); HADLOCAL=true; LOADNOTE=raw?'corrupt':'restored'; localStorage.setItem(KEY,b.s); }catch(e){} }
+  else if(raw) LOADNOTE='lost';
+}
+(function(){ const st=document.createElement('style'); st.textContent='#safestack{position:fixed;inset-inline:12px;bottom:76px;z-index:95;display:grid;gap:8px;pointer-events:none}.safebar{pointer-events:auto;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow);font-size:.92rem}.safebar span{flex:1 1 220px}.safebar .row{gap:6px}'; document.head.appendChild(st); })();
+function safetyBar(id,msg,btns){
+  let box=document.getElementById('safestack'); if(!box){ box=document.createElement('div'); box.id='safestack'; document.body.appendChild(box); }
+  if(document.getElementById(id)) return;
+  const d=document.createElement('div'); d.id=id; d.className='safebar'; d.setAttribute('dir',document.documentElement.dir||'rtl');
+  d.innerHTML='<span>'+esc(msg)+'</span><div class="row">'+(btns||'')+'<button class="btn soft sm" data-sbar="'+id+'">تمام</button></div>'; box.appendChild(d);
+}
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-sbar]'); if(b){ const d=document.getElementById(b.dataset.sbar); if(d) d.remove(); } });
+function bootSafety(){
+  const m={restored:'تقدمك الأساسي كان ناقص، فرجّعنا آخر نسخة احتياطية تلقائية.',corrupt:'ملف حفظ تقدمك كان بايظ، فرجّعنا آخر نسخة سليمة. ممكن تلاقي آخر دقايق ناقصة.',lost:'ملف حفظ تقدمك كان بايظ ومفيش نسخة احتياطية. لو عندك ملف تصدير استورده من الإعدادات.'}[LOADNOTE];
+  if(m) safetyBar('sb-load',m);
+}
+function saveFail(e){
+  SAVEERR=(e&&e.name==='QuotaExceededError')?'full':'blocked';
+  if(!SAFE_NOTED){ SAFE_NOTED=true; try{ toast(SAVEERR==='full'?'مساحة التخزين في المتصفح مليانة، تقدمك مش بيتحفظ. اعمل تصدير من الإعدادات.':'المتصفح مش سامح بالحفظ (وضع خاص أو متصفح داخل تطبيق). تقدمك مش هيفضل. افتح الموقع في Chrome أو Safari.'); }catch(x){} } }
+window.addEventListener('storage',ev=>{ if(ev.key!==KEY||!ev.newValue) return; try{ const o=JSON.parse(ev.newValue); if(o&&typeof o==='object'&&(o.t||0)>(S.t||0)){ adoptState(o); applyTheme(); render(); } }catch(e){} });
+try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 let saveT=null, remote=null, pushing=false, pushAgain=false;
 const SYNC={st:'checking',t:0}; let WXDB=null;
 function setSync(st){ SYNC.st=st; if(st==='on') SYNC.t=Date.now(); const b=document.getElementById('syncBtn'); if(!b) return; b.dataset.st=st; const l=b.querySelector('.t'); if(l) l.textContent=({checking:'بتأكد...',on:'متزامن',local:'الجهاز ده بس',error:'مشكلة في المزامنة'})[st]; b.setAttribute('aria-label','حالة المزامنة: '+(l?l.textContent:st)); }
-function save(){ S.t=Date.now(); try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} clearTimeout(saveT); saveT=setTimeout(push,1200); }
+function save(){
+  S.t=Date.now();
+  try{
+    const js=JSON.stringify(S), old=localStorage.getItem(KEY);
+    if(old&&old!==js){
+      if(!ALLOWSHRINK&&old.length>3000&&js.length<old.length*0.4) bkPush(old,true);   /* sudden big shrink that was not a reset/import: keep the old copy */
+      else if(Date.now()-lastBak>BAKEVERY) bkPush(old);
+    }
+    localStorage.setItem(KEY,js); SAVEERR='';
+  }catch(e){ saveFail(e); }
+  clearTimeout(saveT); saveT=setTimeout(push,1200);
+}
+window.addEventListener('pagehide',()=>{ try{ const old=localStorage.getItem(KEY); const b=bkRead(bkKey(1)); if(old&&old.length>1500&&(!b||b.s!==old)&&Date.now()-lastBak>60*1000) bkPush(old); }catch(e){} });
 async function push(){}
 async function initRemote(){ setSync('local'); }
 
@@ -1204,7 +1263,7 @@ async function loadWeather(force){
   let stale=null;
   try{ const c=JSON.parse(localStorage.getItem('tm-wx')||'null'); if(c){ stale=c; if(!force&&Date.now()-c.t<30*60*1000){ wxApply(c.d); return; } } }catch(e){}
   WXDIAG.last=Date.now();
-  const tries=!ID_HASH?[['om',6000]]:[['om',8000],['wttr',9000],['om',12000]];
+  const tries=[['om',8000],['wttr',9000],['om',12000]];
   for(const t of tries){
     try{
       const d=t[0]==='om'?await wxFetchOM(t[1]):await wxFetchWttr(t[1]);
@@ -3856,7 +3915,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.3.8';
+const APP_VERSION='1.4.0';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -3903,7 +3962,7 @@ function pubDevice(){ return 'بياناتك محفوظة في المتصفح د
 function pubExport(){
   try{ const blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}), a=document.createElement('a');
     a.href=URL.createObjectURL(blob); a.download='tarm-da-leya-backup-'+dayKey()+'.json'; document.body.appendChild(a); a.click();
-    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },600); toast('اتصدّرت'); }catch(e){ toast('التصدير مشتغلش'); }
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },600); S.lastExport=Date.now(); save(); const nb=document.getElementById('sb-exp'); if(nb) nb.remove(); toast('اتصدّرت'); }catch(e){ toast('التصدير مشتغلش'); }
 }
 
 /* ---------- first-run welcome / edit courses ---------- */
@@ -3977,7 +4036,14 @@ render=function(a){ if(!S.pub){ pubWelcome(false); return; } _render(a); };
 /* ---------- text helpers used by the patched views ---------- */
 function pubHi(){ return (S.pub&&S.pub.name?' يا '+esc(S.pub.name):'')+'<button type="button" class="namebtn" data-pub="rename" aria-label="تعديل الاسم" title="تعديل الاسم">✎</button>'; }
 function pubFoot(){ return esc(TERM.name)+' · موقع غير رسمي عمله طالب لزمايله: راجع كل حاجة مع السلايدات والكتب وإعلانات الكلية. · '+pubDevice()+' · نسخة '+APP_VERSION+' · <a href="#about">عن الموقع</a>'; }
-function pubSettingsHTML(){ return '<h3 style="margin:16px 0 6px">بياناتي وموادي</h3><div class="row"><button class="btn soft sm" data-pub="edit">تعديل بياناتي وموادي</button><a class="btn soft sm" href="#about" data-act="close">عن الموقع</a></div>'; }
+function pubBakHTML(){
+  const L=bkList(); if(!L.length) return '';
+  const fmt=t=>new Date(t).toLocaleString(window.LANG_EN?'en-GB':'ar-EG-u-nu-latn',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
+  return '<h3 style="margin:16px 0 6px">نسخ تلقائية على الجهاز ده</h3><p class="sub" style="margin-bottom:6px">لو تقدمك اتصفّر أو رجع لورا، الموقع بيحتفظ بآخر نسخ. اختار واحدة ترجّعها (الحالية بتتحفظ قبل ما تتبدل).</p><div style="display:grid;gap:6px">'+L.map((b,i)=>'<div class="row" style="justify-content:space-between"><span><span>آخر حفظ</span> <bdi>'+fmt(b.o.t||b.at)+'</bdi> · <span>نقاط</span> <bdi>'+(b.o.xp||0)+'</bdi></span><button class="btn soft sm" data-pub="bakrestore" data-k="'+esc(b.k)+'">استرجاع</button></div>').join('')+'</div>';
+}
+function pubSettingsHTML(){ return '<h3 style="margin:16px 0 6px">بياناتي وموادي</h3><div class="row"><button class="btn soft sm" data-pub="edit">تعديل بياناتي وموادي</button><a class="btn soft sm" href="#about" data-act="close">عن الموقع</a></div>'+pubBakHTML(); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-pub=bakrestore]'); if(!b) return; const x=bkRead(b.dataset.k); if(!x){ toast('النسخة دي مش سليمة'); return; }
+  try{ bkPush(JSON.stringify(S)); S=migrateState(x.o); ALLOWSHRINK=true; save(); ALLOWSHRINK=false; applyTheme(); closeModal(); render(true); toast('اتسترجعت النسخة'); }catch(err){ toast('الاسترجاع مشتغلش'); } });
 function pubAboutCards(){
   return ''+
    '<div class="card rise"><h3>إيه ده؟</h3><p>«الترم ده ليا» أداة مذاكرة لطلبة كلية الحاسبات والذكاء الاصطناعي جامعة القاهرة: مواضيع بتتتبع، كروت مراجعة، أسئلة وأمثلة محلولة، جدول، حضور، وحاسبة معدل. غير رسمي وملوش علاقة بإدارة الكلية.</p></div>'+
@@ -4023,6 +4089,23 @@ function newsFor(u){
   return a.filter(x=>SHOWHID||!S.hide[x.id]).sort((a,b)=>b.d.localeCompare(a.d)).map(x=>(window.LANG_EN&&x.en)?Object.assign({},x,{t:x.en}):x);
 }
 
+
+/* ---------- keep progress safe: in-app browsers, export reminder, storage health ---------- */
+function pubSafetyChecks(){
+  try{
+    if(/FBAN|FBAV|FB_IAB|FBIOS|Instagram|MicroMessenger|Snapchat|musical_ly|BytedanceWebview|TikTok|Telegram|Line\//i.test(navigator.userAgent)&&!sessionStorage.getItem('tm-iab-seen')){
+      sessionStorage.setItem('tm-iab-seen','1');
+      safetyBar('sb-iab','إنت فاتح الموقع من جوه تطبيق (فيسبوك أو إنستجرام أو غيره). المتصفحات دي بتمسح بياناتك بسهولة. افتح اللينك من Chrome أو Safari، أو ثبّت الموقع من قايمة المتصفح.','<button class="btn sm" data-pub="copylink">انسخ اللينك</button>');
+    }
+  }catch(e){}
+  try{
+    if(S.pub&&S.xp>=30&&!SAVEERR){ const last=S.lastExport||(S.pub.ts||0), day=dayKey(); let nag=''; try{ nag=localStorage.getItem('tm-exp-nag')||''; }catch(e){}
+      if(Date.now()-last>14*86400000&&nag!==day){ try{ localStorage.setItem('tm-exp-nag',day); }catch(e){} safetyBar('sb-exp','عدّى أكتر من أسبوعين من آخر نسخة احتياطية لتقدمك. صدّر ملف دلوقتي عشان لو المتصفح اتمسح ما تضيعش.','<button class="btn sm" data-act="export">تصدير</button>'); } }
+  }catch(e){}
+  try{ if(SAVEERR) saveFail({name:SAVEERR==='full'?'QuotaExceededError':''}); }catch(e){}
+}
+setTimeout(pubSafetyChecks,2500);
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-pub=copylink]'); if(!b) return; const u=location.origin+location.pathname; try{ navigator.clipboard.writeText(u).then(()=>toast('اللينك اتنسخ، الصقه في Chrome أو Safari')).catch(()=>toast(u)); }catch(x){ toast(u); } });
 
 /* GENERATED by data\mkdict.ps1 from data\i18n-en.json: do not edit by hand */
 const EN_DICT={
@@ -4192,6 +4275,7 @@ const EN_DICT={
 "ابدأ منين":"Where to start",
 "ابني جدولك":"Build your schedule",
 "ابني جدولي من جدول الكلية":"Build my schedule from the college timetable",
+"اتسترجعت النسخة":"Copy restored",
 "اتلغت":"Cancelled",
 "اتلغت؟":"Cancelled?",
 "أحمد حجاج (عدا الفيديوهات {0} و{1} و{2})":"Ahmed Hagag (except videos {0}, {1} and {2})",
@@ -4204,6 +4288,7 @@ const EN_DICT={
 "اختيار من متعدد":"Multiple choice",
 "آخر الأخبار":"Latest news",
 "آخر حركات":"Latest activity",
+"آخر حفظ":"Last saved",
 "إخفاء":"Hide",
 "ارسم كل قيد كخط، ظلّل المنطقة المسموحة (feasible region)، حدد نقاط الأركان، عوّض بكل ركن في دالة الهدف، وخد الأحسن.":"Draw each constraint as a line, shade the feasible region, find the corner points, plug each corner into the objective function, and take the best.",
 "أرقام جديدة كل مرة":"New numbers every time",
@@ -4211,6 +4296,7 @@ const EN_DICT={
 "أسايمنت {0}":"Assignment {0}",
 "أسايمنت وعرض":"Assignment and presentation",
 "أسايمنتات وكويزات":"Assignments and quizzes",
+"استرجاع":"Restore",
 "استيراد":"Import",
 "أسطورة":"Legend",
 "اسم الترم":"Term name",
@@ -4251,6 +4337,7 @@ const EN_DICT={
 "الأسايمنت فردي وبخط اليد وبدون AI، وبيتراجع بأدوات كشف سرقة وAI.":"The assignment is individual, handwritten and without AI, and it is checked with plagiarism detection tools and AI.",
 "الأسبوع":"Week",
 "الاستراحة خلصت. نكمّل؟":"Break is over. Shall we continue?",
+"الاسترجاع مشتغلش":"Restore failed",
 "الاسم":"Name",
 "الاسم بيظهر في التحية بس، واكتبه بأي لغة عايزها.":"Your name only appears in the greeting, and you can write it in any language.",
 "الأسئلة بتظهر على المواضيع المعلّمة بس. نفس التعليم في تاب \"المواضيع\".":"Questions appear only for the topics you marked. The same marking as in the \"Topics\" tab.",
@@ -4328,9 +4415,11 @@ const EN_DICT={
 "الكتاب: Kurose \u0026 Ross الطبعة الثامنة.":"The book: Kurose \u0026 Ross, 8th edition.",
 "الكويزات غالباً أونلاين.":"Quizzes are mostly online.",
 "اللينك (https://...)":"Link (https://...)",
+"اللينك اتنسخ، الصقه في Chrome أو Safari":"Link copied, paste it into Chrome or Safari",
 "الماتريال":"Material",
 "الماتريال: ضيف روابطك.":"Material: add your own links.",
 "المادة":"Course",
+"المتصفح مش سامح بالحفظ (وضع خاص أو متصفح داخل تطبيق). تقدمك مش هيفضل. افتح الموقع في Chrome أو Safari.":"Your browser is not allowing saves (private mode or an in-app browser). Your progress will not stay. Open the site in Chrome or Safari.",
 "المتوسط الموزون":"Weighted mean",
 "المسائل مش بتتكرر في الميد ولا الفاينل. المهم تفهم طريقة الحل وتحوّل مسألة كلامية لمعادلات.":"Problems are not repeated in the midterm or the final. What matters is understanding how to solve and how to turn a word problem into equations.",
 "المستوى":"Level",
@@ -4360,6 +4449,7 @@ const EN_DICT={
 "الميعاد":"Due date",
 "النتايج هنا استرشادية وبتتحسب بالرياضة على لائحة الكلية {0}. القرار الرسمي بيرجع لشؤون الطلاب في الكلية، فراجعهم قبل ما تبني قرار (إعادة أو سحب) عليها. ساعات ترم {1} والصيف موزعة بالتقدير وتقدر تعدلها، المعدل الكلي ما بيتأثرش بتوزيع المواد المتساوية.":"These results are guidance only, calculated mathematically from the college bylaw {0}. The official decision rests with Student Affairs, so check with them before you base a decision (retake or withdrawal) on this. Hours for term {1} and summer are estimated and you can edit them. The cumulative GPA is not affected by how equal-weight courses are distributed.",
 "النسخة {0}":"Version {0}",
+"النسخة دي مش سليمة":"This copy is not valid",
 "النظام x+y+{0}z={1} و{2}x+{3}y−{4}z={5} و{6}x+{7}y−{8}z={9} حله ({10}, {11}, {12}).":"The system x+y+{0}z={1} and {2}x+{3}y−{4}z={5} and {6}x+{7}y−{8}z={9} has the solution ({10}, {11}, {12}).",
 "النظام له حل؟ وكام؟":"Does the system have a solution? How many?",
 "النقط بتتحسب على الخطوات الفعلية (مهمة خلصت، موضوع اتقدّم، دقايق تركيز). لو رجّعت الخطوة النقط بترجع.":"Points are counted on real steps (a task done, a topic advanced, focus minutes). If you step back, the points go back.",
@@ -4374,6 +4464,8 @@ const EN_DICT={
 "أمثلة وتمارين اللاب":"Lab examples and exercises",
 "أنا مزنوق":"I\u0027m stuck",
 "أنا مزنوق. هادي، خد نفس":"I\u0027m stuck. Calm down, take a breath",
+"إنت فاتح الموقع من جوه تطبيق (فيسبوك أو إنستجرام أو غيره). المتصفحات دي بتمسح بياناتك بسهولة. افتح اللينك من Chrome أو Safari، أو ثبّت الموقع من قايمة المتصفح.":"You opened the site inside an app (Facebook, Instagram or similar). Those browsers wipe your data easily. Open the link in Chrome or Safari, or install the site from the browser menu.",
+"انسخ اللينك":"Copy link",
 "إنهاء مهمة":"Finish a task",
 "أنواع البيانات":"Data types",
 "أنواع التأخير الأربعة":"The four types of delay",
@@ -4437,12 +4529,14 @@ const EN_DICT={
 "تغيير المظهر":"Change theme",
 "تفاصيل أكتر عن الموقع وصاحبه تحت في «عن الموقع».":"More details about the site and its owner are below in \"About the site\".",
 "تقدر تضيف كروت وأسئلة وأخبار وروابط، وتخفي اللي مش عايزه.":"You can add cards, questions, news and links, and hide what you don\u0027t want.",
+"تقدمك الأساسي كان ناقص، فرجّعنا آخر نسخة احتياطية تلقائية.":"Your main save was missing, so we restored the latest automatic backup.",
 "تقدير/درجة":"Grade/mark",
 "تكنولوجيا شبكات الحاسب (IT{0})":"Computer Networks Technology (IT{0})",
 "تكنولوجيا شبكات الحاسب (IT{0}) · فيه محتوى جاهز":"Computer Networks Technology (IT{0}) · content ready",
 "تكنولوجيا معلومات (IT)":"Information Technology (IT)",
 "تلقائي":"automatic",
 "تم":"Done",
+"تمام":"OK",
 "تهديدات: packet sniffing (Wireshark)، IP spoofing، DoS (botnet). دفاعات: authentication، encryption للسرية، digital signatures للـintegrity، VPN وaccess restrictions، firewalls.":"Threats: packet sniffing (Wireshark), IP spoofing, DoS (botnet). Defenses: authentication, encryption for confidentiality, digital signatures for integrity, VPN and access restrictions, firewalls.",
 "تواصل مع صاحب الموقع":"Contact the site owner",
 "ثبّت دلوقتي":"Install now",
@@ -4556,6 +4650,7 @@ const EN_DICT={
 "عبقري":"Genius",
 "عدد الفئات k من {0}^k ≥ n، وعرض الفئة = Range ÷ k (قرّب لفوق). منتصف الفئة m = (حد أدنى + حد أعلى) / {1}. المتوسط x̄ ≈ Σ(f·m) / Σf.":"Number of classes k from {0}^k ≥ n, and class width = Range ÷ k (round up). Class midpoint m = (lower limit + upper limit) / {1}. Mean x̄ ≈ Σ(f·m) / Σf.",
 "عدّل اللي عايزه. تقدّمك في المواد مش بيتمسح.":"Edit what you want. Your progress in the courses is not deleted.",
+"عدّى أكتر من أسبوعين من آخر نسخة احتياطية لتقدمك. صدّر ملف دلوقتي عشان لو المتصفح اتمسح ما تضيعش.":"More than two weeks since your last backup. Export a file now so you do not lose progress if the browser is cleared.",
 "عرض المخفي":"Show hidden",
 "عشان كده أرقام زي {0} مبتتخزنش بالظبط.":"That is why numbers like {0} are not stored exactly.",
 "علّم «أشرحه» لما تقدر تشرح كل سطر بدون ما تبص على الكود، لأن المعيد ممكن يسألك في فلتر أي حد في التيم. الموقع بيشرح الأفكار بس ومش بيكتب لك كود الفلاتر. اكتب اسم صاحب كل فلتر بنفسك.":"Mark \"I can explain it\" when you can explain every line without looking at the code, because the TA may ask anyone on the team about any filter. The site explains the ideas only and does not write the filter code for you. Write the name of each filter\u0027s owner yourself.",
@@ -4622,6 +4717,7 @@ const EN_DICT={
 "لسه مفيش حركات.":"No activity yet.",
 "لو المعيد عرف إن الكود من AI الخصم {0} درجات على التيم كله. ولو باين إنك مش فاهم الكود: صفر.":"If the TA finds out the code is from AI, {0} marks are deducted from the whole team. And if it is clear you do not understand the code: zero.",
 "لو تايه: زرار أنا مزنوق فيه كروت مراجعة سريعة.":"If you\u0027re lost: the I\u0027m stuck button has quick review cards.",
+"لو تقدمك اتصفّر أو رجع لورا، الموقع بيحتفظ بآخر نسخ. اختار واحدة ترجّعها (الحالية بتتحفظ قبل ما تتبدل).":"If your progress was reset or went backwards, the site keeps recent copies. Pick one to restore (the current one is saved first).",
 "لو خدت الباقي كامل ({0} من {1}): الفاينل محتاج {2} من {3} ({4}%)":"If you get all of the rest ({0} of {1}): the final needs {2} of {3} ({4}%)",
 "لو خدت نص الباقي ({0} من {1}): الفاينل محتاج {2} من {3} ({4}%)":"If you get half of the rest ({0} of {1}): the final needs {2} of {3} ({4}%)",
 "لو غيرت الجهاز أو مسحت بيانات المتصفح استخدم «تصدير» من الإعدادات":"If you change devices or clear browser data, use \"Export\" in Settings",
@@ -4655,6 +4751,7 @@ const EN_DICT={
 "مركّز":"Focused",
 "مساء الخير":"Good evening",
 "مساء الخير يا {0}":"Good evening, {0}",
+"مساحة التخزين في المتصفح مليانة، تقدمك مش بيتحفظ. اعمل تصدير من الإعدادات.":"Browser storage is full, so your progress is not being saved. Export a backup from Settings.",
 "مستكشف":"Explorer",
 "مستوى جديد: متحمس":"New level: Enthusiast",
 "مسح كل بياناتي":"Delete all my data",
@@ -4695,6 +4792,8 @@ const EN_DICT={
 "ملحوظة للمناقشة: الأسايمنت بيطلب الخيارين: تكبّر الصورة الأصغر للأكبر ثم تدمج، أو تدمج المنطقة المشتركة بس.":"A note for the discussion: the assignment asks for both options: enlarge the smaller image to the bigger one and then merge, or merge only the common area.",
 "ملحوظة للمناقشة: بتدخل x و y نقطة البداية (الركن العلوي الأيسر) وأبعاد W × H، ولازم تكون أصغر من أو تساوي الأصلية.":"A note for the discussion: you enter x and y for the starting point (the top-left corner) and the dimensions W × H, and they must be less than or equal to the original.",
 "ملخصات Flashat فيها معلومات غلط، متعتمدش عليها لوحدها.":"The Flashat summaries contain wrong information, so do not rely on them alone.",
+"ملف حفظ تقدمك كان بايظ ومفيش نسخة احتياطية. لو عندك ملف تصدير استورده من الإعدادات.":"Your save file was corrupted and there is no backup. If you have an exported file, import it from Settings.",
+"ملف حفظ تقدمك كان بايظ، فرجّعنا آخر نسخة سليمة. ممكن تلاقي آخر دقايق ناقصة.":"Your save file was corrupted, so we restored the latest healthy copy. The last few minutes may be missing.",
 "ممنوع دخول المحاضرة بعد {0}، والدكتور بيقفل الباب.":"Entering the lecture after {0} is not allowed, and the doctor closes the door.",
 "من {0} (باقي":"out of {0} (remaining",
 "من {0} دقيقة النهارده":"of {0} minutes today",
@@ -4733,11 +4832,13 @@ const EN_DICT={
 "ميد ريادة الأعمال خريف {0} (Credit)":"Entrepreneurship midterm, Fall {0} (Credit)",
 "ميعاد":"Deadline",
 "ميعاد الميد":"Midterm date",
+"نسخ تلقائية على الجهاز ده":"Automatic backups on this device",
 "نسخة احتياطية":"Backup",
 "نشاط":"Activity",
 "نصيحة استرشادية بسيطة مبنية على لائحة {0} وعلى اللي سجّلته إنت في الصفحة، مش قرار رسمي. راجع الدكتور والسلايدات.":"Simple guidance based on the {0} bylaw and on what you entered on the page, not an official decision. Check with the doctor and the slides.",
 "نظرة عامة":"Overview",
 "نظم معلومات (IS)":"Information Systems (IS)",
+"نقاط":"Points",
 "نقاط الإنجاز":"Achievement points",
 "نقطة التعادل (Break-even)":"Break-even point",
 "نقطة لكل دقيقة":"a point per minute",
@@ -4994,17 +5095,24 @@ genPhrase=function(){
 };
 
 /* ---- "what's new" card for returning visitors (always English, as requested) ---- */
-const WN_KEY='tm-whatsnew', WN_ID='lang-en-1';
+const WN_KEY='tm-whatsnew', WN_ID='safe-1';
 function markWhatsNew(){ try{ localStorage.setItem(WN_KEY,WN_ID); }catch(e){} const w=document.getElementById('whatsnew'); if(w){ w.classList.add('out'); setTimeout(()=>w.remove(),360); } }
+const WN_TXT={
+ ar:{b:'تحديث مهم',h:'حافظ على تقدمك',p:'الموقع بيحفظ تقدمك على جهازك إنت (مفيش حساب). فلو مسحت بيانات المتصفح، أو فتحت الموقع من جوه فيسبوك أو إنستجرام، أو من متصفح تاني، التقدم بيختفي. إحنا ضفنا حماية ونسخ تلقائية، بس عشان تتأمن تمامًا اعمل الخطوات دي:',
+  s:['افتح الموقع من <b><bdi>Chrome</bdi></b> أو <b><bdi>Safari</bdi></b>، مش من جوه فيسبوك أو إنستجرام أو واتساب.','ثبّت الموقع على موبايلك: من قايمة المتصفح اختار <b>«إضافة إلى الشاشة الرئيسية»</b> (مهم جدًا على الآيفون).','دوس <b>«صدّر نسختي دلوقتي»</b> تحت واحفظ الملف في مكان آمن (<bdi>Drive</bdi> أو ابعته لنفسك على واتساب). كرّرها كل أسبوعين.','لو تقدمك اتصفّر: <b>الإعدادات ← نسخ تلقائية على الجهاز ده ← استرجاع</b>. ولو معاك ملف تصدير: <b>الإعدادات ← استيراد</b>.','ماتمسحش بيانات المتصفح، ومتستخدمش الوضع الخاص (<bdi>Incognito</bdi>).'],
+  x:'صدّر نسختي دلوقتي',o:'فهمت',n:'كمان: الموقع بقى متاح بالإنجليزي من زرار <bdi>EN</bdi> فوق.'},
+ en:{b:'Important',h:'Keep your progress safe',p:'The site saves your progress on your own device (there is no account). If you clear your browser data, open the site inside Facebook or Instagram, or switch browsers, your progress disappears. We added protection and automatic backups, but to be fully safe please do these steps:',
+  s:['Open the site in <b>Chrome</b> or <b>Safari</b>, not inside Facebook, Instagram or WhatsApp.','Install the site on your phone: in the browser menu choose <b>"Add to Home Screen"</b> (very important on iPhone).','Press <b>"Export my copy now"</b> below and keep the file somewhere safe (Drive, or send it to yourself on WhatsApp). Repeat every two weeks.','If your progress was reset: <b>Settings → Automatic backups on this device → Restore</b>. If you have an exported file: <b>Settings → Import</b>.','Do not clear your browser data and do not use private (<bdi>Incognito</bdi>) mode.'],
+  x:'Export my copy now',o:'Got it',n:'Also: the site is available in English with the EN switch at the top.'}};
 function pubWhatsNew(){
   let seen=''; try{ seen=localStorage.getItem(WN_KEY)||''; }catch(e){}
   if(seen===WN_ID||document.getElementById('whatsnew')) return;
-  if(!S.pub){ try{ localStorage.setItem(WN_KEY,WN_ID); }catch(e){} return; }   /* brand-new visitors see the toggle on the welcome screen */
-  const d=document.createElement('div'); d.id='whatsnew'; d.setAttribute('dir','ltr'); d.setAttribute('lang','en');
-  d.innerHTML='<h3><span class="badge">Updated</span> English is now available</h3><p>The whole site, including courses, questions and news, can now be read in English. Use the <b>EN</b> switch in the header any time, and switch back whenever you like. Your progress and settings are untouched.</p><div class="row"><button class="btn sm" data-wn="en">Switch to English</button><button class="btn soft sm" data-wn="ok">Got it</button></div>';
+  if(!S.pub&&!seen){ try{ localStorage.setItem(WN_KEY,WN_ID); }catch(e){} return; }   /* brand-new visitors see the toggle on the welcome screen */
+  const t=WN_TXT[LANG==='en'?'en':'ar'], d=document.createElement('div'); d.id='whatsnew'; d.setAttribute('dir',LANG==='en'?'ltr':'rtl'); d.setAttribute('lang',LANG==='en'?'en':'ar'); d.style.cssText='max-height:86vh;overflow:auto';
+  d.innerHTML='<h3><span class="badge">'+t.b+'</span> '+t.h+'</h3><p>'+t.p+'</p><ol style="margin:0 0 12px;padding-inline-start:20px;display:grid;gap:6px;font-size:.93rem;line-height:1.5">'+t.s.map(x=>'<li>'+x+'</li>').join('')+'</ol><p class="sub" style="margin:0 0 12px">'+t.n+'</p><div class="row"><button class="btn sm" data-wn="exp">'+t.x+'</button><button class="btn soft sm" data-wn="ok">'+t.o+'</button></div>';
   document.body.appendChild(d);
 }
-document.addEventListener('click',e=>{ const b=e.target.closest('[data-wn]'); if(!b) return; const a=b.dataset.wn; markWhatsNew(); if(a==='en') setLang('en'); });
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-wn]'); if(!b) return; const a=b.dataset.wn; if(a==='exp'){ try{ pubExport(); }catch(x){} return; } markWhatsNew(); if(a==='en') setLang('en'); });
 setTimeout(pubWhatsNew,1800);
 
 /* boot: apply the saved language */
@@ -5127,7 +5235,7 @@ else if(a==='qf'){ QF=b.dataset.k; QZ.cur=null; LAY.show=false; QZ.exp=""; sfx("
   else if(a==='theme'){ const r=b.getBoundingClientRect(); setTheme(b.dataset.t,r.left+r.width/2,r.top+r.height/2); sfx('soft'); setTimeout(openSettings,60); }
   else if(a==='sound'){ S.sound=!S.sound; save(); if(S.sound) sfx('good'); openSettings(); }
   else if(a==='export'){ pubExport(); }
-  else if(a==='resetall'){ if(b.dataset.sure){ S=fresh(); save(); closeModal(); applyTheme(); render(true); toast('اتمسحت البيانات'); } else { b.dataset.sure=1; b.textContent='تأكيد المسح؟ (مفيش رجوع)'; } }
+  else if(a==='resetall'){ if(b.dataset.sure){ try{ bkPush(JSON.stringify(S)); }catch(e){} S=fresh(); ALLOWSHRINK=true; save(); ALLOWSHRINK=false; closeModal(); applyTheme(); render(true); toast('اتمسحت البيانات'); } else { b.dataset.sure=1; b.textContent='تأكيد المسح؟ (مفيش رجوع)'; } }
   else if(a==='resetslots'){ S.slots=null; save(); openSettings(); render(); }
 });
 function setCfg(id,v){ if(id==='fmin') S.focusMin=v; else if(id==='bmin') S.breakMin=v; else if(id==='gmin') S.goal=v; save(); }
@@ -5167,7 +5275,7 @@ document.addEventListener('change',e=>{
   else if(a==='mid'){ S.mid[t.dataset.u]=t.value||''; save(); render(); }
   else if(a==='week1'){ if(t.value){ S.week1=t.value; save(); render(); } }
   else if(a==='slotA'||a==='slotB'){ if(!S.slots) S.slots=JSON.parse(JSON.stringify(SLOTS)); const i=t.dataset.i; S.slots[i][a==='slotA'?0:1]=t.value||S.slots[i][a==='slotA'?0:1]; save(); render(); }
-  else if(a==='import'){ const f=t.files&&t.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ const o=JSON.parse(rd.result); if(!o||typeof o!=='object'||!('xp' in o)) throw 0; S=migrateState(o); save(); applyTheme(); closeModal(); render(true); toast('اتسترجعت البيانات'); }catch(err){ toast('الملف مش نسخة احتياطية صالحة'); } }; rd.readAsText(f); }
+  else if(a==='import'){ const f=t.files&&t.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ const o=JSON.parse(rd.result); if(!o||typeof o!=='object'||!('xp' in o)) throw 0; try{ bkPush(JSON.stringify(S)); }catch(e){} S=migrateState(o); ALLOWSHRINK=true; save(); ALLOWSHRINK=false; applyTheme(); closeModal(); render(true); toast('اتسترجعت البيانات'); }catch(err){ toast('الملف مش نسخة احتياطية صالحة'); } }; rd.readAsText(f); }
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 
@@ -5195,7 +5303,7 @@ $('#gearBtn').addEventListener('click',()=>{ sfx('open'); openSettings(); });
 $('#xp').addEventListener('click',()=>{ sfx('open'); openXP(); animateRings(false); });
 
 /* ---------- boot ---------- */
-load(); applyTheme(); buildNav(); render(true); initRemote(); loadWeather().then(()=>wxFromDb()).then(()=>wxManualInit());
+load(); applyTheme(); buildNav(); render(true); bootSafety(); initRemote(); loadWeather().then(()=>wxFromDb()).then(()=>wxManualInit());
 setInterval(()=>{ const ae=document.activeElement; if(route()==='home'&&T.st==='idle'&&!$('#modal').classList.contains('on')&&!(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))) render(); },60000);
 </script>
 </body></html>
