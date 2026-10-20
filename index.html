@@ -4067,7 +4067,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.4.2';
+const APP_VERSION='1.4.3';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -5287,7 +5287,7 @@ genPhrase=function(){
 };
 
 /* ---- "what's new" card for returning visitors (always English, as requested) ---- */
-const WN_KEY='tm-whatsnew', WN_ID='safe-1';
+const WN_KEY='tm-whatsnew', WN_ID='upd-1020';
 function markWhatsNew(){ try{ localStorage.setItem(WN_KEY,WN_ID); }catch(e){} const w=document.getElementById('whatsnew'); if(w){ w.classList.add('out'); setTimeout(()=>w.remove(),360); } }
 const WN_TXT={
  ar:{b:'تحديث مهم',h:'حافظ على تقدمك',p:'الموقع بيحفظ تقدمك على جهازك إنت (مفيش حساب). فلو مسحت بيانات المتصفح، أو فتحت الموقع من جوه فيسبوك أو إنستجرام، أو من متصفح تاني، التقدم بيختفي. إحنا ضفنا حماية ونسخ تلقائية، بس عشان تتأمن تمامًا اعمل الخطوات دي:',
@@ -5296,15 +5296,34 @@ const WN_TXT={
  en:{b:'Important',h:'Keep your progress safe',p:'The site saves your progress on your own device (there is no account). If you clear your browser data, open the site inside Facebook or Instagram, or switch browsers, your progress disappears. We added protection and automatic backups, but to be fully safe please do these steps:',
   s:['Open the site in <b>Chrome</b> or <b>Safari</b>, not inside Facebook, Instagram or WhatsApp.','Install the site on your phone: in the browser menu choose <b>"Add to Home Screen"</b> (very important on iPhone).','Press <b>"Export my copy now"</b> below and keep the file somewhere safe (Drive, or send it to yourself on WhatsApp). Repeat every two weeks.','If your progress was reset: <b>Settings → Automatic backups on this device → Restore</b>. If you have an exported file: <b>Settings → Import</b>.','Do not clear your browser data and do not use private (<bdi>Incognito</bdi>) mode.'],
   x:'Export my copy now',o:'Got it',n:'Also: the site is available in English with the EN switch at the top.'}};
+const WN_UPD={
+ ar:{b:'جديد',h:'اتحدّث الموقع (20 أكتوبر)',p:'نزلت مهام وأخبار وكروت وأسئلة جديدة. ده اللي حصل في موادك:',x:'افتح الرئيسية',o:'فهمت',
+  c:{oop:'OOP: Assignment 2 (Part 1 يوم 26/10 وPart 2 يوم 6/11). مناقشات Assignment 1: احجز ميعاد تيمك في شيت معيدك وجيب اللابتوب والكارنيه. بعض المناقشات اتأجلت، فتابع شيتك. المنهج وصل Set 7 (Virtual Functions).',
+     math:'Math 3: الأسايمنت 1 و2 مع م. زينب (Hard وSoft والميعاد لسه). بدأنا Chapter 2 (ضرب المصفوفات). اللي اتأخر عن أسايمنت م. محمد خالد يرفعه على فورم المتأخرين.',
+     or:'OR & DS: فعّل Solver في Excel (مهم جدًا حسب الدكتورة). خلصنا 3 شباتر وآخرهم Simplex.',
+     stat:'Stat 2: المحاضرة الجاية Sampling Distribution، والدكتور بيقول مهمة جدًا لباقي المنهج، فذاكرها قبلها.',
+     net:'Networks: مفيش محاضرة الأربع 21/10.',
+     ent:'ريادة الأعمال: مناقشات المشاريع شغالة، ومن عنده عذر يبعته للمعيدة قبل الميعاد. الدكتور هيعمل scaling على الدرجات في الآخر.'},
+  n:'المهام الجديدة في الرئيسية، والأخبار في تاب الأخبار. الكروت والأسئلة الجديدة مكتوبة من قايمة المواضيع ومعرفة عامة، فراجعها مع سلايدات الدكتور.'},
+ en:{b:'New',h:'The site was updated (20 October)',p:'New tasks, news, cards and questions were added. Here is what happened in your courses:',x:'Open Home',o:'Got it',
+  c:{oop:'OOP: Assignment 2 (Part 1 due 26/10, Part 2 due 6/11). Assignment 1 discussions: book your team\'s slot in your TA\'s sheet and bring your laptop and ID. Some discussions were postponed, so check your sheet. The syllabus reached Set 7 (Virtual Functions).',
+     math:'Math 3: Assignments 1 and 2 with Eng. Zeinab (Hard and Soft copy, deadline not set yet). Chapter 2 started (matrix multiplication). If you were late with Eng. Mohamed Khaled\'s assignment, upload it through the late-submission form.',
+     or:'OR & DS: activate Solver in Excel (very important according to the doctor). We finished 3 chapters, the last one being Simplex.',
+     stat:'Stat 2: the next lecture is Sampling Distribution, which the doctor says is extremely important for the rest of the course, so study it before the lecture.',
+     net:'Networks: no lecture on Wednesday 21/10.',
+     ent:'Entrepreneurship: project discussions are running; if you have an excuse send it to your TA before the slot. The doctor will apply scaling to the grades at the end.'},
+  n:'New tasks are on Home and the news is in the News tab. The new cards and questions are written from the topic list and general knowledge, so check them against the doctors\' slides.'}};
 function pubWhatsNew(){
   let seen=''; try{ seen=localStorage.getItem(WN_KEY)||''; }catch(e){}
   if(seen===WN_ID||document.getElementById('whatsnew')) return;
   if(!S.pub&&!seen){ try{ localStorage.setItem(WN_KEY,WN_ID); }catch(e){} return; }   /* brand-new visitors see the toggle on the welcome screen */
-  const t=WN_TXT[LANG==='en'?'en':'ar'], d=document.createElement('div'); d.id='whatsnew'; d.setAttribute('dir',LANG==='en'?'ltr':'rtl'); d.setAttribute('lang',LANG==='en'?'en':'ar'); d.style.cssText='max-height:86vh;overflow:auto';
-  d.innerHTML='<h3><span class="badge">'+t.b+'</span> '+t.h+'</h3><p>'+t.p+'</p><ol style="margin:0 0 12px;padding-inline-start:20px;display:grid;gap:6px;font-size:.93rem;line-height:1.5">'+t.s.map(x=>'<li>'+x+'</li>').join('')+'</ol><p class="sub" style="margin:0 0 12px">'+t.n+'</p><div class="row"><button class="btn sm" data-wn="exp">'+t.x+'</button><button class="btn soft sm" data-wn="ok">'+t.o+'</button></div>';
+  const t=WN_UPD[LANG==='en'?'en':'ar'], d=document.createElement('div'); d.id='whatsnew'; d.setAttribute('dir',LANG==='en'?'ltr':'rtl'); d.setAttribute('lang',LANG==='en'?'en':'ar'); d.style.cssText='max-height:86vh;overflow:auto';
+  const cs=ORDER.filter(u=>t.c[u]);
+  if(!cs.length){ markWhatsNew(); return; }
+  d.innerHTML='<h3><span class="badge">'+t.b+'</span> '+t.h+'</h3><p>'+t.p+'</p><ul style="margin:0 0 12px;padding-inline-start:20px;display:grid;gap:6px;font-size:.93rem;line-height:1.5">'+cs.map(u=>'<li>'+t.c[u]+'</li>').join('')+'</ul><p class="sub" style="margin:0 0 12px">'+t.n+'</p><div class="row"><button class="btn sm" data-wn="home">'+t.x+'</button><button class="btn soft sm" data-wn="ok">'+t.o+'</button></div>';
   document.body.appendChild(d);
 }
-document.addEventListener('click',e=>{ const b=e.target.closest('[data-wn]'); if(!b) return; const a=b.dataset.wn; if(a==='exp'){ try{ pubExport(); }catch(x){} return; } markWhatsNew(); if(a==='en') setLang('en'); });
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-wn]'); if(!b) return; const a=b.dataset.wn; if(a==='exp'){ try{ pubExport(); }catch(x){} return; } markWhatsNew(); if(a==='home') location.hash='#home'; if(a==='en') setLang('en'); });
 setTimeout(pubWhatsNew,1800);
 
 /* boot: apply the saved language */
