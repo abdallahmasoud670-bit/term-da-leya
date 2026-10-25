@@ -3827,6 +3827,594 @@ N('math','2026-10-18','change',`باقي Chapter 1 (الأقسام اللي بع
   en:['New news and tasks from 21 to 25 October: the OR quiz on 28/10, Assignment 2 details and deliveries in OOP, and the Entrepreneurship discussions.',
   'New links in Resources: Simplex explanations, OR sections from previous batches, OOP lectures 1 to 12 and old exams, PlantUML and draw.io.']});
 })();
+/* Update 2026-10-25 (b): Stat 2.
+   Sources (all sent by the owner): "Section 2.pdf" and "Section 3.pdf" (TA Nourhan El-Khodary slides), the handwritten lecture notes "Stat 2 - Lecture 7..11" (21/10 to 25/10/2026:
+   grouped data, normal distribution, sampling distribution) and the two handwritten note books "Stat 2-2.pdf" / "Stat 2-3.pdf" (definitions, descriptive statistics, grouped data, normal
+   distribution examples 1-5). Numbers were recomputed; items marked (computed) are my own completion of a step the notes leave out. */
+(function(){
+ const ST=(s,n,q,a)=>({s,n,p:0,q,a,u:'stat'});
+ const S2='Section 2 (this year)', S3='Section 3 (this year)', LN='Lecture notes 7-11 (Oct 2026)', NN='Normal distribution notes';
+ EXB.stat=(EXB.stat||[]).concat([
+  /* ===== Section 2: ungrouped descriptive statistics ===== */
+  ST(S2,1,`The ages (in years) of all eight employees of a small company are 53, 32, 61, 27, 39, 44, 49, 57. Find the mean age.`,
+   `μ = (53 + 32 + 61 + 27 + 39 + 44 + 49 + 57) ÷ 8 = 362 ÷ 8 = 45.25 years (45 years and 3 months). It is a population mean because the data are ALL eight employees.`),
+  ST(S2,2,`Charitable givings (million dollars) of six companies in 2007: 22.4, 31.8, 19.8, 9.0, 27.5 and Wal-Mart 337.9. Find the mean without and with Wal-Mart and the median with Wal-Mart. What do you conclude?`,
+   `Without Wal-Mart: (22.4 + 31.8 + 19.8 + 9.0 + 27.5) ÷ 5 = 110.5 ÷ 5 = $22.1 million.
+With Wal-Mart: 448.4 ÷ 6 = $74.73 million.
+Median with Wal-Mart: sorted 9, 19.8, 22.4, 27.5, 31.8, 337.9; i = (50/100)(6) = 3 is an integer, so the median is the average of the 3rd and 4th values = (22.4 + 27.5) ÷ 2 = 24.95.
+Conclusion: one outlier (Wal-Mart) made the mean more than three times bigger, but the median hardly moved. The mean is very sensitive to outliers, so with outliers prefer the median (or the trimmed mean).`),
+  ST(S2,3,`Find the mode: (a) the ages of 10 students 21, 19, 27, 22, 29, 19, 25, 21, 22, 30; (b) the status of five senate members: senior, sophomore, senior, junior, senior.`,
+   `(a) Three modes (multimodal): 19, 21 and 22, each appears twice.
+(b) Mode = senior (qualitative data).
+The mode can be found for qualitative AND quantitative data, whereas the mean and the median need quantitative data. A data set can have no mode or several.`),
+  ST(S2,4,`An instructor gives two exams and a final; the final counts twice as much as each exam. A student scores 73 and 67 on the exams and 85 on the final. Find the weighted mean.`,
+   `Weighted mean = (1·73 + 1·67 + 2·85) ÷ (1 + 1 + 2) = 310 ÷ 4 = 77.5 marks.`),
+  ST(S2,5,`GPA with the slide's grade points: Math A (3.7), 3 hours; Fundamentals of CS B+ (3.3), 3 hours; Human Rights B (3.0), 2 hours; Entrepreneur A+ (4.0), 1 hour. Compute the GPA as a weighted mean.`,
+   `GPA = (3.7·3 + 3.3·3 + 3.0·2 + 4.0·1) ÷ (3 + 3 + 2 + 1) = (11.1 + 9.9 + 6 + 4) ÷ 9 = 31 ÷ 9 = 3.44.
+Note: the slide uses B+ = 3.3. The Faculty bylaw table I read gives B+ = 3.2, so check which scale the exam will use.`),
+  ST(S2,6,`Tomato plants for one week (Mon to Sun). Type A: 5, 5, 5, 3, 5, 1, 5. Type B: 3, 5, 3, 3, 22, 9, 6. Compute the mean, median, mode, range, variance and standard deviation of each type, then the coefficient of variation.`,
+   `Type A: mean = 29 ÷ 7 = 4.14; median = 5; mode = 5; range = 5 − 1 = 4; s² = Σ(x − x̄)² ÷ (n − 1) = 14.86 ÷ 6 = 2.47 (the slide shows 2.47); s = 1.57. CV = 1.57 ÷ 4.14 × 100 = 37.9%.
+Type B: mean = 51 ÷ 7 = 7.29; median = 5; mode = 3; range = 22 − 3 = 19; s² ≈ 46.9; s ≈ 6.85. CV = 6.85 ÷ 7.28 × 100 = 94.1%.`),
+  ST(S2,7,`Using the tomato data (A: mean 4.14, median 5, mode 5; B: mean 7.28, median 5, mode 3), which measure would you use to argue (c) there is no difference between the types, (d) type A is best, (e) type B is best, (f) which describes A, (g) which describes B?`,
+   `(c) Median: both are 5.
+(d) Mode: A's mode 5 is higher than B's mode 3.
+(e) Mean: B's mean 7.28 is higher than A's 4.14 (pulled up by the 22 outlier).
+(f) Mode or mean for A (its data are tight; the single 1 and 3 hardly move them).
+(g) Median for B, because the outlier 22 distorts the mean.`),
+  ST(S2,8,`NileTech Manufacturing tests two calibration methods on 7 production runs each. Method A: 12, 13, 11, 12, 14, 13, 12. Method B: 9, 10, 10, 11, 11, 12, 18. Management cares about typical production time, consistency, risk of delays and long-term reliability. Compute the summary measures and advise.`,
+   `Method A: mean = 87 ÷ 7 = 12.43, median = 12, s ≈ 0.98. Method B: mean = 81 ÷ 7 = 11.57, median = 11, s ≈ 2.99 (computed).
+B is faster on average and in the middle, but its spread is three times bigger and one run took 18 (an outlier), so the risk of delays and inconsistency is higher. A is slower but stable. The slide gives no printed decision: justify one with these measures (if reliability and risk matter most, keep A; if typical time matters and the 18 can be explained, B).`),
+
+  /* ===== Section 3: grouped data ===== */
+  ST(S3,1,`A school nurse weighed 30 students (kg): 50 52 53 54 55 65 60 70 48 63 / 74 40 46 59 68 44 47 56 49 58 / 63 66 68 61 57 58 62 52 56 58. Build the frequency table.`,
+   `Sort: 40 44 46 47 48 49 50 52 52 53 54 55 56 56 57 58 58 58 59 60 61 62 63 63 65 66 68 68 70 74.
+k from 2^k ≥ n: 2^5 = 32 ≥ 30, so k = 5. Range = 74 − 40 = 34. Width = 34 ÷ 5 = 6.8, rounded up to 7.
+Classes (lower limit included, upper limit not): 40–<47: 3; 47–<54: 7; 54–<61: 10; 61–<68: 6; 68–<75: 4 (total 30).`),
+  ST(S3,2,`Vehicle selling prices ($ thousands) at Whitner Autoplex, n = 80: 15–<18: 8; 18–<21: 23; 21–<24: 17; 24–<27: 18; 27–<30: 8; 30–<33: 4; 33–<36: 2. Compute the cumulative and relative frequencies.`,
+   `Cumulative frequency: 8, 31, 48, 66, 74, 78, 80.
+Relative frequency (f ÷ 80): 0.10, 0.29, 0.21, 0.23, 0.10, 0.05, 0.03 (they add to 1; exact values 0.10, 0.2875, 0.2125, 0.225, 0.10, 0.05, 0.025).
+Cumulative frequency is the running total of the frequencies; cumulative relative frequency is the running total of the relative frequencies.`),
+  ST(S3,3,`Same table: what is the probability that a car sold for a price in the class $18,000 to under $21,000? And the slide's "probability of less than $19,000"?`,
+   `P(class 18–<21) = 23 ÷ 80 = 0.29.
+The slide answers 31 ÷ 80 = 0.39 for "less than 19,000". Strictly, 31 is the cumulative count up to 21 (it is P(< 21)). Exactly 19,000 falls inside the class, so the true value needs an assumption (interpolation); the slide just uses the class cumulative frequency.`),
+  ST(S3,4,`Same data: which graph shows what? Histogram, polygon and ogive: axes and purpose.`,
+   `Histogram: x-axis class intervals, y-axis frequency; shows the distribution (adjacent bars).
+Polygon: x-axis class MIDPOINTS (16.5, 19.5, ... 34.5), y-axis frequency; compares distributions / shape; it starts and ends at 0 (an empty class before the first and after the last).
+Ogive: x-axis UPPER class boundary, y-axis cumulative frequency; an increasing curve used to read the median, quartiles and percentiles.`),
+  ST(S3,5,`Same data: calculate the sample mean, mode, range, variance and standard deviation (use the class midpoints 16.5, 19.5, 22.5, 25.5, 28.5, 31.5, 34.5).`,
+   `Mean = Σ f·x ÷ n = (132 + 448.5 + 382.5 + 459 + 228 + 126 + 69) ÷ 80 = 1,845 ÷ 80 = 23.06.
+Mode = midpoint of the class with the highest frequency (23) = 19.5.
+Range = 34.5 − 16.5 = 18 (midpoint of the last class − midpoint of the first class).
+Variance s² = Σ f(x − x̄)² ÷ (n − 1) = 1,531.68 ÷ 79 = 19.39 (the slide shows 19.3 8); s = 4.4.`),
+  ST(S3,6,`Same data: find the median using the doctor's formula x̃ = x_g + [(P/100)(n+1) − g]·(x_h − x_g)/(h − g).`,
+   `i = (50/100)(80 + 1) = 40.5. g = the greatest cumulative frequency below i = 31, so x_g = the upper limit of that class = 21. h = the next cumulative frequency = 48, x_h = 24.
+Median = 21 + (40.5 − 31)·(24 − 21)/(48 − 31) = 21 + 9.5·3/17 = 22.68 (the slide shows 22.67).`),
+  ST(S3,7,`Same data: find the 25th and 90th percentiles.`,
+   `25th: i = 0.25(81) = 20.25; g = 8, x_g = 18; h = 31, x_h = 21: 18 + (20.25 − 8)(3)/(31 − 8) = 18 + 1.598 = 19.598.
+90th: i = 0.90(81) = 72.9; g = 66, x_g = 27; h = 74, x_h = 30: 27 + (72.9 − 66)(3)/(74 − 66) = 27 + 2.5875 = 29.59.`),
+  ST(S3,8,`Oil wells: 700 wells; cumulative relative frequency by depth (feet): 0–<1000: 0.09; 1000–<2000: 0.35; 2000–<3000: 0.72; 3000–<4000: 0.88; 4000–<5000: 0.95; 5000–<6000: 0.98; 6000–<7000: 0.99; 7000–<8000: 1.00. Rebuild the relative, absolute and cumulative frequency tables.`,
+   `Relative frequency = difference of consecutive cumulative values: 0.09, 0.26, 0.37, 0.16, 0.07, 0.03, 0.01, 0.01.
+Frequency = relative × 700: 63, 182, 259, 112, 49, 21, 7, 7.
+Cumulative frequency: 63, 245, 504, 616, 665, 686, 693, 700.`),
+
+  /* ===== Lecture notes (grouped data, normal, sampling distribution) ===== */
+  ST(LN,1,`Lecture 7 (21/10): a manufacturer records the highest temperature on 20 winter days: 24 35 17 21 24 37 26 46 58 30 32 13 12 38 41 43 44 27 53 27. Build the frequency table (classes, relative, cumulative and cumulative relative frequency).`,
+   `n = 20: 2^5 = 32 ≥ 20, so k = 5. Range = 58 − 12 = 46, width = 46 ÷ 5 = 9.2, rounded up to 10. The class limits must include xmax and xmin and use "less than" for the upper limit so classes are continuous and do not overlap.
+10–<20: 3; 20–<30: 6; 30–<40: 5; 40–<50: 4; 50–<60: 2 (total 20).
+Relative frequency: 0.15, 0.30, 0.25, 0.20, 0.10. Cumulative frequency: 3, 9, 14, 18, 20. Cumulative relative frequency: 0.15, 0.45, 0.70, 0.90, 1.00.`),
+  ST(LN,2,`Lecture 7: which graphs for this table, and what do the ogive and the shapes tell you?`,
+   `Histogram, polygon and ogive are drawn from the table. The histogram and polygon show the distribution; temperature is continuous, which is why the bars touch ("an indication of continuity"). The ogive (cumulative frequency or cumulative relative frequency) is an S-curve: reading the quantile gives the percentile and reading the percentile gives the quantile value. The distribution shapes mentioned: uniform, exponential, normal (polygon, ogive and histogram can describe any of them).`),
+  ST(LN,3,`Lecture 8 (13/10): heights of 200 students: 150–<160: 10; 160–<170: 36; 170–<180: 84; 180–<190: 54; 190–<200: 16. Find the mean, mode, range and median.`,
+   `Midpoints xk: 155, 165, 175, 185, 195. f·x: 1,550; 5,940; 14,700; 9,990; 3,120; sum = 35,300.
+Mean = 35,300 ÷ 200 = 176.5 cm.
+Mode: the class with the highest frequency is 170–<180, so the mode is its midpoint 175 cm (assuming the class interval is normally distributed).
+Range = midpoint of last class − midpoint of first class = 195 − 155 = 40 cm.
+Median: i = (n + 1)/2 = 100.5; cumulative frequencies 10, 46, 130, 184, 200; g = 46 (x_g = 170), h = 130 (x_h = 180): 170 + (100.5 − 46)(10)/(130 − 46) = 176.49 ≈ 176 cm.`),
+  ST(LN,4,`Lecture 8: write the variance formulas for grouped data and compute the sample variance and standard deviation for the heights table.`,
+   `Sample: s² = Σ f(x − x̄)² ÷ (n − 1). (The population version divides by N and uses μ.)
+With x̄ = 176.5: 10(21.5)² + 36(11.5)² + 84(1.5)² + 54(8.5)² + 16(18.5)² = 4,622.5 + 4,761 + 189 + 3,901.5 + 5,476 = 18,950.
+s² = 18,950 ÷ 199 = 95.23 and s = 9.76 cm (computed; the notes only give the formulas).`),
+  ST(LN,5,`Lecture 9 (18/10): the normal distribution. List its properties and the formula.`,
+   `Also called Gaussian or bell-shaped; continuous data (discrete properties only by approximation). Properties: (1) symmetric, (2) mean = median = mode, (3) concave down around the center with inflection points at μ ± σ, (4) asymptotic to the x-axis, (5) total area = 1 (the probability density function integrates to 1).
+Notation N(μ, σ). A larger σ makes a flatter, wider curve (σA < σB < σC in the notes).
+f(x) = [1/(σ√(2π))]·e^(−(x − μ)²/(2σ²)), with X any value, σ the population standard deviation, μ the population mean, π = 3.14159, e = 2.71828.`),
+  ST(LN,6,`Lecture 9: standardized normal. The male height has μ = 175 cm and σ = 8. Compute the z-score of 190 cm, P(X < 190) and P(X > 165), and interpret.`,
+   `z = (x − μ)/σ = (190 − 175)/8 = 1.875: 190 cm is 1.875 standard deviations above the mean. The z-table is rounded to two decimals: P(X < 190) = P(Z < 1.88) = 0.9699, i.e. 97% of male heights are 190 cm or less.
+P(X > 165) = P(Z > −1.25) = 1 − P(Z < −1.25) = 1 − 0.1056 = 0.8944.
+The z-value can also be used to measure variability.`),
+  ST(LN,7,`Lecture 10 (20/10): bulb life is normal with μ = 800 hours and σ = 40 hours. Find P(778 < X < 834).`,
+   `z1 = (778 − 800)/40 = −0.55; z2 = (834 − 800)/40 = 0.85.
+P(−0.55 < Z < 0.85) = P(Z < 0.85) − P(Z < −0.55) = 0.8023 − 0.2912 = 0.5111.`),
+  ST(LN,8,`Lecture 10: ball bearings must have diameter 3.0 ± 0.01 cm; the diameter is normal with μ = 3.0 cm and σ = 0.005 cm. What fraction is scrapped?`,
+   `Scrapped: X > 3.01 or X < 2.99. z = ±0.01/0.005 = ±2. P(scrap) = 1 − P(−2 < Z < 2) = 1 − 0.9544 = 0.0456, so 4.56% of the ball bearings are scrapped. Decision: the machine's σ can be adjusted to reduce scrap. Tip from the notes: look at the table and the graph before calculating.`),
+  ST(LN,9,`Lecture 10: gauges reject components whose dimension is not within 1.5 ± d. The measurements are normal with μ = 1.5 and σ = 0.2. Find d so that the specification covers 95% of the measurements.`,
+   `P(1.5 − d < X < 1.5 + d) = 0.95 leaves 0.025 in each tail, so Z = ±1.96. z = d/0.2 = 1.96, so d = 1.96 × 0.2 = 0.392.`),
+  ST(LN,10,`Lecture 10: a population of N = 4 ages: 18, 20, 22, 24. Compute μ and σ, then list all samples of size 2 taken WITH replacement and describe the distribution of the sample mean.`,
+   `μ = (18 + 20 + 22 + 24) ÷ 4 = 21; σ = √[Σ(x − μ)² ÷ N] = √(20 ÷ 4) = √5 = 2.236. The population distribution is uniform (each value has probability 1/4).
+Number of samples = N^n = 4² = 16. Sample means: 18 (1 sample), 19 (2), 20 (3), 21 (4), 22 (3), 23 (2), 24 (1): a symmetric, bell-like distribution (not uniform).
+μ_x̄ = 21 = μ and σ_x̄ = 1.58 = σ/√n = 2.236/√2 (σ_x̄ < σ). The sample error is x̄ − μ.`),
+  ST(LN,11,`Lecture 11 (25/10): population N = 10, values 2, 3, 4, ..., 11. Find μ and σ and the number of possible samples of size 2 WITHOUT replacement.`,
+   `μ = Σx ÷ N = 65 ÷ 10 = 6.5. σ = √[Σ(x − μ)² ÷ N] = √(82.5 ÷ 10) = 2.872.
+Without replacement the number of samples is C(N, n) = N! ÷ [n!(N − n)!] = 10!/(2!·8!) = 45.
+Sample means range from 2.5 to 10.5 and sample variances from 0.5 to 40.5. Sample error = x̄ − μ (for example a sample mean of 4 has error 4 − 6.5 = −2.5; the notes write the size 2.5).`),
+  ST(LN,12,`Lecture 11: define the sampling distribution of x̄, and give μ_x̄ and σ_x̄ (standard error) for a normal population, with and without replacement.`,
+   `The sampling distribution of x̄ lists all possible values of x̄ for a given sample size n from a population, with the probability of each. It is impossible to pick "the best sample" because the true μ is hard to reach.
+If the population is normal with mean μ and standard deviation σ, the sampling distribution of x̄ is also normal with μ_x̄ = μ and σ_x̄ = σ/√n (the standard error). As n increases σ_x̄ gets smaller and x̄ gets closer to μ.
+With replacement (or a large population): σ_x̄ = σ/√n.
+Finite population, without replacement, when n/N ≥ 5% (N < 1,000): σ_x̄ = (σ/√n)·√[(N − n)/(N − 1)] (finite population correction factor).
+z for a sample mean: Z = (x̄ − μ_x̄)/(σ/√n).`),
+  ST(LN,13,`Lecture 11: heights are N(175, 8). A sample of n = 4 is taken. What is P(x̄ > 190)?`,
+   `σ_x̄ = 8/√4 = 4. z = (190 − 175)/4 = 3.75. P(x̄ > 190) = 1 − P(Z < 3.75) ≈ 0.0001, essentially 0 (a very rare event). Compare with a single person: P(X > 190) = 3.01% (lecture 10).`),
+  ST(LN,14,`Lecture 11: the population is not normal. What can you say about the sampling distribution of x̄?`,
+   `Apply the Central Limit Theorem: the sample means are approximately normal as long as the sample size is large enough, with μ_x̄ = μ and σ_x̄ = σ/√n. Theoretically n ≥ 30, but practically n ≥ 25 (the notes say "use this").`),
+
+  /* ===== Normal distribution notes (examples 1-5) ===== */
+  ST(NN,1,`X is normal with μ = 30 and σ = 4. Find (1) P(X < 40), (2) P(X > 21), (3) P(30 < X < 35).`,
+   `(1) z = (40 − 30)/4 = 2.5; P = 0.5 + 0.4938 = 0.9938.
+(2) z = (21 − 30)/4 = −2.25; P(Z > −2.25) = 0.5 + 0.4878 = 0.9878.
+(3) z from 0 to (35 − 30)/4 = 1.25; P = 0.3944.
+Method: read the question, draw the curve in X units, translate to Z = (X − μ)/σ, and use the z-table (the table gives the area from 0 to z).`),
+  ST(NN,2,`A machine produces bolts with diameters N(4, 0.09) (mm). Bolts smaller than 3.5 mm or bigger than 4.4 mm are rejected. Out of a batch of 500, how many are acceptable?`,
+   `N(4, 0.09) means variance 0.09, so σ = √0.09 = 0.3. z1 = (3.5 − 4)/0.3 = −1.67; z2 = (4.4 − 4)/0.3 = 1.33.
+P(−1.67 < Z < 1.33) = 0.4525 + 0.4082 = 0.8607. Acceptable bolts = 500 × 0.8607 = 430.35 ≈ 430.`),
+  ST(NN,3,`Entry to a university is determined by a national test with scores N(μ = 500, σ = 100). Tom must score better than at least 70% of the students. He scores 585. Will he be admitted?`,
+   `z = (585 − 500)/100 = 0.85. P(X < 585) = P(Z < 0.85) = 0.5 + 0.3023 = 0.8023 = 80.23% > 70%, so Tom scored better than about 80% of the students and will be admitted.`),
+  ST(NN,4,`A random variable X has the N(m, 4) distribution (variance 4). The shaded area to the left of 12 is 0.8. Find m to 2 decimal places.`,
+   `σ = √4 = 2. P(X < 12) = 0.8, so the z-value for 0.8 is 0.84: (12 − m)/2 = 0.84, so m = 12 − 1.68 = 10.32.`),
+  ST(NN,5,`Gauges reject components whose dimension is not within 1.50 ± d. The measurement is normal with μ = 1.50 and σ = 0.2. Find d so the specification covers 95% of the measurements.`,
+   `The area from 1.5 − d to 1.5 is 0.95/2 = 0.475, which corresponds to z = 1.96: (X − 1.5)/0.2 = 1.96, so X = 1.892 and d = 1.892 − 1.5 = 0.392. (Same problem as lecture 10.)`)
+ ]);
+
+ MCQB.stat.push(
+  ['The ages 53, 32, 61, 27, 39, 44, 49, 57 have mean:','45.25',['44.5','46','362'],'Section 2: 362 ÷ 8.'],
+  ['Adding Wal-Mart\'s outlier giving 337.9 to five small values changes mainly:','The mean (it more than triples)',['The median','Both equally','Neither'],'Section 2: the mean is very sensitive to outliers; the median is not.'],
+  ['Which measure of central tendency can be used for qualitative data?','Mode',['Mean','Median','Weighted mean'],'Only the mode works for categories.'],
+  ['Exams 73 and 67 and a final (weight 2) of 85 give a weighted mean of:','77.5',['75','76.25','80'],'(73 + 67 + 170) ÷ 4.'],
+  ['Tomato Type A (5, 5, 5, 3, 5, 1, 5) has sample variance about:','2.47',['1.57','4.14','14.86'],'s² = 14.86 ÷ 6; 1.57 is s and 4.14 is the mean.'],
+  ['Which measure compares the variability of two data sets with different units or means?','Coefficient of variation',['Range','Variance','Interquartile range'],'CV = s ÷ x̄ × 100%.'],
+  ['Type B tomatoes (mean 7.28, s 6.85) have a coefficient of variation of about:','94%',['6.85%','106%','7.28%'],'6.85 ÷ 7.28 × 100.'],
+  ['For n = 30 observations, the number of classes from 2^k ≥ n is:','5',['4','6','30'],'2^5 = 32 ≥ 30.'],
+  ['Weights from 40 to 74 kg in k = 5 classes need a class width (rounded up) of:','7',['6.8','34','5'],'34 ÷ 5 = 6.8, rounded up to 7.'],
+  ['The relative frequencies of all classes always add up to:','1',['100','n','0'],'They are proportions of the total.'],
+  ['The ogive plots on the x-axis the:','Upper class boundary',['Class midpoint','Lower limit','Frequency'],'The y-axis is the cumulative frequency.'],
+  ['The frequency polygon plots frequency against the:','Class midpoints',['Upper class limits','Lower class limits','Cumulative frequencies'],'It starts and ends at zero.'],
+  ['For grouped data the mean is approximated by Σ f·x ÷ n where x is:','The class midpoint',['The lower limit','The upper limit','The class width'],'Section 3, Example 4.'],
+  ['The mode of grouped data is estimated by:','The midpoint of the class with the highest frequency',['The lowest class limit','The class width','The cumulative frequency'],'Section 3: 19.5 in the car-price example.'],
+  ['The range of grouped data is estimated as:','Midpoint of the last class − midpoint of the first class',['Upper limit − lower limit of the table','Highest frequency − lowest frequency','Class width × k'],'Car prices: 34.5 − 16.5 = 18.'],
+  ['Car-price grouped data (n = 80): the median uses the position i =','40.5 = (50/100)(80 + 1)',['40 = n/2','41','80/50'],'The doctor\'s grouped formula uses (n + 1).'],
+  ['Car prices: median ≈','22.68',['21','23.06','24'],'21 + (40.5 − 31)(3)/17.'],
+  ['The oil-well wells that lie in 2000–<3000 ft (0.37 × 700) number:','259',['252','504','182'],'Relative frequency 0.72 − 0.35 = 0.37.'],
+  ['In a normal distribution:','Mean = median = mode',['Mean > median > mode','Mean < median < mode','The mode does not exist'],'It is symmetric and bell-shaped.'],
+  ['Approximately 95% of normal data lie within:','2 standard deviations of the mean',['1','3','4'],'The empirical rule: 68% / 95% / 99.7%.'],
+  ['The standardization formula is:','Z = (X − μ)/σ',['Z = (μ − X)·σ','Z = X/σ','Z = (X − σ)/μ'],'It rescales any normal to N(0, 1).'],
+  ['With μ = 175 and σ = 8, the z-score of x = 190 is:','1.875',['15','0.53','2.5'],'(190 − 175) ÷ 8.'],
+  ['For N(175, 8), P(X < 190) from the z-table (z = 1.88) is:','0.9699',['0.0301','0.8944','0.5'],'About 97% of heights are below 190 cm.'],
+  ['For N(175, 8), P(X > 165) is:','0.8944',['0.1056','0.9699','0.5'],'1 − P(Z < −1.25).'],
+  ['Bulb life N(800, 40): P(778 < X < 834) =','0.5111',['0.8023','0.2912','0.7111'],'0.8023 − 0.2912.'],
+  ['Ball bearings 3.0 ± 0.01 cm, σ = 0.005 cm: the scrapped fraction is:','4.56%',['0.46%','95.44%','2.28%'],'1 − P(−2 < Z < 2).'],
+  ['Gauges 1.5 ± d with σ = 0.2 covering 95% need d =','0.392',['0.196','1.96','0.4'],'1.96 × 0.2.'],
+  ['Bolts N(4, 0.09): the standard deviation is:','0.3',['0.09','0.81','4'],'The second parameter written in N(μ, ·) in these notes is the variance, so σ = √0.09.'],
+  ['The sampling distribution of x̄ for a normal population has mean:','μ',['μ/√n','μ·√n','σ'],'μ_x̄ = μ.'],
+  ['The standard error of x̄ is:','σ/√n',['σ·√n','σ/n','σ²/n'],'It shrinks as n grows.'],
+  ['For N(175, 8) and n = 4, σ_x̄ equals:','4',['8','2','32'],'8 ÷ √4.'],
+  ['For N(175, 8) and n = 4, P(x̄ > 190) is:','About 0 (z = 3.75)',['0.0301','0.5','0.3'],'Compare the single-person probability 3.01%.'],
+  ['The finite population correction factor is applied when:','n/N ≥ 5% (without replacement)',['n ≥ 30','N is infinite','Always'],'σ_x̄ = σ/√n · √[(N − n)/(N − 1)].'],
+  ['When the population is not normal, the sample means are approximately normal if n is large; the notes\' practical size is:','25 (theoretically 30)',['5','10','100'],'Central Limit Theorem.'],
+  ['Samples of size 2 WITH replacement from a population of 4 give how many samples?','16',['6','8','4'],'N^n = 4².'],
+  ['Samples of size 2 WITHOUT replacement from a population of 10 give how many samples?','45',['100','90','20'],'C(10, 2).'],
+  ['The population 18, 20, 22, 24 has σ =','2.236',['2','5','1.58'],'√(20 ÷ 4); 1.58 is σ_x̄ for n = 2.'],
+  ['The sample error equals:','x̄ − μ',['μ − σ','s − σ','x̄ ÷ μ'],'Lecture 10 and 11.'],
+  ['As the sample size n increases, the standard error σ_x̄:','Decreases',['Increases','Stays the same','Equals σ'],'σ/√n.'],
+  ['Continuous data are grouped into classes, while discrete data:','Are listed by value (no classes needed)',['Always need classes','Cannot be summarized','Use the ogive only'],'Notes: classes are for continuous data.']
+ );
+
+ SUBJ.stat.topics.push('Frequency Table Construction (k, class width)','Relative and Cumulative Frequency','Histogram, Polygon and Ogive','Grouped Data: Mean, Mode and Range','Grouped Data: Variance, Median and Percentiles','Normal Distribution: Properties and Empirical Rule','Standard Normal (Z) and the Z Table','Normal Probability Problems','Sampling Distribution of the Mean','Sample Error, Standard Error and Finite Population Correction','Central Limit Theorem');
+ TOPIC_RX.stat.push(
+  /frequency table|classes|class width|2\^k|nurse|temperature/i,
+  /relative frequency|cumulative/i,
+  /histogram|polygon|ogive/i,
+  /grouped data|midpoint|mode of grouped|heights of 200/i,
+  /variance|median|percentile|grouped formula|x_g/i,
+  /empirical|properties|mean = median|bell/i,
+  /z-score|standard normal|z table|standardiz/i,
+  /bulb|ball bearing|gauge|bolt|university|N\(\d/i,
+  /sampling distribution|samples of size|possible samples/i,
+  /sample error|standard error|finite population|replacement/i,
+  /central limit/i);
+
+ SUBJ.stat.rescue.push(
+  ['جدول التكرار خطوة بخطوة','1) عدد الفئات k من <bdi class="f">2^k ≥ n</bdi> (والمفضل 5 لـ 20). 2) العرض <bdi class="f">w = Range ÷ k</bdi> وقرّب لفوق. 3) ابدأ من أصغر قيمة وخلّي الحد الأعلى "أقل من" (مثلاً 10–&lt;20) عشان الفئات متصلة ومش بتتداخل، وتأكد إن xmax وxmin جوه الفئات. Relative = f ÷ n (المجموع 1). Cumulative = مجموع متراكم. الفئات للـcontinuous بس، والـdiscrete بتتكتب قيمة قيمة.'],
+  ['Histogram وPolygon وOgive','Histogram: الفئات على x والتكرار على y (أعمدة ملزوقة). Polygon: منتصف الفئات على x والتكرار على y، ولازم يبدأ وينتهي بصفر. Ogive: الحد الأعلى للفئة على x والـcumulative على y (منحنى بيطلع S) ومنه بتقرا الـmedian والـquartiles والـpercentiles. للـqualitative: bar وpie.'],
+  ['Grouped data: المتوسط والمنوال والمدى','المتوسط <bdi class="f">x̄ = Σ f·x ÷ n</bdi> حيث x منتصف الفئة. المنوال = منتصف الفئة صاحبة أعلى تكرار. المدى = منتصف آخر فئة − منتصف أول فئة. كلها تقريبية لأن البيانات الأصلية اتجمعت. مثال: 1,845 ÷ 80 = 23.06.'],
+  ['Grouped data: التباين والـmedian والـpercentile','عينة: <bdi class="f">s² = Σ f(x − x̄)² ÷ (n − 1)</bdi> ومجتمع: القسمة على N. الـmedian والـpercentile: <bdi class="f">x̃ = x_g + (i − g)(x_h − x_g)/(h − g)</bdi> حيث <bdi class="f">i = (P/100)(n+1)</bdi>، g أكبر cumulative أقل من i وx_g الحد الأعلى لفئته، وh الـcumulative اللي بعده وx_h حده الأعلى.'],
+  ['Normal distribution وقاعدة 68–95–99.7','جرسي ومتماثل، mean = median = mode، المساحة الكلية 1، نقطتا الانحناء عند μ ± σ، ومحاذي لمحور x. تقريباً 68% من البيانات جوه μ ± σ و95% جوه μ ± 2σ و99.7% جوه μ ± 3σ. σ أكبر يعني منحنى أعرض وأقل ارتفاعاً. μ بتحرك المنحنى يمين وشمال.'],
+  ['Z والجدول وخطوات حل سؤال Normal','<bdi class="f">Z = (X − μ)/σ</bdi> يحوّل أي normal لـN(0,1) (متوسط 0 وانحراف 1). الجدول بيدي المساحة من 0 لـz (أو P(Z &lt; z) حسب الجدول، قرّب z لرقمين). الخطوات: 1) اقرأ السؤال 2) ارسم المنحنى بوحدات X 3) حوّل لـZ 4) استخدم الجدول. P(Z &gt; a) = 1 − P(Z &lt; a). السالب: P(Z &lt; −a) = 1 − P(Z &lt; a). الـN(μ, ·) أحياناً التاني variance فاجذره.'],
+  ['Sampling distribution (محاضرة 10 و11)','توزيع كل قيم x̄ الممكنة لحجم عينة n. مع الاستبدال عدد العينات <bdi class="f">N^n</bdi> وبدون استبدال <bdi class="f">C(N,n) = N!/(n!(N−n)!)</bdi>. دايماً μ_x̄ = μ وσ_x̄ = σ/√n (standard error) وأصغر من σ. sample error = x̄ − μ. لو المجتمع normal فـx̄ normal، وZ = (x̄ − μ)/(σ/√n).'],
+  ['Standard error وFPC وCLT','لو المجتمع محدود وبدون استبدال والعينة ≥ 5% من N استخدم <bdi class="f">σ_x̄ = (σ/√n)·√((N−n)/(N−1))</bdi>. لو المجتمع مش normal طبّق Central Limit Theorem: متوسطات العينات تقريباً normal لو n كبير، نظرياً 30 وعملياً 25 (حسب ملاحظات المحاضرة). كل ما n بيكبر الـσ_x̄ بيصغر.'],
+  ['إيه المقياس الأنسب؟ (Section 2)','لو فيه outliers استخدم Median أو trimmed mean مش Mean. Mode هو الوحيد للـqualitative. Range بيتأثر بالـoutliers وبيتجاهل باقي القيم. للمقارنة بين مجموعتين بوحدات مختلفة استخدم CV. المتوسط الموزون لما القيم ليها أوزان (زي الـGPA بالساعات).']
+ );
+
+ WHATS_NEW.unshift({d:'25 أكتوبر 2026 (Stat 2)',de:'25 October 2026 (Stat 2)',items:[
+  'Stat 2: 35 سؤال محلول جديد من Section 2 وSection 3 ومحاضرات 7 لـ 11 (Grouped data، Normal distribution، Sampling distribution) ونوتس الأسابيع الأولى، مع أسئلة اختيار من متعدد وكروت مراجعة.'],
+  en:['Stat 2: 35 new solved questions from Section 2, Section 3 and lectures 7 to 11 (grouped data, the normal distribution, sampling distributions) and the early-weeks notes, with multiple-choice questions and review cards.']});
+})();
+/* Update 2026-10-25 (c): OR & DS.
+   Sources: "Section-Graphical solution.pdf" (handwritten section notes, 5 LP problems), "Sensitivity using Simplex_part 2.pdf" (the doctor's slides, Pearson slides 4-1..4-17) and
+   taylor_ims11_module_A.pdf (Taylor, Introduction to Management Science 11e, Module A: text pp A-1..A-42 and Problems A-43..A-63).
+   Every number below was recomputed with a vertex-enumeration / tableau solver; sensitivity ranges for Problems 42-54 were computed from the printed final tableaux
+   (c-range: cj - zj row, q-range: slack/surplus column). Short statements are condensed from the book problems; solutions are mine (check against the doctor's/TA's solutions). */
+(function(){
+ const S0='Section (graphical solution)', SB='Module A: irregular cases and dual', SS='Module A: sensitivity analysis', SP='Module A: Problems';
+ const E=(s,n,q,a,p,k)=>({s,n,p:p||0,k:k||undefined,q,a,u:'or'});
+ EXB.or=(EXB.or||[]).concat([
+  /* ===== Section: graphical solution (5 problems) ===== */
+  E(S0,1,`Graphical method: maximize Z = 120x + 100y subject to 10x + 5y ≤ 80, 6x + 6y ≤ 66, 4x + 8y ≥ 24, 5x + 6y ≤ 90, x, y ≥ 0. Find the optimal solution.`,
+`Plot the constraint lines and shade the feasible region (the ≥ constraint 4x + 8y ≥ 24 cuts off the origin). Corner points and Z:
+A(0,3) = 300 (on 4x + 8y = 24)
+B(0,11) = 1,100 (on 6x + 6y = 66)
+C(5,6) = 1,200 (10x + 5y = 80 meets x + y = 11)
+D(8,0) = 960 (on 10x + 5y = 80)
+E(6,0) = 720 (on 4x + 8y = 24)
+The largest Z is at C: x* = 5, y* = 6, Z* = 1,200. (5x + 6y = 61 ≤ 90, so the fourth constraint is not binding.)`),
+  E(S0,2,`Graphical method: minimize Z = 200x + 50y subject to 6x + 3y ≥ 60, 2x + 3y ≥ 36, x, y ≥ 0. Describe the feasible region and find the optimum.`,
+`The region is unbounded (it extends to infinity away from the origin) but a MINIMIZATION problem still has an optimum because the objective cannot decrease forever.
+Intersection of the two lines: 4x = 24, so x = 6, y = 8.
+Corner points: A(0,20): Z = 1,000. B(6,8): Z = 1,200 + 400 = 1,600. C(18,0): Z = 3,600.
+The smallest Z is at A: x* = 0, y* = 20, Z* = 1,000.
+Lesson: an unbounded feasible region does NOT mean an unbounded solution; it matters whether the objective can improve without limit.`),
+  E(S0,3,`Graphical method: maximize Z = 40x + 30y subject to x + 2y ≤ 40, 4x + 3y ≤ 120, x, y ≥ 0. What is special about this problem?`,
+`Corner points: A(0,20) = 600, B(24,8) = 1,200 (x + 2y = 40 meets 4x + 3y = 120), C(30,0) = 1,200, D(0,0) = 0.
+Two corners give the same maximum Z = 1,200, so the problem has MULTIPLE OPTIMAL SOLUTIONS: every point on segment BC is optimal.
+Reason: the objective function 40x + 30y is parallel to constraint 2 (4x + 3y = 120), so the moving objective line touches a whole edge, not one corner. Z* = 1,200.`),
+  E(S0,4,`Graphical method: maximize Z = 5x1 + 3x2 subject to 4x1 + 2x2 ≤ 8, x1 ≥ 4, x2 ≥ 6, x1, x2 ≥ 0.`,
+`x1 ≥ 4 and x2 ≥ 6 already force 4x1 + 2x2 ≥ 16 + 12 = 28 > 8, so no point satisfies all constraints. The three constraint regions do not overlap: the problem is INFEASIBLE (no feasible region, no solution).`),
+  E(S0,5,`Graphical method: maximize Z = 2x1 + x2 subject to 3x1 + x2 ≤ 6, x1 − x2 ≤ 2, x2 ≤ 3, x1, x2 ≥ 0. Find the solution and say what is special about point C(2, 0).`,
+`Corner points: A(0,3) = 3, B(1,3) = 5, C(2,0) = 4, D(0,0) = 0.
+Optimal: x1* = 1, x2* = 3, Z* = 5 (point B).
+Point C(2,0) lies on three constraint lines at once (3x1 + x2 = 6, x1 − x2 = 2 and x2 = 0). A corner point that comes from MORE than two constraints is called a degenerate point.`),
+
+  /* ===== Module A book examples: mixed constraints, irregular cases, dual ===== */
+  E(SB,1,`Leather shop (Taylor, Module A): maximize Z = 400x1 + 200x2 (briefcases and luggage) subject to x1 + x2 = 30 (contract), 2x1 + 8x2 ≥ 80 (leather) and x1 ≤ 20. How do you put it in simplex form and what is the solution?`,
+`Transform each constraint:
+x1 + x2 + A1 = 30 (equation: add an artificial variable)
+2x1 + 8x2 − s1 + A2 = 80 (≥: subtract surplus, add artificial)
+x1 + s2 = 20 (≤: add slack)
+Objective: Max Z = 400x1 + 200x2 + 0s1 + 0s2 − M·A1 − M·A2 (artificial variables get −M in a MAXIMIZATION problem so they are driven out).
+Optimal tableau (Table A-24): x1 = 20 briefcases, x2 = 10 pieces of luggage, s1 = 40 extra square yards of leather, Z = $10,000 per month.`),
+  E(SB,2,`Summarize how every type of constraint is transformed and which cost M gets in maximization and in minimization.`,
+`≤ : add a slack variable (objective coefficient 0 in both cases).
+= : add an artificial variable (−M in maximization, +M in minimization).
+≥ : subtract a surplus variable (coefficient 0) AND add an artificial variable (−M in maximization, +M in minimization).
+For a minimization problem the row cj − zj is replaced by zj − cj, and the solution is optimal when no zj − cj is positive.`),
+  E(SB,3,`Multiple optimal solutions (Beaver Creek variant): maximize Z = 40x1 + 30x2 subject to x1 + 2x2 ≤ 40, 4x1 + 3x2 ≤ 120. How do you recognize multiple optimal solutions in the simplex tableau and how do you find the other one?`,
+`Optimal tableau (Table A-25): x1 = 30, s1 = 10, Z = 1,200 (point C(30,0)). The nonbasic variable x2 has cj − zj = 0.
+Rule: a nonbasic variable with cj − zj (or zj − cj) = 0 in the final tableau means alternate optimal solutions. Enter that variable: x2 enters, the s1 row leaves (ratio 10 ÷ 5/4 = 8). Table A-26 gives x2 = 8, x1 = 24, Z = 1,200 (point B(24,8)). Both corners have Z = 1,200, and so does every point between them.`),
+  E(SB,4,`Infeasible problem: maximize Z = 5x1 + 3x2 subject to 4x1 + 2x2 ≤ 8, x1 ≥ 4, x2 ≥ 6. How does infeasibility appear in the final simplex tableau?`,
+`The final tableau (Table A-27) has all cj − zj ≤ 0, so it looks optimal, but the solution is x2 = 4, A1 = 4, A2 = 2: artificial variables are still in the basis at positive values.
+Rule: if the tableau is optimal but an artificial variable is still in the solution, the problem is INFEASIBLE (usually a formulation error).`),
+  E(SB,5,`Unbounded problem: maximize Z = 4x1 + 2x2 subject to x1 ≥ 4 and x2 ≤ 2. How does the simplex method show that it is unbounded?`,
+`In the second tableau (Table A-28) s1 enters (cj − zj = 4 > 0) but no pivot row can be chosen: the ratios are 4 ÷ (−1) = −4 (negative) and 2 ÷ 0 = undefined.
+Rule: if every ratio in the pivot column is negative or undefined, the problem is UNBOUNDED: Z can grow forever because the feasible region is not closed in the direction of improvement.`),
+  E(SB,6,`Tie for the pivot row and degeneracy: maximize Z = 4x1 + 6x2 subject to 6x1 + 4x2 ≤ 24, x2 ≤ 3, 5x1 + 10x2 ≤ 40. What happens when there is a tie for the pivot row?`,
+`In the second tableau the s1 row and the s3 row both have ratio 2 (12 ÷ 6 and 10 ÷ 5). Break the tie arbitrarily (choose s3). In the next tableau the other tied variable (s1) has quantity 0: this is degeneracy.
+Continue as usual: the next tableau is optimal with the SAME solution x1 = 2, x2 = 3, Z = 26 but with a different basis (s2 = 0 is replaced by the zero-valued basic variable). Graphically all three constraint lines meet at the same corner point B(2,3). A tie for the pivot column is also broken arbitrarily.`),
+  E(SB,7,`A constraint has a negative right-hand side, for example −6x1 + 2x2 ≥ −30. How is it fixed before the simplex method?`,
+`Simplex needs every quantity value ≥ 0. Multiply the constraint by −1 and reverse the inequality: 6x1 − 2x2 ≤ 30. Then add a slack variable as usual.`),
+  E(SB,8,`Form the DUAL of the Hickory Furniture model: maximize Z = 160x1 + 200x2 subject to 2x1 + 4x2 ≤ 40 (labor), 18x1 + 18x2 ≤ 216 (wood), 24x1 + 12x2 ≤ 240 (storage). What do the dual variables mean?`,
+`Dual: minimize Zd = 40y1 + 216y2 + 240y3 subject to 2y1 + 18y2 + 24y3 ≥ 160 and 4y1 + 18y2 + 12y3 ≥ 200, y1, y2, y3 ≥ 0.
+Rules: one dual variable per primal constraint; primal RHS values become the dual objective coefficients; primal constraint coefficients become dual variable coefficients (columns become rows); primal objective coefficients become the dual RHS; a maximization with ≤ constraints becomes a minimization with ≥ constraints.
+Primal optimum (Table A-32): x1 = 4 tables, x2 = 8 chairs, s3 = 48 ft², Z = $2,240. The cj − zj of the slack columns give the dual variables: y1 = $20 per labor hour, y2 = $6.67 per board foot, y3 = $0 (storage has 48 ft² left over). They are the marginal values (shadow prices) of the resources, and 40(20) + 216(6.67) + 240(0) = 2,240 = the optimal profit.`),
+
+  /* ===== Sensitivity (the doctor's slides 4-1 .. 4-17, Hickory example) ===== */
+  E(SS,1,`Hickory Furniture: max Z = 160x1 + 200x2; 2x1 + 4x2 ≤ 40; 18x1 + 18x2 ≤ 216; 24x1 + 12x2 ≤ 240. The optimal tableau has x2 = 8, x1 = 4, s3 = 48 (rows x2: 0 1 1/2 −1/18 0; x1: 1 0 −1/2 1/9 0; s3: 0 0 6 −2 1) with cj − zj = 0, 0, −20, −20/3, 0. Find the range of c1 over which this solution stays optimal.`,
+`Replace c1 = 160 by 160 + Δ (it appears both in the top row and in the cj column because x1 is basic). The new cj − zj values are −20 + Δ/2 (s1 column) and −20/3 − Δ/9 (s2 column); both must stay ≤ 0.
+−20 + Δ/2 ≤ 0 gives Δ ≤ 40; −20/3 − Δ/9 ≤ 0 gives Δ ≥ −60.
+So −60 ≤ Δ ≤ 40, and with c1 = 160 + Δ: 100 ≤ c1 ≤ 200. The optimal mix (4 tables, 8 chairs) stays the same in this range, though Z changes.`),
+  E(SS,2,`Same Hickory tableau: find the range of c2 (now c2 = 200 + Δ).`,
+`c2 = 200 + Δ (x2 is basic). cj − zj becomes −20 − Δ/2 (s1 column) and −20/3 + Δ/18 (s2 column).
+−20 − Δ/2 ≤ 0 gives Δ ≥ −40; −20/3 + Δ/18 ≤ 0 gives Δ ≤ 120.
+So 160 ≤ c2 ≤ 320. (These ranges are for changing ONE coefficient at a time, not both at once.) For a NONBASIC variable the range is simpler: its Δ shows up in only one column of the cj − zj row, so cj can go up to cj − (cj − zj) = zj and down to −∞ (maximization).`),
+  E(SS,3,`Hickory: find the range of the labor quantity q1 = 40 over which the present basis remains feasible (use the s1 column of the final tableau).`,
+`A Δ change in q1 appears in the quantity column as Δ × (s1 column): x2 = 8 + Δ/2, x1 = 4 − Δ/2, s3 = 48 + 6Δ must all stay ≥ 0.
+8 + Δ/2 ≥ 0 → Δ ≥ −16; 4 − Δ/2 ≥ 0 → Δ ≤ 8; 48 + 6Δ ≥ 0 → Δ ≥ −8.
+So −8 ≤ Δ ≤ 8, i.e. 32 ≤ q1 ≤ 48 hours. Within this range the same variables stay in the solution and the shadow price $20 stays valid; the values of x1, x2, s3 change.`),
+  E(SS,4,`Hickory: find the ranges of q2 (wood, 216) and q3 (storage, 240).`,
+`q2: use the s2 column: 8 − Δ/18 ≥ 0 → Δ ≤ 144; 4 + Δ/9 ≥ 0 → Δ ≥ −36; 48 − 2Δ ≥ 0 → Δ ≤ 24. So −36 ≤ Δ ≤ 24 and 180 ≤ q2 ≤ 240 (the 360 limit is eliminated because Δ ≤ 24 is stricter).
+q3: storage is a nonbasic-slack-in-basis resource (s3 = 48 is basic, so the shadow price is 0). s3 = 48 + Δ ≥ 0 gives Δ ≥ −48, so 192 ≤ q3 < ∞: storage can increase without limit without changing the solution mix.`),
+  E(SS,5,`Hickory: the manager can buy extra labor hours. Within the sensitivity range, how many hours and what happens to the solution and the profit?`,
+`Shadow price of labor = $20 per hour, valid while 32 ≤ q1 ≤ 48, so the manager can add up to 8 hours (to 48).
+With Δ = 8: x2 = 8 + 8/2 = 12, x1 = 4 − 8/2 = 0, s3 = 48 + 6(8) = 96. Profit Z = 2,240 + 20(8) = $2,400.
+At 48 hours the solution basis changes (x1 leaves), and the shadow price of labor would change beyond that.`),
+  E(SS,6,`In sensitivity analysis of the quantity values, what changes for a ≥ constraint, and what does the shadow price tell the manager?`,
+`For a ≥ constraint a surplus variable is subtracted (not a slack added), so a Δ change in qi must be considered as a −Δ change to read the effect from the surplus column.
+The shadow price (marginal value) is the maximum amount worth paying for one more unit of the resource, and it is valid only inside the qi sensitivity range; a resource with slack in the optimal solution has shadow price 0. The total marginal value of all resources equals the optimal profit (dual objective = primal objective).`),
+
+  /* ===== Module A end-of-module problems (Taylor 11e, A-43 .. A-63) ===== */
+  E(SP,1,`Tableau (cj: 10, 2, 6, 0, 0, 0 for x1, x2, x3, s1, s2, s3). Rows: x1 (cj 10): 10 | 1 0 −2 1 −1/2 0 ; x2 (cj 2): 40 | 0 1 2 0 1/2 0 ; s3 (cj 0): 30 | 0 0 8 −3 3/2 1. zj: 420 | 10 2 16 2 4 0 ; cj − zj: 0 0 −10 −2 −4 0.
+a. What is the solution? b. Is it optimal? c. What are x3 and s2? d. Original objective function? e. How many constraints? f. Why hard to solve graphically?`,
+`a. x1 = 10, x2 = 40, s3 = 30; x3 = s1 = s2 = 0; Z = 420.
+b. Yes: all cj − zj are ≤ 0 (maximization), so no variable can improve Z.
+c. x3 = 0 and s2 = 0 (both nonbasic).
+d. Max Z = 10x1 + 2x2 + 6x3.
+e. Three constraints (three slack variables s1, s2, s3).
+f. Three decision variables: a graph needs three dimensions, so the graphical method cannot be used.`,43,'x'),
+  E(SP,2,`Tableau (cj: 6, 20, 12, 0, 0 for x1, x2, x3, s1, s2). Rows: x1 (6): 20 | 1 1 0 0 0 ; x3 (12): 10 | 0 1/3 1 0 −1/6 ; s1 (0): 10 | 0 1/3 0 1 −1/6. zj: 240 | 6 10 12 0 −2 ; zj − cj: 0 −10 0 0 −2.
+a. Max or min? b. Solution? c. Optimal? d. Objective function? e. How many constraints? f. Any originally equations? g. Value of x2?`,
+`a. Minimization: the row is zj − cj, and a minimization problem is optimal when no zj − cj is positive.
+b. x1 = 20, x3 = 10, s1 = 10, x2 = 0, s2 = 0; Z = 240.
+c. Yes: zj − cj ≤ 0 everywhere (minimization).
+d. Min Z = 6x1 + 20x2 + 12x3.
+e. Two constraints (s1 and s2).
+f. No: there is no artificial variable in the tableau (an equation would have an artificial variable); s2 has the negative coefficients of a surplus variable, so that constraint was ≥.
+g. x2 = 0 (nonbasic).`,43,'x'),
+  E(SP,3,`Tableau (cj: 60, 50, 45, 50, 0, 0, 0, 0 for x1..x4, s1..s4). Rows: s1: 20 | 0 1 0 0 1 0 0 0 ; x4 (50): 15 | 0 0 0 1 0 1 0 0 ; x1 (60): 12 | 1 1/2 0 0 0 0 1/10 0 ; s4: 45 | 0 0 8 6 0 −6 0 1. zj: 1,470 | 60 30 0 50 0 50 6 0 ; cj − zj: 0 20 45 0 0 −50 −6 0.
+a. Max or min? b. Decision variables? c. Slack variables? d. What does cj − zj = 20 in the x2 column mean? e. Is it optimal? If not, find the optimum.`,
+`a. Maximization (cj − zj row; positive values show improvement is still possible).
+b. x1 = 12, x4 = 15, x2 = x3 = 0.
+c. s1 = 20, s4 = 45, s2 = s3 = 0.
+d. Each unit of x2 brought into the solution would increase profit by $20 (net, per unit).
+e. Not optimal: cj − zj = 20 (x2) and 45 (x3) are positive. Iteration 1: x3 enters (45), s4 leaves (45 ÷ 8 = 5.625): x3 = 5.625, Z = 1,723.125. Iteration 2: x2 enters, s1 leaves (ratio 20 ÷ 1 = 20): x2 = 20, x1 = 12 − 20/2 = 2. Optimal: x1 = 2, x2 = 20, x3 = 5.625, x4 = 15, Z = 2,123.125.`,44,'x'),
+  E(SP,4,`Tableau (minimization; cj: 8, 10, 4, 0, 0, 0, M, M for x1, x2, x3, s1, s2, s3, A1, A2 — the book lists the third basic variable as A3). Rows: A1 (M): 30 | 2/3 0 1 −1 1/6 0 1 0 ; x2 (10): 10 | 1/3 1 0 0 −1/6 0 0 0 ; A (M): 100 | 0 0 1 0 0 −1 0 1. zj: 130M + 100 ; zj − cj: 2M/3 − 14/3, 0, 2M − 4, −M, M/6 − 5/3, −M, 0, 0.
+a. Max or min? b. x3? c. What does M/6 − 5/3 in the s2 column mean? d. Minimum number of additional iterations? e. Optimal? If not, solve.`,
+`a. Minimization (zj − cj row and +M costs on the artificial variables).
+b. x3 = 0 (nonbasic).
+c. zj − cj > 0 for large M: bringing one unit of s2 into the solution would increase cost by about M/6 − 5/3, so s2 is a candidate to enter (in a minimization problem a positive zj − cj means the solution can still improve).
+d. At least 2: both artificial variables (A1 and the other one) must leave the basis before the solution is feasible.
+e. Not optimal (zj − cj > 0 for x1, x3 and s2). x3 enters (2M − 4 is the largest), A1 leaves (30 ÷ 1): x3 = 30, then s1 enters and the second artificial leaves. Optimal: x2 = 10, x3 = 100, s1 = 70, x1 = 0; Z = 10(10) + 4(100) = 500 (found by running the simplex steps on the printed rows).`,44,'x'),
+  E(SP,5,`Tableau (cj: 4, 6, 0, 0, M for x1, x2, s1, s2, A1). Rows: A1 (M): 2 | 0 1/2 −1 1/2 1 ; x1 (4): 6 | 1 1/2 0 −1/2 0. zj: 24 + 2M | 4 , M/2 + 2 , −M , M/2 − 2 , M ; zj − cj: 0, M/2 − 4, −M, M/2 − 2, 0.
+a. Max or min, why? b. Decision variables? c. Were any constraints equations? d. s2? e. Optimal? If not, do the next iteration.`,
+`a. Minimization: zj − cj row and an artificial variable with cost +M.
+b. x1 = 6, x2 = 0.
+c. There is an artificial variable, so at least one constraint was ≥ or =; s1 has coefficient −1, so that constraint was ≥ (surplus s1).
+d. s2 = 0 (nonbasic).
+e. Not optimal: zj − cj = M/2 − 4 (x2) and M/2 − 2 (s2) are positive. s2 enters (larger), the A1 row leaves (2 ÷ 1/2 = 4; the x1 row is skipped because its coefficient −1/2 is negative). New tableau: s2 = 4, x1 = 6 + (1/2)(4) = 8, Z = 32; now zj − cj = −2 (x2) and −4 (s1), all ≤ 0: OPTIMAL, x1 = 8, x2 = 0, s2 = 4, Z = 32.`,45,'x'),
+  E(SP,6,`Tableau (maximization; cj: 10, 5, 0, 0, −M for x1, x2, s1, s2, A). Rows: x1 (10): 5 | 1 1/2 −1/2 0 0 ; A (−M): 4 | 0 1 0 0 1 ; s2 (0): 15 | 0 7/2 1/2 1 0. zj: −4M + 50 | 10, −M + 5, −5, 0, −M ; cj − zj: 0, M, 5, 0, 0.
+a. Max or min? b. x2? c. Does cj − zj = 0 for x1 mean multiple optimal solutions? d. What does cj − zj = 5 in the s1 column mean? e. Optimal? If not, solve and check for multiple optima.`,
+`a. Maximization (cj − zj row and −M on the artificial variable).
+b. x2 = 0 (nonbasic).
+c. No: x1 is BASIC, and basic variables always have cj − zj = 0. Multiple optimal solutions are indicated only by a NONBASIC variable with cj − zj = 0.
+d. Each unit of s1 in the solution would raise profit by $5.
+e. Not optimal (x2 has cj − zj = M > 0, s1 has 5). Iteration 1: x2 enters; ratios 5 ÷ 1/2 = 10, 4 ÷ 1 = 4, 15 ÷ 7/2 = 4.29, so A leaves: x2 = 4, x1 = 3, s2 = 1, Z = 50. Iteration 2: s1 enters (5), s2 leaves (1 ÷ 1/2 = 2; the x1 row has a negative coefficient): s1 = 2, x1 = 4, x2 = 4, Z = 60. Optimal; no nonbasic variable has cj − zj = 0, so no multiple optimal solutions.`,45,'x'),
+  E(SP,7,`Munchies Cereal: oats give 8 mg of vitamin A and 1 mg of vitamin B per ounce, rice gives 6 mg of A and 2 mg of B per ounce. Each box needs at least 48 mg of A and 12 mg of B. Oats cost $0.05 and rice $0.03 per ounce. Formulate and solve.`,
+`x1 = ounces of oats, x2 = ounces of rice. Min Z = 0.05x1 + 0.03x2 subject to 8x1 + 6x2 ≥ 48, x1 + 2x2 ≥ 12, x1, x2 ≥ 0.
+Corner points: (0,8) Z = 0.24; (2.4,4.8) Z = 0.264 (both constraints binding); (12,0) Z = 0.60. Optimal: x1 = 0, x2 = 8 oz of rice, Z = $0.24 per box.`,45,'x'),
+  E(SP,8,`Maximize Z = 8x1 + 2x2 subject to 4x1 + 5x2 ≤ 20, 2x1 + 6x2 ≤ 18, x1, x2 ≥ 0. Solve with the simplex method.`,
+`Optimal solution: x1 = 5, x2 = 0, Z = 40 (s1 = 0, s2 = 8). In the first tableau x1 enters (cj − zj = 8) and the first row leaves (20 ÷ 4 = 5); then cj − zj = −8 (x2) and −2 (s1), all ≤ 0, so it is optimal after one iteration.`,46,'x'),
+  E(SP,9,`Two products, two assembly lines. Line 1 has 100 hours and line 2 has 42 hours. Each product needs 10 hours on line 1; on line 2 product 1 needs 7 hours and product 2 needs 3 hours. Profit is $6 and $4. Formulate and solve.`,
+`Max Z = 6x1 + 4x2 subject to 10x1 + 10x2 ≤ 100, 7x1 + 3x2 ≤ 42, x1, x2 ≥ 0.
+Optimal: x1 = 3, x2 = 7, Z = $46 (both lines fully used: 30 + 70 = 100 and 21 + 21 = 42).`,46,'x'),
+  E(SP,10,`Pinewood Furniture: 80 hours of labor and 36 board feet of wood per day, demand for chairs is at most 6 per day. A chair needs 8 labor hours and 2 board feet; a table needs 10 labor hours and 6 board feet. Profit $400 per chair and $100 per table. Formulate and solve.`,
+`x1 = chairs, x2 = tables. Max Z = 400x1 + 100x2 subject to 8x1 + 10x2 ≤ 80 (labor), 2x1 + 6x2 ≤ 36 (wood), x1 ≤ 6 (demand), x1, x2 ≥ 0.
+Optimal: x1 = 6, x2 = 3.2, Z = $2,720 (the demand limit and labor are binding; wood has 4.8 board feet unused).`,46,'x'),
+  E(SP,11,`Crumb and Custard Bakery: 25 lb of flour, 16 lb of sugar, coffee cake demand at most 8 pans. A pan of coffee cake needs 5 lb flour and 2 lb sugar (profit $1); a pan of Danish needs 5 lb flour and 4 lb sugar (profit $5). Formulate and solve.`,
+`x1 = pans of coffee cake, x2 = pans of Danish. Max Z = x1 + 5x2 subject to 5x1 + 5x2 ≤ 25, 2x1 + 4x2 ≤ 16, x1 ≤ 8, x1, x2 ≥ 0.
+Optimal: x1 = 0, x2 = 4, Z = $20 (sugar binding; flour 20 of 25 used).`,46,'x'),
+  E(SP,12,`Kalo Fertilizer: ingredient 1 gives 10 oz nitrogen and 6 oz phosphate per pound; ingredient 2 gives 2 oz nitrogen, 6 oz phosphate and 1 oz potassium per pound. A bag needs at least 20 oz nitrogen, 36 oz phosphate, 2 oz potassium. Costs $3 and $5 per pound. Formulate and solve.`,
+`Min Z = 3x1 + 5x2 subject to 10x1 + 2x2 ≥ 20, 6x1 + 6x2 ≥ 36, x2 ≥ 2, x1, x2 ≥ 0.
+Optimal: x1 = 4, x2 = 2, Z = $22 (phosphate and potassium are binding; nitrogen 44 ≥ 20).`,46,'x'),
+  E(SP,13,`Minimize Z = 0.06x1 + 0.10x2 subject to 4x1 + 3x2 ≥ 12, 3x1 + 6x2 ≥ 12, 5x1 + 2x2 ≥ 10, x1, x2 ≥ 0.`,
+`Optimal: x1 = 2.4, x2 = 0.8, Z = 0.224 (the first two constraints are binding; 5(2.4) + 2(0.8) = 13.6 ≥ 10).`,46,'x'),
+  E(SP,14,`Copperfield Mining: contract needs at least 12 tons of high-grade, 8 tons of medium-grade and 24 tons of low-grade ore. Mine 1 gives 6, 2, 4 tons per hour; mine 2 gives 2, 2, 12 tons per hour. Costs $200 and $160 per hour. Find the operating hours at the lowest cost.`,
+`x1, x2 = hours of mine 1 and mine 2. Min Z = 200x1 + 160x2 subject to 6x1 + 2x2 ≥ 12 (high), 2x1 + 2x2 ≥ 8 (medium), 4x1 + 12x2 ≥ 24 (low), x1, x2 ≥ 0.
+Optimal: x1 = 1 hour, x2 = 3 hours, Z = $680 (medium grade: 8 exactly; low grade: 40 ≥ 24).`,47,'x'),
+  E(SP,15,`Survey firm: minimize Z = 2x1 + 3x2 + 5x3 + 7x4 subject to 10x1 + 4x3 ≥ 400 (day interviews), 4x3 + 5x4 ≥ 100 (personal interviews), x1 + x2 + x3 + x4 ≥ 1,200 (total), all ≥ 0.`,
+`Optimal: x1 = 1,175 hours, x3 = 25 hours, x2 = x4 = 0, Z = $2,475. (Check: 10(1,175) + 4(25) = 11,850 ≥ 400; 4(25) = 100 ≥ 100; total 1,200.)`,47,'x'),
+  E(SP,16,`Jewelry store: maximize Z = 300x1 + 400x2 subject to 3x1 + 2x2 ≤ 18 (gold), 2x1 + 4x2 ≤ 20 (platinum), x2 ≤ 4 (demand), x1, x2 ≥ 0.`,
+`Optimal: x1 = 4 necklaces, x2 = 3 bracelets, Z = $2,400 (gold 18 and platinum 20 fully used; demand 3 ≤ 4).`,47,'x'),
+  E(SP,17,`Sporting goods: maximize Z = 5x1 + 4x2 subject to 0.3x1 + 0.5x2 ≤ 150 (leather), 10x1 + 4x2 ≤ 2,000 (yarn), x1, x2 ≥ 0.`,
+`Both constraints binding: 0.3x1 + 0.5x2 = 150 and 10x1 + 4x2 = 2,000 give 19x1 = 2,000. x1 = 105.26 baseballs, x2 = 236.84 softballs, Z = $1,473.68 (the simplex method gives fractional values; it does not guarantee integers).`,47,'x'),
+  E(SP,18,`Clothing shop: maximize Z = 100x1 + 150x2 subject to 10x1 + 4x2 ≤ 160 (material), x1 + x2 ≤ 20 (rack space), 10x1 + 20x2 ≤ 300 (labor), x1, x2 ≥ 0.`,
+`Optimal: x1 = 10 suits, x2 = 10 blazers, Z = $2,500 (rack space and labor binding; material 140 of 160 used).`,48,'x'),
+  E(SP,19,`Maximize Z = 100x1 + 20x2 + 60x3 subject to 3x1 + 5x2 ≤ 60, 2x1 + 2x2 + 2x3 ≤ 100, x3 ≤ 40, all ≥ 0.`,
+`Optimal: x1 = 20, x2 = 0, x3 = 30, Z = 3,800 (constraints 1 and 2 binding; x3 = 30 ≤ 40).`,48,'x'),
+  E(SP,20,`Tableau (cj: 1, 2, −1, 0, 0, 0 for x1, x2, x3, s1, s2, s3). Rows: x2 (2): 10 | 0 1 1/4 1/4 0 0 ; s2 (0): 20 | 0 0 −3/4 3/4 1 −1/2 ; x1 (1): 10 | 1 0 1 −1/2 0 1/2. zj: 30 | 1 2 3/2 0 0 1/2 ; cj − zj: 0 0 −5/2 0 0 −1/2.
+a. Max or min? b. Solution? c. Objective function? d. Constraints? e. Any equations? f. s1? g. Are there multiple optimal solutions? h. Identify them.`,
+`a. Maximization (cj − zj ≤ 0 means no improvement).
+b. x1 = 10, x2 = 10, s2 = 20; x3 = s1 = s3 = 0; Z = 30.
+c. Max Z = x1 + 2x2 − x3.
+d. Three constraints (s1, s2, s3).
+e. No (no artificial variable in the tableau).
+f. s1 = 0 (nonbasic).
+g. Yes: the nonbasic variable s1 has cj − zj = 0.
+h. Enter s1: ratios 10 ÷ 1/4 = 40 (x2), 20 ÷ 3/4 = 26.67 (s2), the x1 row (−1/2) is skipped, so s2 leaves: s1 = 26.67, x2 = 10 − 26.67/4 = 3.33, x1 = 10 + 26.67/2 = 23.33, Z = 30 again. The alternate corner is (x1, x2, x3) = (23.33, 3.33, 0); every point between the two corners is optimal.`,48,'x'),
+  E(SP,21,`Wood products firm: minimize Z = 120x1 + 40x2 + 240x3 subject to 4x1 + x2 + 3x3 ≥ 27 (pulp), 2x1 + 6x2 + 3x3 ≥ 30 (lumber), all ≥ 0.`,
+`Optimal: x1 = 6 acres, x2 = 3 acres, x3 = 0, Z = $840 (both constraints binding: 24 + 3 = 27 and 12 + 18 = 30).`,49,'x'),
+  E(SP,22,`Baby food: minimize Z = 0.05x1 + 0.10x2 subject to 6x1 + 2x2 ≥ 36 (protein), 5x1 + 5x2 ≥ 50 (iron), x1, x2 ≥ 0.`,
+`Optimal: x1 = 10 oz of liver, x2 = 0, Z = $0.50 per jar (iron binding: 50 ≥ 50; protein 60 ≥ 36 so it has 24 mg surplus).`,49,'x'),
+  E(SP,23,`Solve Problem 22 graphically and identify the points that match each simplex tableau.`,
+`Corner points of the feasible region: (0,18) Z = 1.80; (4,6) Z = 0.80; (10,0) Z = 0.50 (optimal).
+Starting the tableau with artificial variables (Big M) at the origin: tableau 1 = (0,0) (NOT feasible, A1 = 36, A2 = 50), tableau 2 = (6,0) (x1 enters, A1 leaves; still has A2 = 20), tableau 3 = (4,6) (x2 enters, A2 leaves: the first feasible corner), tableau 4 = (10,0) (s1 enters, x2 leaves): optimal.`,49,'x'),
+  E(SP,24,`Cookie Monster Store: maximize Z = 10x1 + 12x2 + 7x3 subject to 20x1 + 15x2 + 10x3 ≤ 300 (sugar), 10x1 + 5x2 ≤ 120 (chocolate chips), x1 + 2x3 ≤ 40 (pecans), all ≥ 0.`,
+`Optimal: x2 = 20 batches of pecan chip cookies, x1 = x3 = 0, Z = $240 (sugar fully used: 15 × 20 = 300; chocolate chips 100 of 120; pecans 0 of 40 because pecan chip cookies use no pecans in this model).`,49,'x'),
+  E(SP,25,`Eastern Iron and Steel: maximize Z = 6x1 + 2x2 + 12x3 ($1,000s) subject to 4x1 + x2 + 3x3 ≤ 24 (steel), 2x1 + 6x2 + 3x3 ≤ 30 (zinc), all ≥ 0.`,
+`Optimal: x3 = 8 batches of washers only, Z = $96 thousand (steel fully used; zinc 24 of 30).`,50,'x'),
+  E(SP,26,`Maximize Z = 100x1 + 75x2 + 90x3 + 95x4 subject to 3x1 + 2x2 ≤ 40, 4x3 + x4 ≤ 25, 200x1 + 250x3 ≤ 2,000, 100x1 + 200x4 ≤ 2,200, all ≥ 0.`,
+`Optimal: x1 = 0, x2 = 20, x3 = 3.5, x4 = 11, Z = 2,860 (constraints 1, 2 and 4 binding).`,50,'x'),
+  E(SP,27,`Minimize Z = 20x1 + 16x2 subject to 3x1 + x2 ≥ 6, x1 + x2 ≥ 4, 2x1 + 6x2 ≥ 12, x1, x2 ≥ 0.`,
+`Optimal: x1 = 1, x2 = 3, Z = 68 (constraints 1 and 2 binding: 3(1) + 3 = 6 and 1 + 3 = 4; constraint 3 has surplus 20 − 12 = 8).`,50,'x'),
+  E(SP,28,`Solve Problem 27 graphically and identify the points that match each simplex tableau.`,
+`Corner points: (0,6) Z = 96; (1,3) Z = 68 (optimal); (3,1) Z = 76; (6,0) Z = 120.
+Big-M simplex path (tableau by tableau): (0,0) with all three artificial variables (infeasible), then (0,2), then (1.5,1.5), then (3,1) (first feasible corner), then (1,3): optimal.`,50,'x'),
+  E(SP,29,`Transform into proper form for the simplex method: minimize Z = 8x1 + 2x2 + 7x3 subject to 2x1 + 6x2 + x3 = 30, 3x2 + 4x3 ≥ 60, 4x1 + x2 + 2x3 ≤ 50, x1 + 2x2 ≥ 20.`,
+`Min Z = 8x1 + 2x2 + 7x3 + 0s1 + 0s2 + 0s3 + MA1 + MA2 + MA3 subject to
+2x1 + 6x2 + x3 + A1 = 30 (equation: artificial)
+3x2 + 4x3 − s1 + A2 = 60 (≥: surplus + artificial)
+4x1 + x2 + 2x3 + s2 = 50 (≤: slack)
+x1 + 2x2 − s3 + A3 = 20 (≥: surplus + artificial)
+all variables ≥ 0. (Solving this exact model shows it is infeasible: substituting x3 = 30 − 2x1 − 6x2 into the second constraint gives 8x1 + 21x2 ≤ 60, which contradicts x1 + 2x2 ≥ 20. The question only asks for the transformation.)`,50,'x'),
+  E(SP,30,`Transform into proper form: minimize Z = 40x1 + 55x2 + 30x3 subject to x1 + 2x2 + 3x3 ≤ 60, 2x1 + x2 + x3 = 40, x1 + 3x2 + x3 ≥ 50, 5x2 + 3x3 ≥ 100.`,
+`Min Z = 40x1 + 55x2 + 30x3 + 0s1 + 0s2 + 0s3 + MA1 + MA2 + MA3 subject to
+x1 + 2x2 + 3x3 + s1 = 60
+2x1 + x2 + x3 + A1 = 40
+x1 + 3x2 + x3 − s2 + A2 = 50
+5x2 + 3x3 − s3 + A3 = 100
+all ≥ 0. (Solving it: optimum x1 = 8.75, x2 = 16.25, x3 = 6.25, Z = 1,431.25.)`,51,'x'),
+  E(SP,31,`Manufacturer: maximize Z = 40x1 + 60x2 subject to x1 + 2x2 ≤ 30 (material), 4x1 + 4x2 ≤ 72 (labor), x1 ≥ 5, x2 ≥ 12 (contracts), x1, x2 ≥ 0.`,
+`Optimal: x1 = 6, x2 = 12, Z = $960 (material 30 and the contract x2 = 12 binding; labor 72 exactly too: a degenerate corner).`,51,'x'),
+  E(SP,32,`Custom tailor: maximize Z = x1 + 5x2 ($100s) subject to 5x1 + 5x2 ≥ 25 (wool), 2x1 + 4x2 ≤ 16 (labor), x1 ≤ 5 (demand), x1, x2 ≥ 0.`,
+`Optimal: x1 = 2 pairs of pants, x2 = 3 jackets, Z = 17 ($1,700). (Wool: 25 ≥ 25 exactly, labor 16 fully used.)`,51,'x'),
+  E(SP,33,`Sawmill: minimize Z = 3x1 + 6x2 subject to 3x1 + 2x2 ≤ 18 (production time), x1 + x2 ≥ 5 (contract), x1 ≤ 4 (cherry), x2 ≤ 7 (oak), x1, x2 ≥ 0.`,
+`Optimal: x1 = 4 tons of cherry, x2 = 1 ton of oak, Z = $18 (the cheap resource cherry is used to its limit of 4, and oak only for the 5-ton contract).`,51,'x'),
+  E(SP,34,`Maximize Z = 10x1 + 5x2 subject to 2x1 + x2 ≥ 10, x2 = 4, x1 + 4x2 ≤ 20, x1, x2 ≥ 0.`,
+`The equation x2 = 4 forces x2 = 4; then x1 + 16 ≤ 20 gives x1 ≤ 4, and 2x1 + 4 ≥ 10 gives x1 ≥ 3. Maximum at x1 = 4: Z = 40 + 20 = 60. Optimal: x1 = 4, x2 = 4, Z = 60.`,52,'x'),
+  E(SP,35,`Maximize Z = x1 + 2x2 − x3 subject to 4x2 + x3 ≤ 40, x1 − x2 ≤ 20, 2x1 + 4x2 + 3x3 ≤ 60, all ≥ 0.`,
+`Z* = 30. One optimal corner is (x1, x2, x3) = (10, 10, 0); another is (23.33, 3.33, 0). Multiple optimal solutions exist (objective x1 + 2x2 is parallel to the edge 2x1 + 4x2 = 60); every point between them is optimal.`,52,'x'),
+  E(SP,36,`Maximize Z = x1 + 2x2 + 2x3 subject to x1 + x2 + 2x3 ≤ 12, 2x1 + x2 + 5x3 = 20, x1 + x2 − x3 ≥ 8, all ≥ 0.`,
+`Optimal: x1 = 4, x2 = 5.33, x3 = 1.33, Z = 17.33 (= 52/3). Check: 4 + 5.33 + 2.67 = 12; 8 + 5.33 + 6.67 = 20; 4 + 5.33 − 1.33 = 8.`,52,'x'),
+  E(SP,37,`Farmer (40 acres): maximize Z = 400x1 + 350x2 + 450x3 subject to 2x1 + 3x2 + 2x3 ≤ 120 (labor), 4x1 + 3x2 + x3 ≤ 160 (fertilizer), 3x1 + 2x2 + 4x3 ≤ 100 (insecticide), x1 + x2 + x3 ≤ 40 (acres), all ≥ 0.`,
+`Z* = $15,000 with multiple optimal solutions, for example (corn, peanuts, cotton) = (0, 30, 10) or (20, 20, 0). Insecticide and acreage are binding.`,52,'x'),
+  E(SP,38,`Maximize Z = 3x1 + 2x2 subject to x1 + x2 ≤ 1, x1 + x2 ≤ 2, x1, x2 ≥ 0. Solve (a) graphically and (b) with the simplex method.`,
+`(a) The constraint x1 + x2 ≤ 2 is redundant (it lies outside x1 + x2 ≤ 1). Corner points (0,0), (1,0), (0,1): Z = 0, 3, 2. Optimum (1,0), Z = 3.
+(b) x1 enters (3), the first row leaves (1 ÷ 1 = 1; the second row ratio is 2): x1 = 1, s2 = 1, Z = 3; then cj − zj = −1 (x2) and −3 (s1): optimal. Solution x1 = 1, x2 = 0, Z = 3.`,53,'x'),
+  E(SP,39,`Maximize Z = x1 + x2 subject to x1 − x2 ≥ −1, −x1 + 2x2 ≤ 4, x1, x2 ≥ 0. Solve (a) graphically and (b) with the simplex method.`,
+`(a) The feasible region is open to the upper right (both lines go up and to the right) and Z = x1 + x2 can grow forever: UNBOUNDED.
+(b) The simplex method reaches a tableau where the entering column has no positive entry, so no pivot row can be chosen: unbounded (the rewritten constraint is x2 − x1 ≤ 1 after multiplying −1).`,53,'x'),
+  E(SP,40,`Maximize Z = 7x1 + 5x2 + 5x3 subject to x1 + x2 + x3 ≤ 25, 2x1 + x2 + x3 ≤ 40, x1 + x2 ≤ 25, x3 ≤ 6, all ≥ 0.`,
+`Z* = 155 with multiple optimal solutions: (x1, x2, x3) = (15, 10, 0) and (15, 4, 6), and everything on the segment between them.`,53,'x'),
+  E(SP,41,`Minimize Z = 15x1 + 25x2 subject to 3x1 + 4x2 ≥ 12, 2x1 + x2 ≥ 6, 3x1 + 2x2 ≤ 9, x1, x2 ≥ 0.`,
+`Infeasible. Subtracting 3x1 + 2x2 ≤ 9 from 3x1 + 4x2 ≥ 12 gives x2 ≥ 1.5, so 3x1 ≤ 9 − 2x2 ≤ 6 and x1 ≤ 2; but 2x1 + x2 ≥ 6 with 3x1 + 2x2 ≤ 9 forces x1 ≥ 3. The final simplex tableau shows an artificial variable still in the solution.`,53,'x'),
+  E(SP,42,`Old English Metal Crafters: maximize Z = 6x1 + 10x2 (trays, buckets) subject to x1 + 4x2 ≤ 90 (brass lb), 2x1 + 2x2 ≤ 60 (labor hr). Final tableau: x2 (10): 20 | 0 1 1/3 −1/6 ; x1 (6): 10 | 1 0 −1/3 2/3 ; zj: 260 | 6 10 4/3 7/3 ; cj − zj: 0 0 −4/3 −7/3.
+a. Dual? b. Dual variables? c. Optimal ranges for c1 and c2? d. Feasible ranges for q1 and q2? e. Maximum price for extra labor hours and how many?`,
+`a. Min Zd = 90y1 + 60y2 subject to y1 + 2y2 ≥ 6, 4y1 + 2y2 ≥ 10, y1, y2 ≥ 0.
+b. y1 = $4/3 = $1.33 per pound of brass; y2 = $7/3 = $2.33 per labor hour (Zd = 90(4/3) + 60(7/3) = 260).
+c. 2.5 ≤ c1 ≤ 10 and 6 ≤ c2 ≤ 24.
+d. 30 ≤ q1 ≤ 120 and 45 ≤ q2 ≤ 180.
+e. The company would pay up to $2.33 per hour, and can buy 180 − 60 = 120 more hours before the basis changes.`,54,'x'),
+  E(SP,43,`Southwest Foods: maximize Z = 200x1 + 300x2 (Razorback and Longhorn chili) subject to 10x1 + 50x2 ≤ 500 (beans lb), 34x1 + 20x2 ≤ 800 (ground beef lb). Final tableau: x2 (300): 6 | 0 1 17/750 −1/150 ; x1 (200): 20 | 1 0 −1/75 1/30 ; zj: 5,800 | 200 300 310/75 70/15.
+a. Dual and dual values. b. What profit for Razorback gives no Longhorn, and the new solution? c. Effect of changing beans in Razorback from 10 to 15 lb per batch? d. Ranges of c1, c2. e. Feasible ranges of q1, q2. f. Maximum price for 100 more pounds of only one ingredient, which one? g. Which ingredient to secure? h. If the Longhorn profit becomes $400 is the solution affected?`,
+`a. Min Zd = 500y1 + 800y2 subject to 10y1 + 34y2 ≥ 200, 50y1 + 20y2 ≥ 300. y1 = 310/75 = $4.13 per lb of beans, y2 = 70/15 = $4.67 per lb of ground beef.
+b. Longhorn drops out when c1 > 510: then x1 = 800/34 = 23.53, x2 = 0 (for example c1 = 520 gives Z = 12,235).
+c. With 15 lb of beans per batch the optimum becomes x1 = 21.43, x2 = 3.57, Z = 5,357 (profit falls from 5,800).
+d. 60 ≤ c1 ≤ 510 and 117.65 ≤ c2 ≤ 1,000.
+e. 235.29 ≤ q1 ≤ 2,000 and 200 ≤ q2 ≤ 1,700.
+f. Beans are worth $4.13 × 100 = $413 and beef $4.67 × 100 = $467 at most (both inside their ranges).
+g. Ground beef (higher marginal value).
+h. No: 400 is inside 117.65 ≤ c2 ≤ 1,000, so x1 = 20, x2 = 6 stays optimal (Z becomes 6,400).`,54,'x'),
+  E(SP,44,`Agrimaster: maximize Z = 9x1 + 7x2 subject to 12x1 + 4x2 ≤ 60 (process 1 hr), 4x1 + 8x2 ≤ 40 (process 2 hr). Final tableau: x1 (9): 4 | 1 0 1/10 −1/20 ; x2 (7): 3 | 0 1 −1/20 3/20 ; zj: 57 | 9 7 11/20 12/20.
+a. Dual. b. Dual variables. c. Ranges of c1, c2. d. Feasible ranges of q1, q2. e. Maximum price for process 1 time and how many hours?`,
+`a. Min Zd = 60y1 + 40y2 subject to 12y1 + 4y2 ≥ 9, 4y1 + 8y2 ≥ 7.
+b. y1 = 11/20 = $0.55 per hour of process 1; y2 = 12/20 = $0.60 per hour of process 2 (Zd = 57).
+c. 3.5 ≤ c1 ≤ 21 and 3 ≤ c2 ≤ 18.
+d. 20 ≤ q1 ≤ 120 and 20 ≤ q2 ≤ 120.
+e. Up to $0.55 per hour, for at most 120 − 60 = 60 more hours.`,55,'x'),
+  E(SP,45,`Stratford House Furniture: maximize Z = 200x1 + 300x2 (end tables, coffee tables) subject to 2x1 + 5x2 ≤ 180 (labor hr), 3x1 + 3x2 ≤ 135 (wood bd ft). Final tableau: x2 (300): 30 | 0 1 1/3 −2/9 ; x1 (200): 15 | 1 0 −1/3 5/9 ; zj: 12,000 | 200 300 100/3 400/9.
+a. Dual. b. Dual variables. c. Coffee-table profit at which end tables stop being produced? d. Effect of wood increased from 135 to 180? e. Ranges of c1, c2. f. Feasible ranges of q1, q2. g. Maximum price for wood and how much? h. Labor or wood?`,
+`a. Min Zd = 180y1 + 135y2 subject to 2y1 + 3y2 ≥ 200, 5y1 + 3y2 ≥ 300.
+b. y1 = 100/3 = $33.33 per labor hour; y2 = 400/9 = $44.44 per board foot of wood (Zd = 12,000).
+c. When c2 rises above 500, x1 leaves: x2 = min(180/5, 135/3) = 36, x1 = 0 (for example c2 = 520 gives Z = 18,720).
+d. 180 is inside 108 ≤ q2 ≤ 270, so the basis stays: x2 = 30 − (2/9)(45) = 20, x1 = 15 + (5/9)(45) = 40, Z = 12,000 + 44.44(45) = 14,000.
+e. 120 ≤ c1 ≤ 300 and 200 ≤ c2 ≤ 500.
+f. 90 ≤ q1 ≤ 225 and 108 ≤ q2 ≤ 270.
+g. $44.44 per board foot, and 270 − 135 = 135 more board feet.
+h. Wood (44.44 > 33.33).`,56,'x'),
+  E(SP,46,`Electric motors: maximize Z = 70x1 + 80x2 subject to 2x1 + x2 ≤ 19 (production hr), x1 + x2 ≤ 14 (steel lb), x1 + 2x2 ≤ 20 (wire ft). Final tableau: x1 (70): 6 | 1 0 2/3 0 −1/3 ; s2 (0): 1 | 0 0 −1/3 1 −1/3 ; x2 (80): 7 | 0 1 −1/3 0 2/3 ; zj: 980 | 70 80 20 0 30.
+a. Dual. b. Dual values and meaning. c. Ranges of c1, c2. d. Feasible ranges of q1, q2, q3. e. A new machine raises production time from 19 to 25 hours: effect?`,
+`a. Min Zd = 19y1 + 14y2 + 20y3 subject to 2y1 + y2 + y3 ≥ 70, y1 + y2 + 2y3 ≥ 80.
+b. y1 = $20 per production hour, y2 = $0 (steel has 1 lb unused), y3 = $30 per foot of wire: the marginal value of each resource.
+c. 40 ≤ c1 ≤ 160 and 35 ≤ c2 ≤ 140.
+d. 10 ≤ q1 ≤ 22; 13 ≤ q2 < ∞; 9.5 ≤ q3 ≤ 23.
+e. 25 hours is outside the range (the upper limit is 22), so the solution mix changes. Profit rises by 20 × 3 = $60 up to 22 hours and then no more: with 25 hours the optimum is x1 = 8, x2 = 6, Z = 1,040.`,56,'x'),
+  E(SP,47,`Manufacturer: maximize Z = 9x1 + 12x2 subject to 4x1 + 8x2 ≤ 64, 5x1 + 5x2 ≤ 50 (labor hr), 15x1 + 8x2 ≤ 120 (material lb), x1 ≤ 7, x2 ≤ 7. Final tableau: x1 = 4, s5 = 1, s3 = 12, s4 = 3, x2 = 6, Z = 108, with zj of s1 and s2 = 3/4 and 6/5.
+a. Dual. b. Dual values. c. Ranges of c1, c2. d. Range of q1. e. Only 100 pounds of material available instead of 120: effect?`,
+`a. Min Zd = 64y1 + 50y2 + 120y3 + 7y4 + 7y5 subject to 4y1 + 5y2 + 15y3 + y4 ≥ 9, 8y1 + 5y2 + 8y3 + y5 ≥ 12.
+b. y1 = $0.75 per hour of process 1, y2 = $1.20 per hour of process 2, y3 = y4 = y5 = 0 (material and the two storage limits have slack, so extra units are worth nothing).
+c. 6 ≤ c1 ≤ 12 and 9 ≤ c2 ≤ 18.
+d. 57.14 ≤ q1 ≤ 68.
+e. The material range is 108 ≤ q3 < ∞; 100 is below 108, so the optimal mix changes: new optimum x1 = 3.27, x2 = 6.36, Z = 105.82.`,57,'x'),
+  E(SP,48,`Three products: maximize Z = 40x1 + 35x2 + 45x3 subject to 2x1 + 3x2 + 2x3 ≤ 120 (operation 1), 4x1 + 3x2 + x3 ≤ 160 (operation 2), 3x1 + 2x2 + 4x3 ≤ 100 (operation 3), x1 + x2 + x3 ≤ 40 (storage). Final tableau: s1 = 10, s2 = 60, x3 = 10, x2 = 30, Z = 1,500; zj of s3 and s4 = 5 and 25; cj − zj of x1 = 0.
+a. Dual. b. Dual values. c. How does the multiple optimum affect the dual interpretation? d. Range of c2. e. Feasible range of q4. f. Maximum price to lease more storage and how much?`,
+`a. Min Zd = 120y1 + 160y2 + 100y3 + 40y4 subject to 2y1 + 4y2 + 3y3 + y4 ≥ 40, 3y1 + 3y2 + 2y3 + y4 ≥ 35, 2y1 + y2 + 4y3 + y4 ≥ 45, y ≥ 0.
+b. y1 = y2 = 0 (operations 1 and 2 have unused hours), y3 = $5 per hour of operation 3, y4 = $25 per square foot of storage (Zd = 1,500).
+c. x1 is nonbasic with cj − zj = 0, so the problem has alternate optimal solutions (for example (20, 20, 0) is another optimal corner). The shadow prices and ranges printed belong to the reported basis; another optimal basis can have different dual values, so interpret them with care (my interpretation).
+d. 35 ≤ c2 ≤ 45.
+e. 25 ≤ q4 ≤ 42.5.
+f. Up to $25 per square foot, for 42.5 − 40 = 2.5 more square feet.`,57,'x'),
+  E(SP,49,`School dietitian: minimize Z = 0.03x1 + 0.02x2 subject to 4x1 + 5x2 ≥ 20 (protein), 12x1 + 3x2 ≥ 30 (iron), 3x1 + 2x2 ≥ 12 (carbohydrates). Final tableau: x2 = 3.6, x1 = 1.6, s1 = 4.4, Z = 0.12; zj − cj of s3 = −0.01, of s2 = 0.
+a. Dual. b. Dual values. c. Ranges of c1, c2. d. Ranges of q1, q2, q3. e. What would it be worth to reduce the carbohydrate requirement and to how many mg?`,
+`a. Max Zd = 20y1 + 30y2 + 12y3 subject to 4y1 + 12y2 + 3y3 ≤ 0.03, 5y1 + 3y2 + 2y3 ≤ 0.02, y ≥ 0.
+b. y1 = 0 (protein has 4.4 mg surplus), y2 = 0, y3 = $0.01 per mg of carbohydrate (the cost saved by lowering the requirement by 1 mg).
+c. 0.03 ≤ c1 ≤ 0.08 and 0.008 ≤ c2 ≤ 0.02 (c1 sits at the lower limit, so there are alternate optima).
+d. q1 ≤ 24.4; 18 ≤ q2 ≤ 39.43; 10.625 ≤ q3 ≤ 20.
+e. Each mg removed saves $0.01; the requirement can be lowered until 10.625 mg (the lower limit of q3).`,58,'x'),
+  E(SP,50,`Overnight Food Processing: maximize Z = 1.25x1 + 2.00x2 + 1.75x3 (cheese, ham salad, pimento) subject to 0.5x1 + 1.2x2 + 0.8x3 ≤ 1,200 (minutes), x1 + x3 − x2 ≤ 0 (ham salad demand at least the cheese demand), x2 ≤ 500. Optimal tableau: s1 = 200, x3 = 500, x2 = 500, Z = 1,875; cj − zj: x1 −0.5, s2 −1.75, s3 −3.75.
+a. Dual. b. Ranges of c1, c2, c3. c. Range of q3 (ham salad sandwiches). d. Spending $100 on leaflets raises demand for cheese sandwiches by 200 with all other sandwiches: should it spend it?`,
+`a. Min Zd = 1,200y1 + 0y2 + 500y3 subject to 0.5y1 + y2 ≥ 1.25, 1.2y1 − y2 + y3 ≥ 2.00, 0.8y1 + y2 ≥ 1.75, y ≥ 0 (the signs of y2 follow the −x2 in the second primal constraint). y1 = production minutes ($0), y2 = demand constraint ($1.75), y3 = ham salad limit ($3.75); Zd = 1,200(0) + 500(3.75) = 1,875.
+b. c1 ≤ 1.75; −1.75 ≤ c2 < ∞ (no upper limit); 1.25 ≤ c3 < ∞.
+c. 0 ≤ q3 ≤ 600 (it can grow to 600 ham salad sandwiches).
+d. My interpretation: the leaflets raise the right side of the demand constraint (x1 + x3 − x2 ≤ q2) by 200, worth $1.75 × 200 = $350 (valid up to q2 = 250). The $100 leaflet cost is lower than the $350 benefit, so yes, it should spend it.`,59,'x'),
+  E(SP,51,`Minimize Z = 3x1 + 5x2 + 2x3 subject to x1 + x2 − 3x3 ≥ 35, x1 + 2x2 ≥ 50, −x1 + x2 ≥ 25. Optimal tableau: s2 = 15, x1 = 5, x2 = 30, Z = 165; zj − cj: x3 −13, s1 −4, s3 −1.
+a. Find the optimal ranges for all cj values. b. Find the feasible ranges for all qi values.`,
+`a. x1: −3.5 ≤ c1 ≤ 5; x2: 3 ≤ c2 < ∞; x3 (nonbasic): in a minimization it only needs c3 ≥ z3 = −11, so −11 ≤ c3 < ∞ (the current value 2 is inside).
+b. q1: 25 ≤ q1 < ∞; q2: −∞ < q2 ≤ 65; q3: −5 ≤ q3 ≤ 35. The shadow prices are $4 for the first constraint, $0 for the second (it has surplus 15) and $1 for the third.`,60,'x'),
+  E(SP,52,`Sunshine Food Processing: maximize Z = 10x1 + 6x2 + 8x3 subject to 20x1 + 10x2 + 16x3 ≤ 320 (pears), 10x1 + 20x2 + 16x3 ≤ 400 (peaches), x1 + 2x2 + 2x3 ≤ 43 (mixing), x1 + x2 + x3 ≤ 60 (canning), 2x1 + x2 + x3 ≤ 40 (packaging). Optimal: x1 = 8, x2 = 16, s3 = 3, s4 = 36, s5 = 8, Z = 176; zj of s1 and s2 = 7/15 and 1/15.
+a. Maximum price for additional pears and how many? b. Marginal value of peaches and its range? c. Mixing time 43 → 60 hours? d. Packaging 40 → 50 hours? e. Which resource if only one can be increased?`,
+`a. $7/15 = $0.47 per pound; valid up to 328 pounds (200 ≤ q1 ≤ 328), so at most 8 more pounds.
+b. $1/15 = $0.067 per pound of peaches, valid for 160 ≤ q2 ≤ 430.
+c. No effect: mixing has 3 hours slack and its range is 40 ≤ q3 < ∞.
+d. No effect: packaging has slack 8 and its range is 32 ≤ q5 < ∞.
+e. Pears (marginal value 0.47 vs 0.067 for peaches).`,61,'x'),
+  E(SP,53,`Evergreen Products: maximize Z = 4x1 + 10x2 + 8x3 (Western, Old English, Colonial) subject to 5x1 + 4x2 + 4x3 ≤ 200 (pine), 2x1 + 5x2 + 2x3 ≤ 160 (spruce), x1 + x2 + 2x3 ≤ 50 (cutting), 2x1 + 4x2 + 2x3 ≤ 80 (pressing). Optimal: x3 = 20, x2 = 10, s1 = 80, s2 = 70, Z = 260; zj of s3 and s4 = 2 and 2.
+a. Marginal value of spruce and its range. b. Marginal value of cutting and its range. c. More cutting or pressing? d. Spruce cut from 160 to 100? e. Profit of Western needed before producing it? f. Colonial profit 8 → 13?`,
+`a. $0 (70 lb of spruce are unused); valid for 90 ≤ q2 < ∞.
+b. $2 per cutting hour, valid for 20 ≤ q3 ≤ 80.
+c. Both are worth $2 per hour; pressing can be increased more (to 132.5, i.e. 52.5 hours) than cutting (to 80, i.e. 30 hours), so pressing allows the larger gain.
+d. No: 100 is still inside 90 ≤ q2 < ∞, so the solution does not change.
+e. Western must earn more than $6 per unit (c1 ≤ 6 keeps it out); at 7 the plan changes to x1 = 30, x3 = 10, Z = 290.
+f. No change in the solution: 13 is inside 5 ≤ c3 ≤ 20 (Z becomes 20(13) + 10(10) = 360).`,61,'x'),
+  E(SP,54,`Four products: maximize Z = 2x1 + 8x2 + 10x3 + 6x4 subject to 2x1 + x2 + 4x3 + 2x4 ≤ 200 (material lb), x1 + 2x2 + 2x3 + x4 ≤ 160 (machine hr). Optimal tableau: x4 = 80, x2 = 40, Z = 800; zj of s1 and s2 = 4/3 and 10/3. What is the marginal value of an additional pound of material, and over what range is it valid?`,
+`$4/3 = $1.33 per pound of material, valid for 80 ≤ q1 ≤ 320 (Δ from −120 to +120). Machine time is worth $10/3 = $3.33 per hour, valid for 100 ≤ q2 ≤ 400.`,63,'x')
+ ]);
+
+ SUBJ.or.topics.push('Graphical Solution Section Examples','Multiple Optimal Solutions and Degeneracy','Mixed Constraints: Surplus, Artificial Variables and Big M','The Dual and Shadow Prices','Sensitivity Analysis: Objective Coefficients (cj)','Sensitivity Analysis: Constraint Quantities (qi)','Module A Problems (Taylor)');
+ TOPIC_RX.or.push(
+  /graphical|corner point|extreme point|feasible region|degenerate point/i,
+  /multiple optimal|alternate optimal|degenerac|tie for the pivot|infeasible|unbounded/i,
+  /artificial|surplus|big m|mixed constraint|transform/i,
+  /dual|shadow price|marginal value/i,
+  /range of c|c1 range|optimal range|objective (function )?coefficient|cj/i,
+  /range of q|feasible range|quantity value|constraint quantit|q1|q2|labor hours/i,
+  /module a|problem \d+|tableau/i);
+
+ SUBJ.or.rescue.push(
+  ['Simplex لو فيه ≥ أو = (Big M)','≤ : تضيف slack (تكلفتها 0). = : تضيف artificial (−M في الـmax و+M في الـmin). ≥ : تطرح surplus (0) وتضيف artificial. الـartificial لازم يخرج من الحل. في الـmin بتبدّل الصف cj − zj بـ<bdi class="f">zj − cj</bdi> والحل أمثل لما مفيش zj − cj موجب. لو الـRHS سالب اضرب القيد في −1 واعكس الإشارة.'],
+  ['حالات الـSimplex الخاصة','Multiple optimal: متغير nonbasic قيمة cj − zj بتاعته = 0 (ادخله تطلع الحل التاني). Infeasible: الحل أمثل بس لسه فيه artificial بقيمة موجبة. Unbounded: عمود الدخول كل ratios فيه سالبة أو غير معرّفة، مفيش pivot row. Tie في الصفوف: اختار عشوائي وهيطلع degeneracy (قيمة صفر في الـbasis) وكمّل عادي.'],
+  ['الحل البياني: خطوات وحالات','ارسم الخطوط وظلّل الـfeasible region (القيد ≥ بيبعد عن نقطة الأصل). احسب Z عند كل corner point والأكبر (max) أو الأصغر (min) هو الأمثل. Multiple optimal لو دالة الهدف موازية لقيد. Infeasible لو القيود مش بتتقاطع. نقطة بتجي من أكتر من قيدين تبقى degenerate. منطقة مفتوحة مش معناها unbounded في الـmin.'],
+  ['الـDual وShadow prices','لكل قيد في الـprimal متغير في الـdual، وRHS الـprimal هو معاملات دالة هدف الـdual، ومعاملات الـprimal الأعمدة تبقى صفوف. max بقيود ≤ يتحول لـmin بقيود ≥. قيم الـdual هي <bdi class="f">cj − zj</bdi> لأعمدة الـslack في الجدول الأمثل (سعر ظل كل مورد = أقصى سعر تدفعه في الوحدة الزيادة)، ومورد فيه slack سعره صفر. مجموع (RHS × y) = Z الأمثل.'],
+  ['Sensitivity: مدى cj','لو المتغير basic: خد cj = cj + Δ في الصف والعمود، واحسب cj − zj الجديد لكل عمود nonbasic واجعله ≤ 0 (max). حل المتباينات في Δ يطلع المدى. لو المتغير nonbasic: Δ بتظهر في عمود واحد بس، فالمدى لحد cj = zj. المدى بتاع تغيير معامل واحد بس في المرة.'],
+  ['Sensitivity: مدى qi وسعر الظل','تغيّر Δ في qi بينعكس في عمود الـslack si بتاعه: كمّل الـquantity column بإضافة Δ × (عمود si) وخليها كلها ≥ 0 عشان تطلع Δ min و max. جوه المدى نفس المتغيرات في الحل وسعر الظل ثابت. القيد ≥ بنتعامل معاه بـ−Δ لأن الـsurplus بيتطرح. الأرباح الزيادة = سعر الظل × Δ.']
+ );
+
+ MCQB.or.push(
+  ['In a maximization problem an artificial variable gets which objective coefficient?','−M',['+M','0','+1'],'Module A: −M drives it out of the solution; in a minimization problem it gets +M.'],
+  ['A ≥ constraint is transformed by:','Subtracting a surplus variable and adding an artificial variable',['Adding a slack variable','Adding only an artificial variable','Subtracting only a surplus variable'],'Slack for ≤, artificial for =, surplus and artificial for ≥.'],
+  ['A final tableau that looks optimal but still contains an artificial variable at a positive level shows that the problem is:','Infeasible',['Unbounded','Degenerate','Has multiple optimal solutions'],'Module A: artificial variable in the final solution means infeasible.'],
+  ['The simplex method shows an UNBOUNDED problem when:','No pivot row can be selected (all ratios negative or undefined)',['A tie for the pivot column appears','A basic variable equals zero','All cj − zj are zero'],'Module A: unbounded when the pivot column has no positive entry.'],
+  ['A nonbasic variable with cj − zj = 0 in the final tableau indicates:','Multiple optimal solutions',['An infeasible problem','An unbounded problem','Degeneracy'],'Enter that variable to find the alternate solution.'],
+  ['A tie for the pivot row is broken arbitrarily and results in:','A basic variable with value 0 (degeneracy)',['An infeasible problem','An unbounded solution','Multiple optimal solutions'],'The other tied variable will have quantity 0 in the next tableau.'],
+  ['In the graphical example max Z = 40x + 30y s.t. x + 2y ≤ 40, 4x + 3y ≤ 120 there are multiple optimal solutions because:','The objective is parallel to constraint 2',['The feasible region is unbounded','Constraint 1 is redundant','The origin is optimal'],'40x + 30y is proportional to 4x + 3y.'],
+  ['Max 5x1 + 3x2 s.t. 4x1 + 2x2 ≤ 8, x1 ≥ 4, x2 ≥ 6 is:','Infeasible',['Unbounded','Optimal at (2,0)','Degenerate'],'x1 ≥ 4 and x2 ≥ 6 force 4x1 + 2x2 ≥ 28.'],
+  ['In the graphical problem min Z = 200x + 50y s.t. 6x + 3y ≥ 60, 2x + 3y ≥ 36 the optimum is at:','(0, 20)',['(6, 8)','(18, 0)','(0, 12)'],'Z = 1,000 at (0,20) vs 1,600 at (6,8) and 3,600 at (18,0).'],
+  ['A degenerate corner point is one that:','Comes from more than two constraint lines',['Lies on the x-axis','Has Z = 0','Is outside the feasible region'],'Section graphical problem 5: point C(2,0).'],
+  ['In the dual of a maximization problem with ≤ constraints, the constraints are:','≥ constraints',['≤ constraints','= constraints','The same as the primal'],'Max with ≤ becomes min with ≥.'],
+  ['The dual variables of the Hickory Furniture model (labor, wood, storage) are:','$20, $6.67, $0',['$160, $200, $0','$40, $216, $240','$2,240 each'],'They are the shadow prices: the cj − zj of the slack columns.'],
+  ['The shadow price of a resource that is not completely used is:','Zero',['Equal to its profit','Negative','Infinite'],'The Hickory storage space has 48 ft² unused.'],
+  ['Hickory model: the range of c1 over which x1 = 4, x2 = 8 stays optimal is:','100 ≤ c1 ≤ 200',['60 ≤ c1 ≤ 160','160 ≤ c1 ≤ 320','0 ≤ c1 ≤ 200'],'−20 + Δ/2 ≤ 0 and −20/3 − Δ/9 ≤ 0 give −60 ≤ Δ ≤ 40.'],
+  ['Hickory model: the range of c2 is:','160 ≤ c2 ≤ 320',['100 ≤ c2 ≤ 200','200 ≤ c2 ≤ 360','0 ≤ c2 ≤ 320'],'−40 ≤ Δ ≤ 120 with c2 = 200 + Δ.'],
+  ['Hickory model: the labor range q1 over which the solution basis stays feasible is:','32 ≤ q1 ≤ 48',['24 ≤ q1 ≤ 48','8 ≤ q1 ≤ 48','32 ≤ q1 ≤ 40'],'The s1 column gives Δ ≥ −16, Δ ≤ 8 and Δ ≥ −8.'],
+  ['Hickory model: buying 8 more labor hours raises profit by:','$160 (to $2,400)',['$20','$320','$8'],'20 per hour × 8 hours.'],
+  ['Hickory model: the storage range 192 ≤ q3 < ∞ means that:','Extra storage never changes the solution mix',['Storage is the scarcest resource','Storage must be exactly 240','Storage has shadow price 20'],'s3 = 48 is basic, so more storage is worthless.'],
+  ['For a ≥ constraint, to use the surplus column in sensitivity analysis we consider:','A −Δ change in qi',['A +Δ change in qi','No change','A change of M'],'Module A: surplus is subtracted, so the effect is reversed.'],
+  ['Munchies cereal (min 0.05 oats + 0.03 rice, 8a + 6r ≥ 48, a + 2r ≥ 12) has optimal cost:','$0.24 (0 oats, 8 oz rice)',['$0.285','$0.60','$0.12'],'Corner (0,8) is the cheapest feasible corner.'],
+  ['Pinewood Furniture (max 400 chairs + 100 tables) has optimal profit:','$2,720 (6 chairs, 3.2 tables)',['$2,400','$3,200','$1,000'],'Demand limit x1 ≤ 6 and labor are binding.'],
+  ['Jewelry store (max 300 necklaces + 400 bracelets, gold ≤ 18, platinum ≤ 20, bracelets ≤ 4) has Z =','$2,400',['$1,800','$3,000','$2,600'],'x1 = 4, x2 = 3.'],
+  ['The simplex method guarantees integer solutions:','False: values can be fractional',['True always','True for maximization only','True when all constraints are ≤'],'Example: sporting goods problem x1 = 105.26.'],
+  ['In Problem 46 (electric motors) the shadow price of production hours is $20 and valid for 10 ≤ q1 ≤ 22. If production time goes to 25 hours:','The solution mix changes (25 is outside the range)',['Profit rises 6 × 20 = $120','Nothing changes','Wire becomes worthless'],'Beyond 22 hours the basis changes (new optimum x1 = 8, x2 = 6, Z = 1,040).']
+ );
+
+ WHATS_NEW.unshift({d:'25 أكتوبر 2026 (OR)',de:'25 October 2026 (OR)',items:[
+  'OR: كل مسائل Module A من Taylor (54 مسألة) بحلولها، والـgraphical Section (5 مسائل)، وأمثلة الـmixed constraints وحالات الـSimplex الخاصة والـdual، وSensitivity (مدى cj وqi) بمثال Hickory خطوة بخطوة.'],
+  en:['OR: all Taylor Module A problems (54, with solutions), the graphical-solution section (5 problems), mixed constraints, the special simplex cases, the dual, and sensitivity analysis (cj and qi ranges) with the Hickory example step by step.']});
+})();
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
    ===================================================================== */
@@ -4089,7 +4677,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.4.6';
+const APP_VERSION='1.5.0';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
