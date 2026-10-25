@@ -469,7 +469,7 @@ const df = id => 'https://drive.google.com/file/d/'+id+'/view';
 const SUBJ = {
  math:{n:'Math 3',ar:'الجبر الخطي',c:'math',gpa:true,
   staff:'محاضرة: أ.د. طارق أبو العنين · سكشن: م. زينب هشام',grade:[['فاينل',60],['ميد',20],['شيتات',20]],
-  covered:'حسب 13 أكتوبر: وصلوا ص49 وخلصوا Section 1.5 Solution Sets of Linear Systems (ص45-52)، وقبلها 1.4 The Matrix Equation Ax = b. خريطة الدروس: Lesson 1 = 1.1 (ص1-13) · Lesson 2 = 1.2 (ص13-26) · Lesson 3 = 1.3 Vector Equations (ص26-37) · Lesson 4 = 1.4 (ص37-45). Exercises 3 = مسائل 1.3، وExercises 4 = مسائل 1.4.',
+  covered:'حسب 25 أكتوبر خلصوا مع الدكتور Chapter 1 (1.1 لـ 1.5) وChapter 2 (2.1 و2.2) وChapter 3 (3.1). وحسب 13 أكتوبر: وصلوا ص49 وخلصوا Section 1.5 Solution Sets of Linear Systems (ص45-52)، وقبلها 1.4 The Matrix Equation Ax = b. خريطة الدروس: Lesson 1 = 1.1 (ص1-13) · Lesson 2 = 1.2 (ص13-26) · Lesson 3 = 1.3 Vector Equations (ص26-37) · Lesson 4 = 1.4 (ص37-45). Exercises 3 = مسائل 1.3، وExercises 4 = مسائل 1.4.',
   topics:['Linear Models in Economics and Engineering','Systems of Linear Equations','Matrix Notation','Solving a Linear System','Existence and Uniqueness Questions','Row Reductions and Echelon Forms','Pivot Positions','Row Reduction Algorithm','Solutions of Linear Systems','Parametric Description of Solution Sets','Back-Substitution','Vector Equations','Vectors in 2D, 3D','Linear Combinations','Vector Spans','The Matrix Equation Ax = b','Existence of Solutions (Theorem 4)','Computation of Ax (Row–Vector Rule)','Properties of Ax (Theorem 5)'],
   rules:['الـ Row Operations مهمة والدكتور قال ممكن تيجي في الامتحان بأي شكل (MCQ أو مقالي).','الأسايمنت فردي وبخط اليد وبدون AI، وبيتراجع بأدوات كشف سرقة وAI.','في بونص على أسئلة المعيد في السكاشن.','فولدر الامتحانات القديمة فاضي (الكود جديد MA214)، فالمرجع هو كتاب Lay والشيتات.'],
   path:['اتفرج على بلاي ليست أحمد حجاج من أول فيديو.','حل أمثلة الكتاب بنفسك قبل ما تبص على الحل.','Ex-2: اكتب خصائص Echelon وReduced Echelon وخوارزمية الاختزال بكلامك.','قبل أي امتحان: اختزل 5 مصفوفات من الصفر بدون خطوات جاهزة.'],
@@ -3755,6 +3755,78 @@ N('math','2026-10-18','change',`باقي Chapter 1 (الأقسام اللي بع
   en:['New tasks for every course in the task list (Assignment 2 in OOP, Solver in OR, the assignments in Math 3, Sampling Distribution in Stat 2...).',
   'News from 14 to 20 October for all six courses: assignment discussions, schedule changes and an important warning about Sampling Distribution.']});
 })();
+/* Update 2026-10-25. Source: the 6 WhatsApp class chats read from 20/10/2026 ~7:13 pm to 25/10/2026 (text only: pictures/PDFs of the export were NOT included).
+   News, tasks and resource links come from the chats only. No questions or cards were added (owner rule: nothing written from my own knowledge). */
+(function(){
+ const N=(u,d,k,t,en)=>({u,d,k,t,en});
+ NEWS.push(
+  N('or','2026-10-21','change',`مفيش محاضرة OR النهارده (الأربع 21/10)، اتلغت.`,`There is no OR lecture today (Wednesday 21/10); it was cancelled.`),
+  N('or','2026-10-21','note',`اتنزل فيديو يوتيوب بيشرح Simplex بطريقة الدكتورة مع صورة سلايد الشرح (الرابط في الموارد).`,`A YouTube video explaining the Simplex method the doctor's way was posted with a picture of the explanation slide (the link is in Resources).`),
+  N('or','2026-10-23','deadline',`أول كويز يوم الأربع 28/10 في ميعاد المحاضرة العادي، على كل اللي اتاخد لحد دلوقتي. هيتعمل على 3 مجموعات، وتوزيع المجموعات والتوقيت هيتعلنوا في رسالة لوحدها.`,`The first quiz is on Wednesday 28/10 at the usual lecture time and covers everything studied so far. It will be held in three groups; the group distribution and timing will be announced in a separate message.`),
+  N('or','2026-10-24','note',`اتنزل على الجروب فيديو شرح استخدام Excel في Simplex Method (على الدرايف، في الموارد)، وPDF آخر محاضرة، وصور من الكتاب فيها شرح وتمارين لمن يريد يحل أكتر.`,`Posted in the group: a video on using Excel for the Simplex Method (on Drive, in Resources), the PDF of the last lecture, and pictures from the book with explanations and exercises for anyone who wants more practice.`),
+  N('or','2026-10-25','note',`سكاشن مسجلة من دفعات سابقة (Section 2 لـ 7) اتحطت في الموارد. اتأكد إن طريقة الحل فيها نفس طريقتنا قبل ما تعتمد عليها.`,`Section recordings from previous batches (Sections 2 to 7) were added to Resources. Check that their solving method matches ours before relying on them.`),
+  N('math','2026-10-21','note',`موقع matrixcalc.org فيه كل عمليات الـMatrices وحل System of Linear Equations، مفيد جدًا تتأكد بيه من إجاباتك (في الموارد).`,`The website matrixcalc.org does all matrix operations and solves systems of linear equations, very useful for checking your answers (in Resources).`),
+  N('math','2026-10-25','note',`اللي خلصناه مع الدكتور لحد دلوقتي: Chapter 1 من 1.1 لـ 1.5، وChapter 2 الأقسام 2.1 و2.2، وChapter 3 القسم 3.1.`,`Covered with the doctor so far: Chapter 1 from 1.1 to 1.5, Chapter 2 sections 2.1 and 2.2, and Chapter 3 section 3.1.`),
+  N('net','2026-10-22','note',`صور بورد سكشن م. محمد اتنزلت على الجروب.`,`Pictures of the board from Eng. Mohamed's section were posted in the group.`),
+  N('net','2026-10-24','change',`سكشن م. يمنى فتحي يوم السبت 24/10 اتلغى لظروف صحية، وهتبلّغ بميعاد التعويض.`,`Eng. Yomna Fathy's section on Saturday 24/10 was cancelled for health reasons; she will announce the makeup session.`),
+  N('stat','2026-10-22','change',`سكشن م. سماء النهارده (الخميس 22/10) بدأ الساعة 8:30 الصبح.`,`Eng. Samaa's section today (Thursday 22/10) started at 8:30 AM.`),
+  N('stat','2026-10-22','note',`اتنزل لينك فولدر Flashat على الدرايف (في الموارد)، وقال إنه هيفيد. ولاحظ إن شرح Flashat على يوتيوب فيه أخطاء فقارنه بالسلايدات.`,`A Flashat Drive folder link was shared (in Resources) and it should help. Note that Flashat's YouTube explanations contain mistakes, so compare them with the slides.`),
+  N('stat','2026-10-24','note',`اتنزلت صور سكشن الأسبوع اللي فات على الجروب.`,`Pictures of last week's section were posted in the group.`),
+  N('oop','2026-10-21','note',`اتنزل ريكورد لزميل من دفعة أكبر بيشرح Task 0 وإزاي تشتغل. ومعاه موقعين: PlantUML (تحط الكود وتطلعلك الـclass diagram) وdraw.io (للـDiagrams). الروابط في الموارد.`,`A recording by a student from an older batch explaining Task 0 and how to work was posted. Two sites came with it: PlantUML (paste code and get the class diagram) and draw.io (for diagrams). Links are in Resources.`),
+  N('oop','2026-10-22','deadline',`جدول مناقشة التيمات المتأخرة اتنزل في شيت. القواعد زي ما هي: كل عضو بيتسأل، واللابتوب والمشروع شغّال والكارنيه معاك، والعذر الرسمي بالإيميل ولازم رد بالقبول، وبدون عذر مقبول الدرجة بتروح.`,`The discussion schedule for late teams was posted in a sheet. Same rules: every member is questioned, bring your laptop with the project running and your ID, an official excuse must be emailed and is valid only with a confirming reply, and without an accepted excuse you lose the grade.`),
+  N('oop','2026-10-23','change',`مناقشات Assignment 1 اللي كانت 23/10 اتأجلت لبكرة 24/10 في نفس المواعيد (م. مهيتاب). ويوم 24/10 هو آخر فرصة للمناقشة، واللي مش هيحضر مش هياخد درجة. هات: صورة كاملة من GitHub history، فيديو جاهز، ملف System diagram، والكود جاهز للتشغيل.`,`Assignment 1 discussions that were set for 23/10 were postponed to 24/10 at the same times (Eng. Mahetab). 24/10 is the last chance and anyone who does not attend gets no grade. Bring: a full screenshot of the GitHub history, a video ready to play, the system-diagram document, and code ready to run.`),
+  N('oop','2026-10-23','note',`Assignment 2 بتاع الـVole Machine بالتفصيل (ملخص من زميل، اقرأ نص الدكتور الأصلي): البرنامج بيحاكي الـCPU في تخزين الـMemory. اتفرج على فيديوهات الدكتور عشان تفهم الـVole Machine بتتكتب إزاي، واكتب برنامجين بسيطين بيها. اطلب من 3 AI مختلفين وصف البرنامج يصمموه، وسلّم الـ3 تصاميم لـAI رابع يختار الأحسن وليه. كل ده في تقرير PDF مع فيديو حوالي 10 دقايق. التسليمة التانية: تكتب كود التصميم بنفسك بالـC++ من غير AI، وبرامج الـVole Machine بتاعة الكل هتتنشر لتجربها. بونص: GUI (والـAI مسموح فيه).`,`Assignment 2, the Vole Machine, in detail (a classmate's summary; read the doctor's original text): the program simulates how a CPU stores memory. Watch the doctor's videos to learn how Vole Machine programs are written and write two simple programs with it. Give 3 different AIs the program description to design it, then give the 3 designs to a fourth AI to pick the best one and say why. All of this goes into a PDF report with a video of about 10 minutes. Second delivery: write the design's code yourself in C++ without AI, and everyone's Vole Machine programs will be published for you to test. Bonus: a GUI (AI is allowed for it).`),
+  N('oop','2026-10-23','note',`ملاحظات مهمة في Assignment 2: لازم تشتغلوا على GitHub، وقسّموا الشغل بينكم. الـAI مسموح في كل حاجة ما عدا كود الـC++ اللي هتكتبه (غير الـGUI). لازم فيديو للتقرير وفيديو تاني للـGUI لو عملتوه. ولازم تسلموا برنامجين Vole Machine شغالين في الفورم. تفاصيل التسليمة الأخيرة هتنزل بعدين.`,`Important notes for Assignment 2: you must work on GitHub and split the work between you. AI is allowed everywhere except the C++ code you write (the GUI aside). You need one video for the report and another for the GUI if you build one. You must submit two working Vole Machine programs in the form. Details of the final delivery will be posted later.`),
+  N('oop','2026-10-23','deadline',`فورم تسليم برنامجي الـVole Machine اتنزل على الجروب، والديدلاين 26/10. اسم الملف لازم يحتوي IDs التيم كلها، ومن رفع من غير الـIDs يرفع تاني.`,`The form for submitting the two Vole Machine programs was posted in the group. The deadline is 26/10. The file name must contain all the team's IDs; if you uploaded without them, upload again.`),
+  N('oop','2026-10-23','deadline',`تسليم تقرير Assignment 2 Part 1 اتفتح على الكلاسروم. الملف PDF باسم CS213_A2_Part1_SectionNum_YourID_YourID_YourID_YourID.pdf، ولو أي جزء ناقص التقرير بيترفض: غلاف (أسماء، IDs، إيميلات، الكلية والجامعة، اسم الأسايمنت، بيانات المادة، تليفون قائد التيم، التاريخ) وجدول بيوضح مين عمل إيه، Introduction عن الـVole Machine ومعماريتها، Initial Design بالكلاسات ومسؤولياتها مع PlantUML وUML class diagram، AI Designs بالمحادثات كاملة مع الـ3 AI وتصميم كل واحد، Final Design بالمحادثة كاملة وليه هو الأفضل، Examples فيها برنامجين Vole Machine، ولينك الفيديو.`,`Assignment 2 Part 1 report submission opened on Classroom. A PDF named CS213_A2_Part1_SectionNum_YourID_YourID_YourID_YourID.pdf; if any part is missing the report is rejected: a cover page (names, IDs, emails, faculty and university, assignment name, course info, team leader phone, date) and a table showing who did what, an Introduction describing the Vole Machine and its architecture, an Initial Design with the classes and their responsibilities plus PlantUML and a UML class diagram, AI Designs with the full conversations with the three AIs and each design, a Final Design with the full conversation and why it is the best, Examples with two Vole Machine programs, and the video link.`),
+  N('oop','2026-10-24','deadline',`Lab (S21,22,41,42) م. داليا: تاسك بتسلّمه ملف .cpp واحد بس فيه الكود كامل مع تعليقات تشرحه، على الكلاسروم. الديدلاين اتعدل لـ11:59 بليل يوم 25/10 (كان 6 الصبح). مطلوب من المسجلين في الجروب ده بس.`,`Lab (S21, 22, 41, 42) Eng. Dalia: a task delivered as a single .cpp file with the full code and explanatory comments, on Classroom. The deadline was changed to 11:59 PM on 25/10 (it was 6 AM). Required only from those registered in that lab group.`),
+  N('oop','2026-10-24','note',`الدكتور نزّل محاضرات 9 و10 و11 وامتحانات قديمة للمادة. موجودين على الكلاسروم واتحطوا على الدرايف (فولدر المحاضرات 1 لـ 12 وفولدر الامتحانات القديمة في الموارد).`,`The doctor released lectures 9, 10 and 11 and old exams for the course. They are on Classroom and were put on Drive (the folder of lectures 1 to 12 and the old-exams folder are in Resources).`),
+  N('ent','2026-10-23','deadline',`مناقشات مجموعات م. محمد تامر يوم 24/10 من 11 لـ 1:30 في غرفة المعيدين. كل تيم يجهّز شغله ويعرضه بسلايد أو اتنين، والدرجة بس للأعضاء الحاضرين والمشاركين فعلًا.`,`Discussions for Eng. Mohamed Tamer's groups on 24/10 from 11:00 to 1:30 in the TAs' room. Every team prepares and presents its work with one or two slides, and only members who are present and actively take part get a grade.`),
+  N('ent','2026-10-23','change',`مناقشات مجموعات م. نورا يوم 24/10 من 11 لـ 12 في غرفة المعيدين بالترتيب: تيم 111 الساعة 11:05، 113 الساعة 11:15، 115 الساعة 11:25، 116 الساعة 11:35، 121 الساعة 11:45، 100 الساعة 11:55. مفيش فرصة تانية.`,`Eng. Nora's groups' discussions on 24/10 from 11 to 12 in the TAs' room in this order: team 111 at 11:05, 113 at 11:15, 115 at 11:25, 116 at 11:35, 121 at 11:45, 100 at 11:55. There are no other chances.`),
+  N('ent','2026-10-24','deadline',`التيمات اللي لسه معندهاش معيد مناقشة في ملف الـExcel تملا الفورم (على الجروب) لحد 25/10 الساعة 11:59 بليل، وده آخر فرصة للتسجيل. اللي كان مع م. أحمد رمزي هيناقش مع م. نورا حسن ومايملاش الفورم.`,`Teams that are not yet assigned a discussion TA in the Excel file must fill the form (in the group) by 25/10 at 11:59 PM; this is the last chance to register. Teams that were with Eng. Ahmed Ramzy will discuss with Eng. Noura Hassan and must not fill the form.`)
+ );
+ NEWS.forEach((n,i)=>{ if(!n.id) n.id='n'+i; });
+
+ const T=(id,u,t,due,hi)=>({id,u,t,due:due||null,hi:hi||0});
+ TASKS0.push(
+  T('p25-oop-vole','oop',`OOP: ارفع برنامجين Vole Machine شغالين على الفورم (اسم الملف فيه IDs التيم كلها)`,'2026-10-26',1),
+  T('p25-oop-report','oop',`OOP: سلّم تقرير Assignment 2 Part 1 على الكلاسروم (PDF بالاسم المطلوب وكل الأقسام وإلا يترفض)`,'2026-10-26',1),
+  T('p25-oop-ais','oop',`OOP: خلّي 3 AI مختلفين يصمموا الـVole Machine وAI رابع يختار الأحسن، واحفظ المحادثات كاملة للتقرير`,null),
+  T('p25-oop-video','oop',`OOP: اعمل فيديو التقرير (حوالي 10 دقايق) وحط لينكه في التقرير`,null),
+  T('p25-oop-lect','oop',`OOP: نزّل محاضرات 9 و10 و11 وذاكرها، وبص على الامتحانات القديمة`,null),
+  T('p25-or-quiz','or',`OR: كويز الأربع 28/10 في ميعاد المحاضرة على كل المنهج لحد دلوقتي (استنى إعلان المجموعات والتوقيت)`,'2026-10-28',1),
+  T('p25-or-excel','or',`OR: اتفرج على فيديو الـExcel للـSimplex واتمرن بيه`,null),
+  T('p25-math-ch','math',`Math 3: ذاكر اللي خلصناه مع الدكتور: Chapter 2 (2.1 و2.2) وChapter 3 (3.1)`,null),
+  T('p25-net-makeup','net',`Networks: استنى إعلان ميعاد تعويض السكشن اللي اتلغى`,null),
+  T('p25-ent-form','ent',`ريادة الأعمال: لو تيمك مش متسجل عند معيد مناقشة في الإكسل املا الفورم (آخر فرصة)`,'2026-10-25',1)
+ );
+
+ SUBJ.or.res.push(
+  ['شرح Simplex بطريقة الدكتورة',yv('UPOxBeovVl4'),'مع صورة السلايد على الجروب'],
+  ['فيديو Excel للـSimplex Method',df('1LxVsiApo7Xf7AF547X2_FbYw7mOcZJBP'),'من م. أريج'],
+  ['Section 2 (دفعة سابقة)',dr('1pCuA8LlKoBCDbt4FbzXR7BQ3AZMBRqGl'),'اتأكد إنها نفس طريقتنا'],
+  ['Section 3 (دفعة سابقة)',df('1pEah1A8CrSIszz1hiZNAJKSkjmLIXWZu'),''],
+  ['Section 4 (دفعة سابقة) الجزء 1',df('1TZ0NzolmWlNzsbwdcyzb7kbrfsMRcQLg'),''],
+  ['Section 4 (دفعة سابقة) الجزء 2',df('1izjP3KS2M2ps7ku2wvbZ3sXJpy2Y__lP'),''],
+  ['Section 5 و6 (دفعة سابقة) الجزء 1',df('1apPebS0bWYzR8f_w_znODKMUAq-OjHnM'),''],
+  ['Section 5 و6 (دفعة سابقة) الجزء 2',df('1K1ozwWnco5aeX3y3EmsTWZqGktbRKcwO'),''],
+  ['Section 5 و6 (دفعة سابقة) الجزء 3',df('1bhjpu-PvJb_31wB2jxvYpHk9S9R-4qli'),''],
+  ['Section 7 (دفعة سابقة)',df('1tIwI5XcKCSLvsJUZYEBLiKM62BdEWzs6'),'']);
+ SUBJ.math.res.push(['موقع matrixcalc.org لمراجعة إجاباتك','https://matrixcalc.org/','Matrices وSystems of Linear Equations']);
+ SUBJ.stat.res.push(['فولدر Flashat على الدرايف',dr('1RYDS1Mn3EIfqh2D3TOke5zWigSgAvrKd'),'قارنه بالسلايدات']);
+ SUBJ.oop.res.push(
+  ['ريكورد شرح Task 0 (من زميل دفعة أكبر)',dr('18SoM-F4jhN5EKAZvG7EGRexRbKM5rcfJ'),''],
+  ['PlantUML (طلّع الـclass diagram من الكود)','https://plantuml.com',''],
+  ['draw.io (للـDiagrams)','https://www.drawio.com',''],
+  ['كل محاضرات الدكتور 1 لـ 12 (درايف)',dr('17WLQe7mDGbVPEoEwrW3DpU-j55V5Y1Bn'),''],
+  ['امتحانات قديمة للمادة (درايف)',dr('1QXPqc2AglGXGMljD8nnfOzJXJoGJo7i_'),'']);
+
+ WHATS_NEW.unshift({d:'25 أكتوبر 2026',de:'25 October 2026',items:[
+  'أخبار ومهام جديدة من 21 لـ 25 أكتوبر: كويز OR يوم 28/10، وتفاصيل Assignment 2 وتسليماته في OOP، ومناقشات ريادة الأعمال.',
+  'روابط جديدة في الموارد: شروحات Simplex، سكاشن OR من دفعات سابقة، محاضرات OOP 1 لـ 12 وامتحانات قديمة، PlantUML وdraw.io.'],
+  en:['New news and tasks from 21 to 25 October: the OR quiz on 28/10, Assignment 2 details and deliveries in OOP, and the Entrepreneurship discussions.',
+  'New links in Resources: Simplex explanations, OR sections from previous batches, OOP lectures 1 to 12 and old exams, PlantUML and draw.io.']});
+})();
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
    ===================================================================== */
@@ -4017,7 +4089,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.4.5';
+const APP_VERSION='1.4.6';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -4252,15 +4324,22 @@ const EN_DICT={
 "{0}: Exercises {1} و{2} (Lay {3} و{4})":"{0}: Exercises {1} and {2} (Lay {3} and {4})",
 "{0}: ابدأ Chapter {1} في الكتاب (Matrix Operations)":"{0}: start Chapter {1} in the book (Matrix Operations)",
 "{0}: احجز ميعاد مناقشة Assignment {1} في شيت معيدك بإيميل الكلية ومن غير ما تلمس خلايا غيرك":"{0}: book your Assignment {1} discussion slot in your TA\u0027s sheet with your college email, without touching anyone else\u0027s cells",
+"{0}: ارفع برنامجين Vole Machine شغالين على الفورم (اسم الملف فيه IDs التيم كلها)":"{0}: upload two working Vole Machine programs to the form (the file name must contain all the team IDs)",
+"{0}: استنى إعلان ميعاد تعويض السكشن اللي اتلغى":"{0}: wait for the announcement of the makeup time for the cancelled section",
+"{0}: اعمل فيديو التقرير (حوالي {1} دقايق) وحط لينكه في التقرير":"{0}: make the report video (about {1} minutes) and put its link in the report",
 "{0}: جهّز مناقشة Assignment {1}: لابتوب والمشروع شغّال والكارنيه، وافهم كود كل فلاتر التيم":"{0}: prepare for the Assignment {1} discussion: laptop with the project running, your ID, and understand the code of all the team\u0027s filters",
 "{0}: حضور اللاب إجباري (غياب أكتر من {1}% يحرمك من الفاينل)":"{0}: lab attendance is mandatory (missing more than {1}% bars you from the final)",
 "{0}: حل الأسايمنت {1} و{2} كله وخلّي نسخة Hard (التسليم Hard وSoft والميعاد لسه)":"{0}: solve all of Assignments {1} and {2} and keep a Hard copy (submission is Hard and Soft, deadline not set yet)",
+"{0}: خلّي {1} AI مختلفين يصمموا الـVole Machine وAI رابع يختار الأحسن، واحفظ المحادثات كاملة للتقرير":"{0}: have {1} different AIs design the Vole Machine and a fourth AI pick the best one, and save the full conversations for the report",
 "{0}: ذاكر Chapter {1} من السلايدات لحد آخر اللي اتشرح":"{0}: study Chapter {1} from the slides up to the last point explained",
 "{0}: ذاكر Set {1} لحد سلايد {2} (Virtual Functions وDefault Class Functions)":"{0}: study Set {1} up to slide {2} (Virtual Functions and Default Class Functions)",
 "{0}: ذاكر الأول فكرة Sampling Distribution قبل المحاضرة الجاية (مهمة جدًا لباقي المنهج)":"{0}: first study the idea of Sampling Distribution before the next lecture (very important for the rest of the course)",
+"{0}: ذاكر اللي خلصناه مع الدكتور: Chapter {1} ({2} و{3}) وChapter {4} ({5})":"{0}: study what we finished with the doctor: Chapter {1} ({2} and {3}) and Chapter {4} ({5})",
 "{0}: راجع Grouped Data (جدول التكرار وHistogram وPolygon وOgive والمتوسط والوسيط والمنوال)":"{0}: review Grouped Data (frequency table, histogram, polygon, ogive, mean, median and mode)",
+"{0}: سلّم تقرير Assignment {1} Part {2} على الكلاسروم (PDF بالاسم المطلوب وكل الأقسام وإلا يترفض)":"{0}: submit the Assignment {1} Part {2} report on Classroom (a PDF with the required name and all sections, or it is rejected)",
 "{0}: كوّن تيم Assignment {1} من نفس السكشن (أو استأذن المعيد/ة لو من سكشن تاني)":"{0}: form your Assignment {1} team from the same section (or ask your TA\u0027s permission if from another section)",
 "{0}: لو اتأخرت عن أول أسايمنت مع م. محمد خالد ارفعه على فورم المتأخرين":"{0}: if you were late with the first assignment with Eng. Mohamed Khaled, upload it through the late-submission form",
+"{0}: نزّل محاضرات {1} و{2} و{3} وذاكرها، وبص على الامتحانات القديمة":"{0}: download lectures {1}, {2} and {3}, study them, and look at the old exams",
 "{0}° برد شديد":"{0}° very cold",
 "{0}° سما صافية":"{0}° clear sky",
 "{0}° شبورة":"{0}° fog",
@@ -4312,6 +4391,7 @@ const EN_DICT={
 "Diagonal: كل اللي بره القطر أصفار. AB ≠ BA غالباً. (AB)ᵀ = BᵀAᵀ. Symmetric: Aᵀ = A. Skew-symmetric: Aᵀ = −A وقطرها أصفار. ضرب (m×r) في (r×n) يطلع m×n.":"Diagonal: everything outside the diagonal is zero. AB ≠ BA in general. (AB)ᵀ = BᵀAᵀ. Symmetric: Aᵀ = A. Skew-symmetric: Aᵀ = −A and its diagonal is zero. Multiplying (m×r) by (r×n) gives m×n.",
 "Dispersion وQuartiles وBox Plot وبداية Grouped Data":"Dispersion, Quartiles, Box Plot and the start of Grouped Data",
 "Doc مشترك: بيانات التيم، من عمل إيه، لقطات GitHub، System Diagram، لقطات البرنامج، أصعب وأحلى جزء، وصورة القَسَم بخط اليد.":"A shared Doc: team details, who did what, GitHub screenshots, the System Diagram, program screenshots, the hardest and best part, and a photo of the handwritten oath.",
+"draw.io (للـDiagrams)":"draw.io (for diagrams)",
 "Echelon و Reduced Echelon":"Echelon and Reduced Echelon",
 "Echelon وReduced Echelon":"Echelon and Reduced Echelon",
 "Echelon: الصفوف الصفرية تحت، وأول رقم غير صفري في كل صف (pivot) على يمين اللي فوقه، وتحته أصفار. Reduced: كمان الـpivot = {0} وهو الرقم الوحيد في عموده. الـReduced وحيدة لأي مصفوفة، والـEchelon العادية لأ.":"Echelon: zero rows at the bottom, the first nonzero number in each row (pivot) is to the right of the one above it, with zeros below it. Reduced: also the pivot = {0} and it is the only nonzero number in its column. The Reduced form is unique for any matrix, and the ordinary Echelon is not.",
@@ -4339,6 +4419,7 @@ const EN_DICT={
 "Math 3: ابدأ Chapter 2 في الكتاب (Matrix Operations)":"Math 3: start Chapter 2 in the book (Matrix Operations)",
 "Math 3: حل الأسايمنت 1 و2 كله وخلّي نسخة Hard (التسليم Hard وSoft والميعاد لسه)":"Math 3: solve all of Assignments 1 and 2 and keep a Hard copy (submission is Hard and Soft, deadline not set yet)",
 "Math 3: لو اتأخرت عن أول أسايمنت مع م. محمد خالد ارفعه على فورم المتأخرين":"Math 3: if you were late with the first assignment with Eng. Mohamed Khaled, upload it through the late-submission form",
+"Matrices وSystems of Linear Equations":"Matrices and Systems of Linear Equations",
 "Mean = المجموع ÷ العدد. Median = الرقم اللي في النص بعد الترتيب (لو العدد زوجي: متوسط الرقمين اللي في النص). Mode = الأكثر تكراراً. القيم الشاذة بتأثر في Mean أكتر من Median.":"Mean = sum ÷ count. Median = the middle number after sorting (if the count is even: the average of the two middle numbers). Mode = the most frequent value. Outliers affect the Mean more than the Median.",
 "Mean وMedian وMode":"Mean, Median and Mode",
 "Multiple optimal: خط الهدف موازي لقيد. Infeasible: مفيش منطقة مسموحة (كل نقطة بتكسر قيد). Unbounded: الهدف بيكبر بلا نهاية، غالباً غلط في النموذج.":"Multiple optimal: the objective line is parallel to a constraint. Infeasible: there is no feasible region (every point breaks a constraint). Unbounded: the objective grows without limit, usually a mistake in the model.",
@@ -4360,8 +4441,10 @@ const EN_DICT={
 "OOP: ذاكر Set 7 لحد سلايد 27 (Virtual Functions وDefault Class Functions)":"OOP: study Set 7 up to slide 27 (Virtual Functions and Default Class Functions)",
 "OOP: كوّن تيم Assignment 2 من نفس السكشن (أو استأذن المعيد/ة لو من سكشن تاني)":"OOP: form your Assignment 2 team from the same section (or ask your TA\u0027s permission if from another section)",
 "Operations Research and Decision Support · فيه محتوى جاهز":"Operations Research and Decision Support · content ready",
+"OR: اتفرج على فيديو الـExcel للـSimplex واتمرن بيه":"OR: watch the Excel video for Simplex and practise with it",
 "OR: حل مثال Beaver Creek بالـSimplex بإيدك من غير ما تبص على الحل":"OR: solve the Beaver Creek example with the Simplex method by hand without looking at the solution",
 "OR: فعّل Solver في Excel (فيديو الشرح على الجروب)":"OR: activate Solver in Excel (the how-to video is in the group)",
+"OR: كويز {0} {1} في ميعاد المحاضرة على كل المنهج لحد دلوقتي (استنى إعلان المجموعات والتوقيت)":"OR: quiz on {0} {1} at lecture time on everything so far (wait for the groups and timing announcement)",
 "Part {0} · تسليم {1}":"Part {0} · due {1}",
 "Pass by value و by reference":"Pass by value and by reference",
 "Pass-by-value وPass-by-reference":"Pass-by-value and Pass-by-reference",
@@ -4369,6 +4452,7 @@ const EN_DICT={
 "Percentiles وQuartiles (القاعدة)":"Percentiles and Quartiles (the rule)",
 "Pivot position هو مكان في المصفوفة الأصلية بيقابل leading {0} في الـReduced form. أعمدة الـpivot هي الـbasic variables، والباقي free variables.":"A pivot position is a place in the original matrix that corresponds to a leading {0} in the Reduced form. The pivot columns are the basic variables, and the rest are free variables.",
 "Pivot و Basic و Free":"Pivot, Basic and Free",
+"PlantUML (طلّع الـclass diagram من الكود)":"PlantUML (get the class diagram from code)",
 "Population: σ² = Σ(x−μ)² / N. Sample: s² = Σ(x−x̄)² / (n−{0}). الانحراف المعياري هو الجذر وبنفس وحدة البيانات. CV = (s / x̄) × {1}% وبيقارن تشتت مجموعتين بوحدات مختلفة. مجموع الانحرافات عن الـmean دايماً صفر، عشان كده بنربّع.":"Population: σ² = Σ(x−μ)² / N. Sample: s² = Σ(x−x̄)² / (n−{0}). The standard deviation is the square root and has the same unit as the data. CV = (s / x̄) × {1}% compares the spread of two groups with different units. The sum of deviations from the mean is always zero, which is why we square them.",
 "Positive (right) skewed: Mean \u003e Median والذيل ناحية اليمين. Negative (left) skewed: Mean \u003c Median. متماثل: Mean = Median.":"Positive (right) skewed: Mean \u003e Median, with the tail on the right. Negative (left) skewed: Mean \u003c Median. Symmetric: Mean = Median.",
 "Q{0} هو P{1} وQ{2} هو P{3} (الـMedian) وQ{4} هو P{5}":"Q{0} is P{1}, Q{2} is P{3} (the Median) and Q{4} is P{5}",
@@ -4459,6 +4543,7 @@ const EN_DICT={
 "الاحتمالات والإحصاء {0}":"Probability and Statistics {0}",
 "الاحتمالات والإحصاء {0} · فيه محتوى جاهز":"Probability and Statistics {0} · content ready",
 "الأخبار":"News",
+"الأساسية، الجروب {0} عند الفيديو {1}":"The main one, the group stopped at video {1}",
 "الأساسية، الجروب وقف عند الفيديو {0}":"The core playlist, the group stopped at video {0}",
 "الأسايمنت بيتناقش: كل واحد في التيم لازم يفهم كود الكل. الغايب عن المناقشة بياخد صفر.":"The assignment is discussed: everyone on the team must understand everyone\u0027s code. Anyone absent from the discussion gets zero.",
 "الأسايمنت فردي وبخط اليد وبدون AI، وبيتراجع بأدوات كشف سرقة وAI.":"The assignment is individual, handwritten and without AI, and it is checked with plagiarism detection tools and AI.",
@@ -4733,6 +4818,7 @@ const EN_DICT={
 "روابطك":"Your links",
 "ريادة الأعمال":"Entrepreneurship",
 "ريادة الأعمال: حضّر مناقشة المشروع مع المعيد/ة، ولو عندك عذر ابعته قبل الميعاد":"Entrepreneurship: prepare for the project discussion with your TA, and if you have an excuse send it before the slot",
+"ريادة الأعمال: لو تيمك مش متسجل عند معيد مناقشة في الإكسل املا الفورم (آخر فرصة)":"Entrepreneurship: if your team is not registered with a discussion TA in the Excel sheet, fill the form (last chance)",
 "ريبو الأسايمنت":"Assignment repo",
 "زينب هشام":"Zeinab Hesham",
 "ساعات":"Hours",
@@ -4756,6 +4842,7 @@ const EN_DICT={
 "شارحة من نفس سلايدات الدكتور":"Explained from the doctor\u0027s own slides",
 "شارحة من نفس سلايدات الدكتور↗":"Explained from the doctor\u0027s own slides↗",
 "شبورة":"Fog",
+"شرح Simplex بطريقة الدكتورة":"Simplex explained the doctor\u0027s way",
 "شرح أغلب المنهج":"Explains most of the syllabus",
 "شرح الـBlur (فلتر {0})":"Blur explained (filter {0})",
 "شرح المرجع (playlist الأساسية)":"Reference explanation (the core playlist)",
@@ -4907,6 +4994,7 @@ const EN_DICT={
 "مطلوب":"To do",
 "مطلوب مع Part {0}:":"Required with Part {0}:",
 "مع الكتاب مش بدله":"Together with the book, not instead of it",
+"مع صورة السلايد على الجروب":"with the slide picture in the group",
 "معاك {0} نقطة، مستوى «متحمس». فاضل {1} نقطة للمستوى اللي بعده.":"You have {0} points, level \"Enthusiast\". {1} points to the next level.",
 "معاك لحد دلوقتي {0}. للـB محتاج مجموع {1} من {2} (باقي {3}).":"So far you have {0}. For B you need a total of {1} out of {2} ({3} remaining).",
 "معدل الترم":"Term GPA",
@@ -4966,6 +5054,7 @@ const EN_DICT={
 "موضوع: حليت عليه":"Topic: solved on it",
 "موضوع: شفته":"Topic: seen it",
 "موضوع: فهمته":"Topic: understood it",
+"موقع matrixcalc.org لمراجعة إجاباتك":"matrixcalc.org website for checking your answers",
 "موقع غير رسمي عمله طالب لزمايله":"Unofficial site made by a student for classmates",
 "ميد":"Midterm",
 "ميد {0} كان فيه LP + حساسية (sensitivity) + integer programming. ميدكم ممكن يبقى أضيق، تأكد من الدكتورة.":"The {0} midterm had LP + sensitivity + integer programming. Yours may be narrower, so confirm with the doctor.",
@@ -5237,7 +5326,7 @@ genPhrase=function(){
 };
 
 /* ---- "what's new" card for returning visitors (always English, as requested) ---- */
-const WN_KEY='tm-whatsnew', WN_ID='upd-1020';
+const WN_KEY='tm-whatsnew', WN_ID='upd-1025';
 function markWhatsNew(){ try{ localStorage.setItem(WN_KEY,WN_ID); }catch(e){} const w=document.getElementById('whatsnew'); if(w){ w.classList.add('out'); setTimeout(()=>w.remove(),360); } }
 const WN_TXT={
  ar:{b:'تحديث مهم',h:'حافظ على تقدمك',p:'الموقع بيحفظ تقدمك على جهازك إنت (مفيش حساب). فلو مسحت بيانات المتصفح، أو فتحت الموقع من جوه فيسبوك أو إنستجرام، أو من متصفح تاني، التقدم بيختفي. إحنا ضفنا حماية ونسخ تلقائية، بس عشان تتأمن تمامًا اعمل الخطوات دي:',
@@ -5247,22 +5336,22 @@ const WN_TXT={
   s:['Open the site in <b>Chrome</b> or <b>Safari</b>, not inside Facebook, Instagram or WhatsApp.','Install the site on your phone: in the browser menu choose <b>"Add to Home Screen"</b> (very important on iPhone).','Press <b>"Export my copy now"</b> below and keep the file somewhere safe (Drive, or send it to yourself on WhatsApp). Repeat every two weeks.','If your progress was reset: <b>Settings → Automatic backups on this device → Restore</b>. If you have an exported file: <b>Settings → Import</b>.','Do not clear your browser data and do not use private (<bdi>Incognito</bdi>) mode.'],
   x:'Export my copy now',o:'Got it',n:'Also: the site is available in English with the EN switch at the top.'}};
 const WN_UPD={
- ar:{b:'جديد',h:'اتحدّث الموقع (20 أكتوبر)',p:'نزلت مهام وأخبار جديدة. ده اللي حصل في موادك:',x:'افتح الرئيسية',o:'فهمت',
-  c:{oop:'OOP: Assignment 2 (Part 1 يوم 26/10 وPart 2 يوم 6/11). مناقشات Assignment 1: احجز ميعاد تيمك في شيت معيدك وجيب اللابتوب والكارنيه. بعض المناقشات اتأجلت، فتابع شيتك. المنهج وصل Set 7 (Virtual Functions).',
-     math:'Math 3: باقي Chapter 1 ملغي والمنهج انتقل لـ Chapter 2. الأسايمنت 1 و2 مع م. زينب (Hard وSoft والميعاد لسه). بدأنا Chapter 2 (ضرب المصفوفات). اللي اتأخر عن أسايمنت م. محمد خالد يرفعه على فورم المتأخرين.',
-     or:'OR & DS: فعّل Solver في Excel (مهم جدًا حسب الدكتورة). خلصنا 3 شباتر وآخرهم Simplex.',
-     stat:'Stat 2: المحاضرة الجاية Sampling Distribution، والدكتور بيقول مهمة جدًا لباقي المنهج، فذاكرها قبلها.',
-     net:'Networks: مفيش محاضرة الأربع 21/10.',
-     ent:'ريادة الأعمال: مناقشات المشاريع شغالة، ومن عنده عذر يبعته للمعيدة قبل الميعاد. الدكتور هيعمل scaling على الدرجات في الآخر.'},
-  n:'المهام الجديدة في الرئيسية، والأخبار في تاب الأخبار.'},
- en:{b:'New',h:'The site was updated (20 October)',p:'New tasks and news were added. Here is what happened in your courses:',x:'Open Home',o:'Got it',
-  c:{oop:'OOP: Assignment 2 (Part 1 due 26/10, Part 2 due 6/11). Assignment 1 discussions: book your team\'s slot in your TA\'s sheet and bring your laptop and ID. Some discussions were postponed, so check your sheet. The syllabus reached Set 7 (Virtual Functions).',
-     math:'Math 3: the rest of Chapter 1 is cancelled and the course moved to Chapter 2. Assignments 1 and 2 with Eng. Zeinab (Hard and Soft copy, deadline not set yet). Chapter 2 started (matrix multiplication). If you were late with Eng. Mohamed Khaled\'s assignment, upload it through the late-submission form.',
-     or:'OR & DS: activate Solver in Excel (very important according to the doctor). We finished 3 chapters, the last one being Simplex.',
-     stat:'Stat 2: the next lecture is Sampling Distribution, which the doctor says is extremely important for the rest of the course, so study it before the lecture.',
-     net:'Networks: no lecture on Wednesday 21/10.',
-     ent:'Entrepreneurship: project discussions are running; if you have an excuse send it to your TA before the slot. The doctor will apply scaling to the grades at the end.'},
-  n:'New tasks are on Home and the news is in the News tab.'}};
+ ar:{b:'جديد',h:'اتحدّث الموقع (25 أكتوبر)',p:'نزلت مهام وأخبار وروابط جديدة. ده اللي حصل في موادك:',x:'افتح الرئيسية',o:'فهمت',
+  c:{oop:'OOP: تفاصيل Assignment 2 (الـVole Machine): برنامجين على الفورم وتقرير Part 1 على الكلاسروم، الاتنين تسليم 26/10. مناقشات Assignment 1 يوم 24/10 كانت آخر فرصة. نزلت محاضرات 9 لـ 12 وامتحانات قديمة.',
+     math:'Math 3: خلصنا مع الدكتور Chapter 1 (1.1 لـ 1.5) وChapter 2 (2.1 و2.2) وChapter 3 (3.1). ضفنا موقع matrixcalc.org لمراجعة إجاباتك.',
+     or:'OR & DS: أول كويز الأربع 28/10 في ميعاد المحاضرة على كل المنهج لحد دلوقتي. ضفنا فيديو Excel للـSimplex وسكاشن مسجلة من دفعات سابقة.',
+     stat:'Stat 2: ضفنا فولدر Flashat على الدرايف، وصور سكشن الأسبوع اللي فات على الجروب.',
+     net:'Networks: سكشن م. يمنى السبت 24/10 اتلغى والتعويض هيتعلن.',
+     ent:'ريادة الأعمال: آخر فرصة تسجيل مناقشة المشروع بالفورم لحد 25/10 الساعة 11:59 بليل لو تيمك معندوش معيد.'},
+  n:'المهام الجديدة في الرئيسية، والأخبار في تاب الأخبار، واللينكات في صفحة كل مادة.'},
+ en:{b:'New',h:'The site was updated (25 October)',p:'New tasks, news and links were added. Here is what happened in your courses:',x:'Open Home',o:'Got it',
+  c:{oop:'OOP: Assignment 2 (Vole Machine) details: two programs through the form and the Part 1 report on Classroom, both due 26/10. The Assignment 1 discussions on 24/10 were the last chance. Lectures 9 to 12 and old exams were released.',
+     math:'Math 3: we finished Chapter 1 (1.1 to 1.5), Chapter 2 (2.1 and 2.2) and Chapter 3 (3.1) with the doctor. We added matrixcalc.org for checking your answers.',
+     or:'OR & DS: the first quiz is on Wednesday 28/10 at lecture time and covers everything so far. We added the Excel video for Simplex and recorded sections from previous batches.',
+     stat:'Stat 2: we added the Flashat Drive folder, and pictures of last week\'s section are in the group.',
+     net:'Networks: Eng. Yomna\'s section on Saturday 24/10 was cancelled and the makeup will be announced.',
+     ent:'Entrepreneurship: last chance to register a project discussion through the form, by 25/10 at 11:59 PM, if your team has no TA.'},
+  n:'New tasks are on Home, the news is in the News tab, and links are on each course page.'}};
 function pubWhatsNew(){
   let seen=''; try{ seen=localStorage.getItem(WN_KEY)||''; }catch(e){}
   if(seen===WN_ID||document.getElementById('whatsnew')) return;
