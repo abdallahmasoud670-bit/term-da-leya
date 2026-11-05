@@ -4892,6 +4892,200 @@ The board also lists Wireshark among the tools to try in the lab.`),
   'OR: كل مسائل Taylor Chapter 2 (58 مسألة: صياغة وحل بياني) بحلولها، مع قراءاتي للنقط الغامضة موضحة في الحل.'],
   en:['OR: all Taylor Chapter 2 problems (58: formulation and graphical solution) with solutions; my reading of ambiguous wording is stated in the answer.']});
 })();
+/* Update 2026-11-05. Source: the 6 WhatsApp class chats read from 25/10/2026 4:13 pm to 5/11/2026 (this export has media) + files from the chats
+   (Networks Ch3 slides 1-36 / Sheet 2 / Midterm 2025, Math lessons 7-10 + midterm subjects, Stat midterm scope, OOP lecture folder).
+   News/tasks/midterm scope come from the chats. Solved items below are MINE and are labelled as such. Graded assignments (Math/Stat/OR A1, OOP A2 code) are NOT solved here. */
+(function(){
+ const N=(u,d,k,t,en)=>({u,d,k,t,en});
+ NEWS.push(
+  N('math','2026-10-29','deadline',`موضوعات ميدتيرم Math 3: درس 1 (1.1 Systems of Linear Equations)، 2 (1.2 Row Reduction وEchelon Forms)، 3 (1.3 Vector Equations)، 4 (1.4 المعادلة Ax=b)، 5 (1.5 Solution Sets)، 6 (2.1 Matrix Operations). يعني الـDeterminants والـInverse مش في الميد.`,`Math 3 midterm subjects: lesson 1 (1.1 Systems of Linear Equations), 2 (1.2 Row Reduction and Echelon Forms), 3 (1.3 Vector Equations), 4 (1.4 The Matrix Equation Ax=b), 5 (1.5 Solution Sets of Linear Systems), 6 (2.1 Matrix Operations). So determinants and the inverse are NOT in the midterm.`),
+  N('math','2026-11-01','deadline',`Assignment 1 في Math 3 (لمسجلين م. زينب): حل على ورق وسكان وارفعه على الفورم، اكتب اسمك وID على كل صفحة، من إيميل الكلية. الديدلاين الأحد 8/11 الساعة 10 بليل.`,`Math 3 Assignment 1 (for Eng. Zeinab's students): solve on paper, scan and submit through the form, with your name and ID on every page, from your FCAI email. Deadline Sunday 8/11 at 10 PM.`),
+  N('math','2026-11-03','deadline',`Assignment 2 في Math 3 (لمسجلين م. محمد خالد فقط): بخط اليد وفردي وبدون AI، اسمك وكودك وسكشنك في أول صفحة والـID فوق كل صفحة. هيتراجع بأدوات Plagiarism وAI detector. الديدلاين بعد أسبوع من 3/11.`,`Math 3 Assignment 2 (only for Eng. Mohamed Khaled's students): handwritten, individual, no AI; name, code and section on the first page and your ID at the top of every page. It is checked with plagiarism and AI-detector tools. Deadline one week from 3/11.`),
+  N('math','2026-11-01','note',`الدكتور خلص 3.3 (Cramer's Rule). جزء الـlinear transformation مش هيتشرح دلوقتي. محاضرة 2/11 اتأجلت للأسبوع اللي بعده. سكاشن م. زينب: تعويض يوم الاثنين الجاي في ميعاد السكشن (حضوري)، ومفيش سكشن الخميس 5/11، وهي هتحاول تعمل مراجعة قبل الميد.`,`The doctor finished 3.3 (Cramer's Rule). The linear-transformation part will not be taught now. The 2/11 lecture was postponed to next week. Eng. Zeinab's sections: a makeup session next Monday at the normal section time (in person), no section on Thursday 5/11, and she will try to give a review before the midterm.`),
+  N('stat','2026-11-02','deadline',`ميدتيرم Stat 2 هيشمل: الأساس النظري للإحصاء (data, sampling)، Descriptive statistics لـ ungrouped وgrouped data، Normal distribution، Sampling distribution، وEstimation of single population parameters.`,`The Stat 2 midterm covers: the theoretical foundation of statistics (data, sampling), descriptive statistics for ungrouped and grouped data, the normal distribution, sampling distributions, and estimation of single population parameters.`),
+  N('stat','2026-11-05','deadline',`Quiz 1 في Stat 2 أونلاين الاثنين 9/11 الساعة 8 بليل، 20 لـ 30 دقيقة، محاولة واحدة بس، من إيميل الكلية FCI بس، وكل واحد له موديل مخصوص بيتنشر قبل الكويز. استخدام AI = صفر. المحتوى: Descriptive (ungrouped وgrouped) وNormal وSampling Distribution.`,`Stat 2 Quiz 1 is online on Monday 9/11 at 8 PM, 20 to 30 minutes, one attempt only, from your FCI university email only, and each student gets an assigned model published before the quiz. Using AI = zero. Covers: descriptive statistics (ungrouped and grouped), the normal distribution and sampling distributions.`),
+  N('stat','2026-10-31','deadline',`Assignment 1 في Stat 2: الديدلاين السبت 7/11 الساعة 11:59 بليل. تسليم واحد بس (أكتر من مرة أو بعد الميعاد = صفر). أول سؤالين صور حلهم PDF باسم ID_name_Q1.pdf (مثال 2021_Ahmed_Q1.pdf) والباقي MCQ في الفورم.`,`Stat 2 Assignment 1: deadline Saturday 7/11 at 11:59 PM. One submission only (more than once or after the deadline = zero). The first two questions are photographed as a PDF named ID_name_Q1.pdf (e.g. 2021_Ahmed_Q1.pdf) and the rest are MCQs in the form.`),
+  N('stat','2026-10-26','note',`جداول إحصائية Statistical Tables 2 اتنزلت على الجروب، ومحاضرات 12 و13 وSection 4 وStat 2-4 اتنزلوا. مفيهمش ورق قوانين في الميد حسب ما اتقال قبل كده.`,`The Statistical Tables 2 file was posted, along with lectures 12 and 13, Section 4 and Stat 2-4. As said earlier, no formula sheet in the midterm.`),
+  N('or','2026-10-28','deadline',`الكويز الأول في OR كان الأربع 28/10: 5 درجات، ربع ساعة (اتعدل 20 دقيقة)، حوالي 10 MCQ، على 3 شباتر من غير مسائل الـSimplex لكن مع الـExcel.`,`The first OR quiz was on Wednesday 28/10: 5 marks, 15 minutes (changed to 20), about 10 MCQs, on the 3 chapters without Simplex problems but including the Excel parts.`),
+  N('or','2026-11-04','deadline',`Assignment 1 في OR (Intro to OR & DS): الديدلاين الخميس 12/11 الساعة 11 بليل، على Google form. PDF واحد فيه صور واضحة لحلك ولقطات من Excel، اسمه ID-Name وأول صفحة فيها اسمك وID. تسليم واحد بس، ولو اتنسخ من حد الاتنين صفر.`,`OR Assignment 1: deadline Thursday 12/11 at 11 PM on a Google form. One PDF with clear scans of your solution and Excel screenshots, named ID-Name, with your name and ID on the first page. One submission only; if copied, both students get zero.`),
+  N('or','2026-11-02','change',`شابتر 4 Self study ومش هيتشرح (فيه ملفين على الجروب). المحاضرات وصلت Chapter 5 لحد صفحة 36، وخلصوا Chapter 5 يوم 4/11. الدكتورة قالت في Chapter 5 ركزوا على مسألة معينة (صورتها على الجروب).`,`Chapter 4 is self-study and will not be taught (two files are in the group). The lectures reached Chapter 5 page 36 and finished Chapter 5 on 4/11. The doctor said to focus on one particular problem in Chapter 5 (its picture is in the group).`),
+  N('or','2026-11-04','change',`م. أريج مش هتحضر سكشن الخميس اللي الساعة 8 الصبح الأسبوع ده. تحضر أي سكشن تاني: الأربع 8 أو 9:30، أو الخميس 9:30 أو 11:15.`,`Eng. Areej cannot attend the Thursday 8:00 AM section this week. Attend any other section: Wednesday 8:00 or 9:30, or Thursday 9:30 or 11:15.`),
+  N('net','2026-11-03','deadline',`ميدتيرم Networks: من Chapter 1 لـ Chapter 3 (الدكتور خلص Chapter 3 كله، لكن من صفحة 36 لـ 66 ملغي ومش علينا). 20 درجة، 5 مجموعات أسئلة كل سؤال جواه أكتر من سؤال (صح وغلط وMCQ ومسألة مقالي وأكمل). الأسئلة فهم مش حفظ. Wireshark مش داخل. المسألة اللي في الآخر هي اللي هتيجي بأرقام مختلفة، وفي الغالب سؤال المقارنة بين TCP وUDP.`,`Networks midterm: Chapter 1 to Chapter 3 (the doctor finished Chapter 3 but pages 36 to 66 are cancelled and not required). 20 marks, 5 groups of questions each with several parts (true/false, MCQ, an essay problem, complete). Questions test understanding, not memorising. Wireshark is NOT included. The problem at the end is the one that will come with different numbers, and the comparison question is most likely TCP vs UDP.`),
+  N('net','2026-10-28','change',`الدكتور خلص Chapter 2 وبدأ Chapter 3 (وقف عند صفحة 36 يوم 28/10). Sheet 2 (Application Layer) اتنزل، وميدتيرم 2025 اتنزل للتدريب.`,`The doctor finished Chapter 2 and started Chapter 3 (stopped at page 36 on 28/10). Sheet 2 (Application Layer) and the 2025 midterm for practice were posted.`),
+  N('net','2026-11-05','change',`م. يمنى: مفيش سكشن النهارده لجروبات S37 لـ S40 لظروف صحية، وهتسجل السكشن وتبعته.`,`Eng. Yomna: no section today for groups S37 to S40 for health reasons; she will record the section and send it.`),
+  N('oop','2026-11-03','deadline',`ميدتيرم OOP هيبقى لحد محاضرة Backtracking (Lecture 12). والميد يوم 14 نوفمبر والجدول هيتنشر من د. إيهاب.`,`The OOP midterm goes up to the Backtracking lecture (Lecture 12). The midterms start 14 November and the schedule will be posted by Dr Ehab.`),
+  N('oop','2026-11-02','note',`مواضيع مهمة ممكن تيجي في الميد: Copy Constructor والتمرير by reference، Shallow copy، Memory leak، Scope، Variable lifetime، Defensive programming (ابحث عنه)، Tail recursion optimization وTail recursion stack frame وExhaustive recursion.`,`Important topics that may come in the midterm: copy constructor and passing by reference, shallow copy, memory leak, scope, variable lifetime, defensive programming (research it), tail recursion optimization and the tail-recursion stack frame, and exhaustive recursion.`),
+  N('oop','2026-10-30','note',`Assignment 2 Part 2: الشغل مقسوم بينكم ولازم GitHub. الـAI ممنوع في تنفيذ Part 2 ومسموح في Part 3 (الـGUI). التسليم zip باسم CS213_A2_Part2_SectionNum_ID_ID_ID_ID.zip (اسم غلط أو ID غلط = صفر) وفيه التقرير المحدّث، وكود بـseparate compilation (header وclasses وapp)، ولقطات GitHub ولقطات 10 برامج شغالة، ولينك فيديو عملية تصميم الـAI، وملف TEAM.txt. الدرجات: 3.5 للتصميم و3.5 للتنفيذ و2 بونص GUI، وخصم 7 لكود AI أو منسوخ.`,`Assignment 2 Part 2: split the work between you and use GitHub. AI is NOT allowed to implement Part 2 but is allowed in Part 3 (the GUI). Submit a zip named CS213_A2_Part2_SectionNum_ID_ID_ID_ID.zip (wrong name or wrong ID = zero) containing the updated report, code with separate compilation (header, classes, app), GitHub screenshots, screenshots of 10 sample programs running, the link to the AI design-process video, and the filled TEAM.txt. Marks: 3.5 for design, 3.5 for implementation, 2 bonus for a GUI, and -7 for AI-generated or copied code.`),
+  N('oop','2026-11-02','note',`درجات Assignment 1 اتنزلت (ملف الدرجات على الجروب). لو في مشكلة كلم الـTA بتاعك.`,`Assignment 1 grades were posted (the grades file is in the group). If there is an issue, talk to your TA.`),
+  N('oop','2026-10-31','deadline',`Lab 5 (Deep Copy: Copy Constructor وOperator): الديدلاين 1/11 الساعة 6 الصبح على الكلاسروم. جروب م. داليا (S21,S22,S41,S42) بس. وLab 4 تاسك لجروبات تانية اتنزل 28/10.`,`Lab 5 (Deep Copy: copy constructor and operator): deadline 1/11 at 6 AM on Classroom. For Eng. Dalia's groups (S21, S22, S41, S42) only. A Lab 4 task for other groups was posted on 28/10.`),
+  N('oop','2026-11-03','change',`الدكتور خلص السلايدات لحد Set 12 سلايد 20. مكان لاب S37 وS38 يوم 3/11 بقى Lab 3 بدل Lab 5.`,`The doctor finished the slides up to Set 12 slide 20. The lab for S37 and S38 on 3/11 moved to Lab 3 instead of Lab 5.`),
+  N('ent','2026-10-31','note',`المناقشة الجاية: Business Model Canvas (BMC) بفكرة واحدة بس لفريقك، من 9 عناصر: Customer Segments، Value Propositions، Channels، Relationships، Revenue Streams، Key Resources، Key Activities، Key Partners، Cost Structure. نوتس L6 اتنزلت.`,`The next discussion: the Business Model Canvas (BMC) for ONE idea per team, with 9 elements: Customer Segments, Value Propositions, Channels, Relationships, Revenue Streams, Key Resources, Key Activities, Key Partners, Cost Structure. The L6 notes were posted.`),
+  N('ent','2026-10-30','deadline',`مناقشة التيمات (Delivery 3): لازم واحد من كل تيم يملا الفورم. الفورم كان متاح لحد السبت 31/10 الساعة 6 الصبح. والمناقشة حوالي 5 دقائق بالترتيب، والدرجة للحاضرين المشاركين بس.`,`Team discussion (Delivery 3): one member of each team must fill the form, which was open until Saturday 31/10 at 6 AM. The discussion takes about 5 minutes in group order, and only members who are present and take part get a grade.`)
+ );
+ NEWS.forEach((n,i)=>{ if(!n.id) n.id='n'+i; });
+
+ const T=(id,u,t,due,hi)=>({id,u,t,due:due||null,hi:hi||0});
+ TASKS0.push(
+  T('p05-stat-a1','stat',`Stat 2: سلّم Assignment 1 (تسليم واحد بس، PDF أول سؤالين + MCQ في الفورم)`,'2026-11-07',1),
+  T('p05-math-a1','math',`Math 3: سلّم Assignment 1 على الفورم (ورق وسكان، اسمك وID على كل صفحة)`,'2026-11-08',1),
+  T('p05-stat-q1','stat',`Stat 2: Quiz 1 أونلاين 8 بليل من إيميل الكلية (Descriptive وNormal وSampling)`,'2026-11-09',1),
+  T('p05-or-a1','or',`OR: سلّم Assignment 1 (PDF واحد: حلك + لقطات Excel، اسمه ID-Name)`,'2026-11-12',1),
+  T('p05-oop-a2','oop',`OOP: جهّز تسليم Assignment 2 Part 2 (zip بالاسم الصح + TEAM.txt + GitHub + فيديو)`,null,1),
+  T('p05-net-mid','net',`Networks: راجع Chapter 1 و2 و3 (لحد ص36)، وركز على مقارنة TCP وUDP ومسائل HTTP delay`,'2026-11-14',1),
+  T('p05-math-mid','math',`Math 3: راجع دروس 1 لـ 6 فقط (1.1 لـ 2.1) للميد`,'2026-11-14',1),
+  T('p05-oop-mid','oop',`OOP: راجع لحد Lecture 12 (Backtracking) + مواضيع الميد المهمة (copy constructor وrecursion)`,'2026-11-14',1),
+  T('p05-ent-bmc','ent',`ريادة الأعمال: جهّز Business Model Canvas بـ 9 عناصر لفكرة واحدة`,null)
+ );
+
+ SUBJ.oop.res.push(['محاضرات الدكتور Set 1 لـ 12 (درايف، الحالي)','https://drive.google.com/drive/folders/17WLQe7mDGbVPEoEwrW3DpU-j55V5Y1Bn','Set 12 = Backtracking']);
+
+ /* ===== Networks: Chapter 3 (slides 1-36) + Sheet 2 + Midterm 2025. All solutions are mine; check with your TA. ===== */
+ const SC3='Chapter 3 slides 1-36 (transport layer, midterm scope)', SS2='Sheet 2 (Application layer)', SMT='Midterm 2025 (practice, my answers)';
+ const Q=(s,n,q,a)=>({s,n,p:0,k:'x',q,a,u:'net'});
+ EXB.net=(EXB.net||[]).concat([
+  Q(SS2,1,`Why do HTTP, FTP, SMTP and POP3 run on top of TCP rather than UDP?`,`Because these applications need every byte to arrive, complete and in order (a web page, a file or an e-mail with a missing piece is useless). TCP gives reliable, in-order delivery, flow control and congestion control; UDP does not. The small delay of the TCP handshake is acceptable for them.`),
+  Q(SS2,2,`An e-commerce site wants a purchase record for each customer. How can cookies do it?`,`HTTP is stateless, so the server gives the browser an ID on the first visit: the response has "Set-cookie: 1678". The browser stores it in its cookie file and sends "Cookie: 1678" in every later request to that site. The server keeps a back-end database entry keyed by 1678 (cart, purchases), so it recognises the user and updates the record on each visit.`),
+  Q(SS2,3,`How can Web caching reduce the delay for a requested object? Does it reduce the delay for all objects?`,`A cache (proxy server) near the client keeps copies of objects, so a hit is answered from the local LAN at high speed instead of going to the origin server over the access link, which also reduces the load on that link. It only helps for objects that are in the cache (hits, which depend on the hit rate); a miss still has to be fetched from the origin server (the cache may first check with a conditional GET), so not all objects get a shorter delay.`),
+  Q(SS2,4,`Institution network: average object 850,000 bits, 16 requests/s, Internet delay 3 s, total response = access delay Δ/(1-ΔB) + Internet delay. (a) Total average response time (b) with a cache in the LAN and miss rate 0.4.`,`(My reading: the figure was not in the text; I used the textbook version of this problem with a 15 Mbps access link. Check your figure's rate.) Δ = 850,000 / 15,000,000 = 0.0567 s, β = 16/s, so ΔB = 0.907.
+(a) Access delay = 0.0567 / (1 - 0.907) = 0.607 s. Total = 0.607 + 3 = 3.61 s.
+(b) The access link now carries only misses: intensity = 0.4 × 0.907 = 0.363; access delay = 0.0567 / (1 - 0.363) = 0.089 s. A miss costs 0.089 + 3 = 3.089 s; a hit is about 0 (LAN). Average = 0.4 × 3.089 = 1.24 s (about 1.2 s).`),
+  Q(SS2,5,`Download 10 objects of 10 bits each (1 main page + 9 embedded). RTT = 10 ms, rate = 1 kbps. (a) Non-persistent HTTP (b) Persistent HTTP (c) Compare.`,`Transmission time per object = 10 bits / 1000 bps = 10 ms.
+(a) Non-persistent: each object needs 1 RTT for the TCP connection + 1 RTT for request/response + transmission = 10 + 10 + 10 = 30 ms; 10 objects = 300 ms.
+(b) Persistent (no pipelining): one connection setup RTT (10 ms), then each object takes 1 RTT + transmission = 20 ms; total = 10 + 10 × 20 = 210 ms.
+(c) Persistent is faster because the TCP handshake (1 RTT) is paid only once instead of 10 times. (Assumes the HTTP request packets have negligible transmission time and no parallel connections.)`),
+  Q(SMT,1,`True/false: (1) A lost packet may be retransmitted when using UDP. (2) Servers in data centers are network-edge devices. (3) Wired and wireless links are transmission media. (4) Link transmission rate is the speed data can be sent over a connection. (5) Bluetooth is a wired medium. (6) Forwarding moves a packet from a router's input link to the right output link. (7) Queuing can delay packets. (8) Store-and-forward buffers the whole packet before forwarding. (9) Packets are lost if the queue is full. (10) Processing delay is the time to examine the header and choose the output.`,`1 F (UDP never retransmits), 2 T (hosts, clients and servers, are at the network edge), 3 T, 4 T, 5 F (wireless), 6 T, 7 T, 8 T, 9 T, 10 T.`),
+  Q(SMT,2,`MCQ: (1) Arrival rate > output rate for a while: what happens to packets? (2) Purpose of a queue in packet switching? (3) Two categories of throughput? (4) Instantaneous throughput is? (5) Average throughput is?`,`1 b (they wait in the queue), 2 b (manage the flow and avoid loss when the network is congested), 3 c (instantaneous and average), 4 b (the rate at a specific point in time), 5 b (the rate over a longer period).`),
+  Q(SMT,3,`Complete (choose from: Multiplexing, Network, MX, TLD, hosts, bottleneck, encapsulation, segment, iterated, recursive, frame, Flow control, Connection setup, Internet checksum, stateless): (1) ... procedure before data transfer. (2) ... prevents the sender overwhelming the receiver. (3) ... collects data from many application processes. (4) ... detects errors. (5) DNS mail alias record. (6) ... servers handle .com .org .edu. (7) Cookies needed because HTTP is ... (8) smartphones are ... (9) ... link constrains throughput. (10) wrapping a higher layer's data with a header. (11) transport packet. (12) ... layer packet is a datagram. (13) link-layer packet. (14) DNS query where the server delegates back to the client. (15) DNS query where the server resolves for the client.`,`1 Connection setup, 2 Flow control, 3 Multiplexing, 4 Internet checksum, 5 MX, 6 TLD, 7 stateless, 8 hosts, 9 bottleneck, 10 encapsulation, 11 segment, 12 Network, 13 frame, 14 iterated, 15 recursive.`),
+  Q(SMT,4,`Download 100 objects of 100 bits (1 page + 99 embedded). RTT = 100 ms, rate = 10 Mbps. (1) Non-persistent time (2) Persistent time (3) Compare.`,`Transmission per object = 100 / 10,000,000 = 0.01 ms.
+(1) Non-persistent: 100 × (RTT for TCP setup + RTT for request/response + transmission) = 100 × (100 + 100 + 0.01) ms = 20,001 ms, about 20 s.
+(2) Persistent (no pipelining): 1 RTT setup + 100 × (RTT + transmission) = 100 + 100 × 100.01 = 10,101 ms, about 10.1 s.
+(3) Persistent is about twice as fast because the TCP connection setup (one RTT) is done once instead of once per object; the transmission times are negligible here.`),
+  Q(SMT,5,`Compare TCP and UDP: reliability and ordering, connection setup, congestion control, flow control, socket definition.`,`Reliability/ordering: TCP is reliable and in-order; UDP is unreliable, may lose or reorder. Connection: TCP is connection-oriented (handshake); UDP is connectionless. Congestion control: TCP has it; UDP does not (it can blast as fast as it wants). Flow control: TCP has it (receiver window); UDP none. Socket: TCP socket identified by the 4-tuple (source IP, source port, dest IP, dest port); UDP socket identified by destination IP and port only.`),
+  Q(SC3,1,`What does the transport layer do compared with the network layer? Use the Ann and Bill analogy.`,`The transport layer gives logical communication between PROCESSES on different hosts; the network layer gives communication between HOSTS. Analogy: houses = hosts, kids = processes, letters = application messages, Ann and Bill = the transport protocol (they demultiplex mail to the kids), the postal service = the network layer. The transport protocol relies on, and enhances, the network layer's services.`),
+  Q(SC3,2,`Explain multiplexing and demultiplexing, and what each protocol uses to demultiplex.`,`Multiplexing (sender): take data from several sockets and add a transport header (source/destination port) that is later used for demultiplexing. Demultiplexing (receiver): use the header fields to deliver each segment to the correct socket. UDP demultiplexes using the destination port number only (so datagrams with the same dest port but different source IPs or ports go to the SAME socket). TCP demultiplexes using the 4-tuple (source IP, source port, dest IP, dest port), so each connection gets its own socket.`),
+  Q(SC3,3,`Why does UDP exist? List its advantages and typical uses.`,`UDP is a "no frills", best-effort protocol: segments may be lost or delivered out of order. Advantages: no connection setup (no RTT delay), no connection state at sender or receiver, small header (8 bytes), and no congestion control so it can send as fast as desired and still work when the network is congested. Uses: streaming multimedia (loss tolerant, rate sensitive), DNS, SNMP, HTTP/3 (reliability and congestion control added at the application layer).`),
+  Q(SC3,4,`Draw the UDP segment header and say what each field does.`,`Four 16-bit fields (32 bits per row): source port #, dest port #, length (in bytes of the UDP segment including the header), checksum; followed by the application data (payload). Header = 8 bytes.`),
+  Q(SC3,5,`Internet checksum: add the 16-bit numbers 1110011001100110 and 1101010101010101 and find the checksum.`,`Add: 1110011001100110 + 1101010101010101 = 1 1011101110111011 (a carry out of the top bit). Wrap the carry around: 1011101110111011 + 1 = 1011101110111100 (the sum). The checksum is the one's complement of the sum: 0100010001000011. The receiver adds all segment words plus the checksum; if the result is all 1s there is no detected error. The checksum is weak: two bit flips in the same column (one 0→1, another 1→0) leave the sum unchanged.`)
+ ]);
+
+ SUBJ.net.topics.push('Transport layer services (Chapter 3)','Multiplexing and demultiplexing','UDP and the Internet checksum','Midterm 2025 practice');
+ TOPIC_RX.net.push(/transport layer|logical communication|transport protocol/i,/multiplex|demultiplex|4-tuple|port number|socket/i,/\bUDP\b|checksum|datagram|connectionless/i,/non-persistent|persistent|cookie|web cach|proxy|conditional get/i);
+
+ MCQB.net.push(
+  ['UDP demultiplexes an incoming segment to a socket using:','The destination port number only',['The 4-tuple of source and destination IPs and ports','The source IP address only','The checksum'],'Chapter 3: UDP uses destination port; TCP uses the 4-tuple.'],
+  ['A TCP socket is identified by:','Source IP, source port, destination IP, destination port',['Destination port only','Destination IP only','Source port only'],'Chapter 3, connection-oriented demultiplexing.'],
+  ['Which is NOT a reason UDP is used by some applications?','It guarantees in-order delivery',['No connection setup delay','Small header','No congestion control limiting the sending rate'],'UDP does not guarantee delivery or order.'],
+  ['The UDP header size is:','8 bytes (four 16-bit fields)',['20 bytes','4 bytes','16 bytes'],'Source port, dest port, length, checksum.'],
+  ['The Internet checksum is computed as:','The one\'s complement of the 16-bit one\'s-complement sum (carry wrapped around)',['The XOR of all bytes','The two\'s complement sum of the header only','The product of all words'],'Chapter 3, slide on Internet checksum.'],
+  ['The transport layer provides logical communication between:','Processes on different hosts',['Hosts on the same LAN','Adjacent routers','Network cards'],'The network layer is host to host.'],
+  ['Non-persistent HTTP with N objects, no parallel connections, needs about:','N × (2 RTT + transmission time)',['RTT + N × transmission time','1 RTT in total','N × RTT only'],'One RTT for TCP setup and one for request/response per object.'],
+  ['Cookies are needed because HTTP is:','Stateless',['Connectionless on UDP','Encrypted','Persistent'],'The server keeps state in a back-end database keyed by the cookie.'],
+  ['In an iterated DNS query the contacted server:','Replies with the name of the next server and the client continues',['Resolves the whole name for the client','Drops the query','Forwards it silently'],'Recursive puts the burden on the contacted server.']
+ );
+
+ WHATS_NEW.unshift({d:'5 نوفمبر 2026',de:'5 November 2026',items:[
+  'أخبار ومهام جديدة من 25 أكتوبر لـ 5 نوفمبر: موضوعات الميد في Math 3 وStat 2 وNetworks وOOP، وتسليمات Assignment 1 وQuiz 1، وتفاصيل Assignment 2 في OOP، ومناقشة BMC.',
+  'Networks: حلول Sheet 2 وميدتيرم 2025 وأسئلة على Chapter 3 (Transport layer لحد ص36 وهو نطاق الميد).'],
+  en:['New news and tasks from 25 October to 5 November: midterm scope for Math 3, Stat 2, Networks and OOP, the Assignment 1 and Quiz 1 deadlines, the OOP Assignment 2 details and the BMC discussion.',
+  'Networks: solutions for Sheet 2 and the 2025 midterm plus questions on Chapter 3 (transport layer up to page 36, the midterm scope).']});
+})();
+/* Update 2026-11-05 part 2. Sources: Stat Section 4 (TA Nourhan El-Khodary), Stat lecture notes 12-13 (handwritten, read from the PDFs), OR "Revision and simplex" (Section 4 handout),
+   Entrepreneurship L6 message (BMC), OOP Lab 4/5 task statements + the midterm topic list from the chat. Numbers were recomputed by script.
+   Graded assignments and lab code are NOT solved here (concepts only). All answers/explanations are mine unless the item says otherwise. */
+(function(){
+ const Q=(s,n,u,q,a)=>({s,n,p:0,k:'x',q,a,u});
+
+ /* ===== Stat 2 ===== */
+ const S4='Section 4 (TA sheet)', L12='Lecture 12 notes (27/10)', L13='Lecture 13 notes (1/11)';
+ EXB.stat=(EXB.stat||[]).concat([
+  Q(S4,1,'stat',`X is normally distributed with mean 30 and standard deviation 4. Find (a) P(X < 40) (b) P(X > 21) (c) P(30 < X < 35).`,
+`Standardise z = (x − μ)/σ.
+(a) z = (40 − 30)/4 = 2.5, P = 0.9938.
+(b) z = (21 − 30)/4 = −2.25, P(Z > −2.25) = 1 − 0.0122 = 0.9878.
+(c) z from 0 to 1.25: 0.8944 − 0.5 = 0.3944.`),
+  Q(S4,2,'stat',`A machine makes bolts that are N(4, 0.09) in mm. Bolts under 3.5 mm or over 4.4 mm are rejected. How many of a batch of 500 are acceptable?`,
+`Variance 0.09 so σ = 0.3. z limits: (3.5 − 4)/0.3 = −1.667 and (4.4 − 4)/0.3 = 1.333. P = 0.9082 − 0.0475 = 0.8607 (table values). Acceptable = 500 × 0.8607 = 430.35, about 430 bolts.`),
+  Q(S4,3,'stat',`University entry needs a score better than at least 70% of test takers. Scores are N(500, 100²) (σ = 100). Tom scores 585. Is he admitted?`,
+`z = (585 − 500)/100 = 0.85, P(Z < 0.85) = 0.8023. Tom scored better than 80.23% of students, which is above 70%, so he is admitted.`),
+  Q(S4,4,'stat',`X ~ N(m, 4) (variance 4, σ = 2). Find m so that P(X < 12) = 0.8.`,
+`P(Z < (12 − m)/2) = 0.8, and the table gives z = 0.84 (more exactly 0.8416). So (12 − m)/2 = 0.84, m = 12 − 2(0.84) = 10.32 (10.317 with 0.8416).`),
+  Q(S4,5,'stat',`Samples of size 3 are drawn WITHOUT replacement from the population 4, 5, 5, 7. Find every sample mean and the sampling distribution of x̄.`,
+`Number of samples = C(4,3) = 4. Samples: (4,5,5) mean 14/3; (4,5,7) mean 16/3; (4,5,7) mean 16/3; (5,5,7) mean 17/3. Distribution: x̄ = 14/3 with P = 0.25, 16/3 with P = 0.5, 17/3 with P = 0.25. Check: mean of the sample means = 63/12 = 5.25 = the population mean (21/4).`),
+  Q(S4,6,'stat',`Samples of size 2 are drawn WITH replacement from 4, 5, 5, 7. Find the sampling distribution of x̄.`,
+`Number of samples = 4² = 16. Means: 4 (1 sample), 4.5 (4), 5 (4), 5.5 (2), 6 (4), 7 (1). Probabilities: 0.0625, 0.25, 0.25, 0.125, 0.25, 0.0625 (they add to 1).`),
+  Q(L12,1,'stat',`When do we use σ_x̄ = σ/√n and when do we add the finite-population correction?`,
+`The sampling distribution of x̄ has mean μ_x̄ = μ and standard error σ_x̄ = σ/√n, and z = (x̄ − μ)/(σ/√n). If sampling is WITHOUT replacement from a finite population of size N and n ≥ 5% of N, use σ_x̄ = (σ/√n)·√((N − n)/(N − 1)). If replacement and N are not mentioned, use σ/√n. By the Central Limit Theorem x̄ is approximately normal when n is large (about 30 or more) even if the population is not.`),
+  Q(L12,2,'stat',`μ = 8, σ = 3, n = 36. Find P(7.8 < x̄ < 8.2).`,
+`n = 36 so by the CLT x̄ is normal. σ_x̄ = 3/√36 = 0.5. z limits = (7.8 − 8)/0.5 = −0.4 and (8.2 − 8)/0.5 = 0.4. P = P(Z < 0.4) − P(Z < −0.4) = 0.6554 − 0.3446 = 0.3108.`),
+  Q(L12,3,'stat',`μ = 800, σ = 40, n = 16 (a large manufacture, no replacement mentioned). Find P(x̄ < 775).`,
+`σ_x̄ = 40/√16 = 10. z = (775 − 800)/10 = −2.5. P = 0.0062 (the population is large, so no correction factor).`),
+  Q(L12,4,'stat',`N = 154, n = 25, σ = $900. Find the probability that the sample mean falls within $500 of the population mean.`,
+`n/N = 25/154 = 16.2% ≥ 5%, so use the correction factor: σ_x̄ = (900/√25)·√((154 − 25)/(154 − 1)) = 180 × 0.9182 = 165.3. P(μ − 500 < x̄ < μ + 500) = P(−500/165.3 < Z < 500/165.3) = P(−3.03 < Z < 3.03) = about 0.9975. (My reading of the handwriting: N = 154; the "183" is crossed out.)`),
+  Q(L13,1,'stat',`What is estimation, and what are point and interval estimates of μ, σ² and π?`,
+`Estimation is the statistical process used when the real population value is unknown, so we use a sample. A point estimate is a single number: μ is estimated by x̄, σ² by s², and the population proportion π by the sample proportion p. An interval estimate gives a range μ̂_L < μ < μ̂_U. The smaller the interval, the more accurate the estimate (39 to 41 is more accurate than 35 to 45).`),
+  Q(L13,2,'stat',`Define the confidence level and say how it relates to accuracy.`,
+`The confidence level (reliability) is P(μ̂_L < μ < μ̂_U) = (1 − α)·100%. It equals 100% only if the sample is the whole population. When the confidence level increases the interval gets wider, so the accuracy decreases (and the other way round): reliability and accuracy move in opposite directions.`),
+  Q(L13,3,'stat',`Derive the (1 − α)100% confidence interval for μ when σ is known.`,
+`Start from P(−z_{α/2} < Z < z_{α/2}) = 1 − α with Z = (x̄ − μ)/(σ/√n). Then −z_{α/2}·σ/√n < x̄ − μ < z_{α/2}·σ/√n, and rearranging: x̄ − z_{α/2}·σ/√n < μ < x̄ + z_{α/2}·σ/√n, i.e. μ = x̄ ± z_{α/2}·σ/√n. Here z_{α/2} is the z value that leaves an area α/2 to its right (chosen from the confidence level), x̄ comes from the sample, and σ and n are known.`)
+ ]);
+ SUBJ.stat.topics.push('Sampling distribution of the mean (CLT, finite population correction)','Estimation of one population parameter: confidence interval for the mean','Normal distribution word problems (Section 4)');
+ TOPIC_RX.stat.push(/standard error|finite population|correction factor|sampling distribution/i,/confidence (interval|level)|point estimate|interval estimate|z_?\{?alpha|estimation/i,/normal.*(bolt|probabilit)|standardi[sz]e/i);
+ MCQB.stat.push(
+  ['If samples of n = 36 are drawn from a population with σ = 3, the standard error of x̄ is:','0.5',['3','0.083','1.5'],'σ/√n = 3/6.'],
+  ['Increasing the confidence level from 90% to 99% (same n and σ) makes the interval:','Wider (less accurate)',['Narrower','The same','Shifted left'],'Lecture 13: reliability and accuracy move in opposite directions.'],
+  ['The correction factor √((N − n)/(N − 1)) is used when sampling without replacement and:','n ≥ 5% of N',['n < 5% of N','n ≥ 30','σ is unknown'],'Lecture 12.'],
+  ['The point estimate of the population proportion π is:','The sample proportion p',['x̄','s²','σ'],'Lecture 13.'],
+  ['The confidence interval for μ when σ is known is:','x̄ ± z_{α/2}·σ/√n',['x̄ ± σ/√n only','x̄ ± z·σ','μ ± z·s'],'Lecture 13.'],
+  ['Sampling 2 items WITH replacement from a population of 4 gives how many possible samples?','16',['6','12','8'],'4² = 16 (without replacement and order ignored it would be C(4,2) = 6).'],
+  ['For X ~ N(30, 4²), P(X < 40) is about:','0.9938',['0.9878','0.3944','0.5'],'z = 2.5 (Section 4, Q1).']
+ );
+
+ /* ===== OR: Section 4 handout (Revision and simplex) ===== */
+ EXB.or=(EXB.or||[]).concat([
+  Q('Section 4: Revision and simplex',1,'or',`Max Z = 12x1 + 16x2 subject to 3x1 + 2x2 ≤ 500 and 4x1 + 5x2 ≤ 800, x1, x2 ≥ 0 (the section's example, reconstructed from its numbers). Solve it (a) graphically (b) with the simplex method.`,
+`(a) Constraint 1 line passes through (0, 250) and (166.67, 0); constraint 2 through (0, 160) and (200, 0). Their intersection is (128.57, 57.14). Corner points: (0,0) Z = 0; (166.67, 0) has Z = 2,000; (128.57, 57.14) has Z = 2,457.1; (0, 160) has Z = 2,560. Optimal: x1 = 0, x2 = 160, Z = 2,560.
+(b) Add slacks s1, s2. Initial tableau basis s1, s2 (b = 500, 800); cj − zj = 12 and 16, so x2 enters (largest positive). Ratios: 500/2 = 250, 800/5 = 160, minimum 160, so s2 leaves; the pivot is 5. New pivot row: divide by 5 → x2 row (0.8, 1, 0, 0.2 | 160). s1 row: x1 3 − 2(0.8) = 1.4, x2 2 − 2(1) = 0, s1 1, s2 0 − 2(0.2) = −0.4, quantity 500 − 2(160) = 180. Now cj − zj ≤ 0 for all variables, so it is optimal: x2 = 160, x1 = 0, s1 = 180, Z = 2,560.`),
+  Q('Section 4: Revision and simplex',2,'or',`List the steps of the simplex method and the stopping rule (summary of the section).`,
+`1) Convert the inequalities to equations (add slack for ≤, subtract surplus for ≥). 2) Set up the initial tableau at the origin and compute the zj and cj − zj rows. 3) Pivot column = the largest positive cj − zj (maximisation). 4) Pivot row = the minimum non-negative quotient (quantity ÷ pivot-column value). 5) New pivot row = old pivot row ÷ pivot number. 6) Every other row = old row − (its pivot-column value × new pivot row). 7) Recompute zj and cj − zj. 8) Stop when all cj − zj ≤ 0 (maximisation); otherwise repeat from step 3. With n = 4 variables and m = 2 constraints, n − m = 2 variables are zero in a basic solution.`)
+ ]);
+ MCQB.or.push(
+  ['In a maximisation simplex tableau the entering variable is:','The one with the largest positive cj − zj',['The one with the smallest quotient','The one with the largest zj','Any slack variable'],'Section 4 handout.'],
+  ['The leaving variable is chosen by:','The minimum non-negative ratio (quantity / pivot-column value)',['The largest ratio','The largest cj','The first row'],'Section 4 handout.'],
+  ['A basic solution with 4 variables and 2 constraints has how many variables equal to zero?','2 (n − m)',['4','0','1'],'n − m = 2.'],
+  ['The simplex tableau is optimal (maximisation) when:','All cj − zj ≤ 0',['All cj − zj ≥ 0','All quantities are 0','All zj are negative'],'Stopping criterion.']
+ );
+
+ /* ===== Entrepreneurship: BMC ===== */
+ SUBJ.ent.topics.push('Business Model Canvas (9 building blocks)');
+ TOPIC_RX.ent.push(/business model canvas|BMC|customer segment|value proposition|revenue stream|key (partner|resource|activit)|cost structure/i);
+ MCQB.ent.push(
+  ['Which BMC block describes WHO you are targeting?','Customer Segments',['Key Partners','Cost Structure','Channels'],'Lecture 6 / discussion message.'],
+  ['"How do I reach my target audience (distribution points)?" is the:','Channels block',['Revenue Streams block','Key Activities block','Relationships block'],'BMC.'],
+  ['Which block lists the costs needed to start and run the idea?','Cost Structure',['Revenue Streams','Key Resources','Value Propositions'],'BMC.'],
+  ['The BMC has how many building blocks?','9',['5','7','12'],'Customer Segments, Value Propositions, Channels, Relationships, Revenue Streams, Key Resources, Key Activities, Key Partners, Cost Structure.'],
+  ['Key Partners answers the question:','Who do I need to help me build the idea, and for what?',['What is my income?','Who buys from me?','What value do I offer?'],'BMC.']
+ );
+
+ /* ===== OOP: concepts from Lab 4 / Lab 5 tasks and the midterm topic list (no code for graded labs) ===== */
+ SUBJ.oop.topics.push('Deep copy vs shallow copy, copy constructor and assignment operator','Operator overloading (<<, +, ==) and virtual print helper','Tail recursion and exhaustive recursion');
+ TOPIC_RX.oop.push(/copy constructor|deep copy|shallow copy|memory leak|assignment operator/i,/operator ?(<<|\+|==)|overload|virtual.*print|polymorphi/i,/tail recursion|exhaustive|backtrack/i);
+ MCQB.oop.push(
+  ['A class has an int* pointing to a dynamic array. If you rely on the default copy constructor, the copy gets:','A pointer to the SAME array (shallow copy)',['A brand-new array with the same values','An empty array','A compile error'],'Lab 5: that is why you write a deep-copy constructor.'],
+  ['Why must a class with a pointer member also overload operator= (rule of three)?','To avoid shallow copying and leaking or double-freeing memory on assignment',['To make << work','To allow inheritance','To speed up the program'],'Lab 5 (Deep Copy).'],
+  ['The copy constructor parameter must be taken by reference (const T&) because:','Passing by value would call the copy constructor again (infinite recursion)',['References are faster only','It is a syntax rule of cout','It avoids the destructor'],'Midterm topic list: copy constructor and passing by reference.'],
+  ['A memory leak happens when:','Dynamically allocated memory is never released with delete',['A variable goes out of scope','A function returns a value','An object is copied'],'Midterm topic list.'],
+  ['To print through a Shipment* so each derived type shows its own details with operator<<, you:','Call a virtual print(ostream&) helper from the overloaded <<',['Overload << in each derived class only','Cast every pointer','Use a static function'],'Lab 4 (Delivery and Shipping): virtual helper + base pointer.'],
+  ['Overloading calculateShippingCost() and calculateShippingCost(double extra) is:','Compile-time polymorphism (overloading)',['Runtime polymorphism (overriding)','Inheritance','Encapsulation'],'Same name, different parameter lists; overriding is the derived version of the SAME signature.'],
+  ['In tail recursion the recursive call is:','The last operation in the function, so the compiler can reuse the stack frame',['The first statement','Inside a loop','Never allowed in C++'],'Midterm topic list: tail recursion optimization.'],
+  ['A local (automatic) variable lives:','Until its block ends (its scope), then it is destroyed',['Until the program ends','Until delete is called','Forever'],'Scope and variable lifetime.']
+ );
+
+ WHATS_NEW.unshift({d:'5 نوفمبر 2026 (٢)',de:'5 November 2026 (2)',items:[
+  'Stat 2: أسئلة Section 4 وأمثلة محاضرة 12 (Sampling distribution) ومحاضرة 13 (Confidence interval)، وأسئلة اختيار من متعدد جديدة.',
+  'OR: مثال Section 4 (حل بياني وSimplex خطوة بخطوة). Entrepreneurship: أسئلة Business Model Canvas. OOP: أسئلة مفاهيم (deep copy وoperator overloading وrecursion).'],
+  en:['Stat 2: Section 4 questions and examples from lecture 12 (sampling distribution) and lecture 13 (confidence intervals), plus new MCQs.',
+  'OR: the Section 4 example (graphical and step-by-step simplex). Entrepreneurship: Business Model Canvas questions. OOP: concept questions (deep copy, operator overloading, recursion).']});
+})();
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
    ===================================================================== */
@@ -5154,7 +5348,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.6.0';
+const APP_VERSION='1.7.0';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
