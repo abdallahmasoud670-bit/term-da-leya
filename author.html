@@ -246,8 +246,8 @@ label.fld{display:grid;gap:4px;font-weight:700;font-size:.86rem;color:var(--ink2
 .rcard h4{font-size:1.05rem;margin-bottom:6px}
 .rcard .x{position:absolute;inset-inline-end:8px;top:8px}
 .rules{margin:0;padding-inline-start:20px;display:grid;gap:8px}
-.news{display:grid;gap:10px}
-.nitem{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;gap:4px;transition:transform .3s var(--ease)}
+.news{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+.nitem{min-width:0;overflow-wrap:anywhere;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;gap:4px;transition:transform .3s var(--ease)}
 .nitem:hover{transform:translateX(-3px)}
 .nitem .h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .nitem time{font-size:.8rem;color:var(--ink2)}

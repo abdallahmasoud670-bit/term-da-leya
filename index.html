@@ -244,8 +244,8 @@ label.fld{display:grid;gap:4px;font-weight:700;font-size:.86rem;color:var(--ink2
 .rcard h4{font-size:1.05rem;margin-bottom:6px}
 .rcard .x{position:absolute;inset-inline-end:8px;top:8px}
 .rules{margin:0;padding-inline-start:20px;display:grid;gap:8px}
-.news{display:grid;gap:10px}
-.nitem{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;gap:4px;transition:transform .3s var(--ease)}
+.news{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+.nitem{min-width:0;overflow-wrap:anywhere;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;gap:4px;transition:transform .3s var(--ease)}
 .nitem:hover{transform:translateX(-3px)}
 .nitem .h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .nitem time{font-size:.8rem;color:var(--ink2)}
@@ -1423,13 +1423,14 @@ function todayHTML(){
   const body=evs.length?'<div class="tl">'+rows+'</div>':'<div class="empty">مفيش محاضرات النهارده ('+DAYN[dow]+'). يوم كويس تقفل فيه حاجة متأخرة من قايمة الأولويات.</div>';
   return '<div class="card rise"><h3>النهارده · '+fmtDate(now)+'</h3>'+body+'<p class="sub" style="margin-top:12px">'+esc(tomorrow)+'</p>'+attHTML()+'</div>';
 }
+let SHOWALLT=false;
 function priorityHTML(){
-  const list=allTasks().filter(t=>!S.done[t.id]).map(t=>({t,n:dueInfo(t.due).n})).sort((a,b)=>a.n-b.n).slice(0,6).map(x=>x.t);
+  const allOpen=allTasks().filter(t=>!S.done[t.id]).map(t=>({t,n:dueInfo(t.due).n})).sort((a,b)=>a.n-b.n).map(x=>x.t); const list=SHOWALLT?allOpen:allOpen.slice(0,6); const moreBtn=allOpen.length>6?'<button class="btn sm ghost" type="button" data-act="showall" style="margin-top:10px;width:100%">'+(SHOWALLT?'عرض أقل':'عرض كل المهام ('+allOpen.length+')')+'</button>':'';
   const doneL=allTasks().filter(t=>S.done[t.id]&&Date.now()-S.done[t.id]<WEEKMS).sort((a,b)=>S.done[b.id]-S.done[a.id]);
   const dn=doneL.length;
   const opts=ORDER.map(u=>'<option value="'+u+'">'+SUBJ[u].n+'</option>').join('');
   const doneH=dn?'<details open style="margin-top:12px"><summary>خلصت ('+dn+') — دوس على العلامة لو علّمت بالغلط</summary><div style="margin-top:8px">'+doneL.map(taskRow).join('')+'</div></details>':'';
-  return '<div class="card rise"><h3>الأولويات</h3>'+(list.length?list.map(taskRow).join(''):'<div class="empty">كل المهام خلصت. استمتع بالراحة وراجع كروت «أنا مزنوق».</div>')+doneH+
+  return '<div class="card rise"><h3>الأولويات</h3>'+(list.length?list.map(taskRow).join('')+moreBtn:'<div class="empty">كل المهام خلصت. استمتع بالراحة وراجع كروت «أنا مزنوق».</div>')+doneH+
    '<form class="add" data-form="task"><input type="text" id="nt" placeholder="مهمة جديدة" aria-label="مهمة جديدة"><select id="ns" aria-label="المادة">'+opts+'</select><input type="date" id="nd" aria-label="الميعاد"><button class="btn sm" type="submit">إضافة</button></form></div>';
 }
 function stepper(id,val,min,max){ return '<span class="step"><button type="button" data-act="step" data-id="'+id+'" data-d="-1" aria-label="أقل">−</button><input id="'+id+'" type="number" min="'+min+'" max="'+max+'" value="'+val+'" data-act-in="stepin" aria-label="'+id+'"><button type="button" data-act="step" data-id="'+id+'" data-d="1" aria-label="أكتر">+</button></span>'; }
@@ -5348,7 +5349,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.7.0';
+const APP_VERSION='1.7.1';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -6174,7 +6175,9 @@ const EN_DICT={
 "عدد الفئات k من {0}^k ≥ n، وعرض الفئة = Range ÷ k (قرّب لفوق). منتصف الفئة m = (حد أدنى + حد أعلى) / {1}. المتوسط x̄ ≈ Σ(f·m) / Σf.":"Number of classes k from {0}^k ≥ n, and class width = Range ÷ k (round up). Class midpoint m = (lower limit + upper limit) / {1}. Mean x̄ ≈ Σ(f·m) / Σf.",
 "عدّل اللي عايزه. تقدّمك في المواد مش بيتمسح.":"Edit what you want. Your progress in the courses is not deleted.",
 "عدّى أكتر من أسبوعين من آخر نسخة احتياطية لتقدمك. صدّر ملف دلوقتي عشان لو المتصفح اتمسح ما تضيعش.":"More than two weeks since your last backup. Export a file now so you do not lose progress if the browser is cleared.",
+"عرض أقل":"Show fewer",
 "عرض المخفي":"Show hidden",
+"عرض كل المهام ({0})":"Show all tasks ({0})",
 "عشان كده أرقام زي {0} مبتتخزنش بالظبط.":"That is why numbers like {0} are not stored exactly.",
 "علّم «أشرحه» لما تقدر تشرح كل سطر بدون ما تبص على الكود، لأن المعيد ممكن يسألك في فلتر أي حد في التيم. الموقع بيشرح الأفكار بس ومش بيكتب لك كود الفلاتر. اكتب اسم صاحب كل فلتر بنفسك.":"Mark \"I can explain it\" when you can explain every line without looking at the code, because the TA may ask anyone on the team about any filter. The site explains the ideas only and does not write the filter code for you. Write the name of each filter\u0027s owner yourself.",
 "علّم الأول المواضيع اللي ذاكرتها فوق، وأسئلتها هتظهر هنا.":"First mark the topics you have studied above, and their questions will appear here.",
@@ -6738,6 +6741,7 @@ document.addEventListener('click',async e=>{
   if(e.target===$('#modal')){ closeModal(); return; }
   const b=e.target.closest('[data-act]'); if(!b) return; const a=b.dataset.act;
   if(a==='close'){ closeModal(); return; }
+  if(a==='showall'){ SHOWALLT=!SHOWALLT; sfx('tap'); render(); return; }
   if(a==='task'){ const id=b.dataset.id; BUMP='.chk[data-id="'+id+'"]'; if(S.done[id]){ delete S.done[id]; awardXP('t'+id,0,'مهمة'); sfx('undo'); } else { S.done[id]=Date.now(); awardXP('t'+id,10,'مهمة خلصت'); sfx('done'); } save(); render(); }
   else if(a==='lvl'){ const id=b.dataset.id, cur=lvl(id), nx=(cur+1)%4; BUMP='.lvl[data-id="'+id+'"]'; S.topics[id]=nx; awardXP('l'+id,[0,5,15,30][nx],'موضوع'); sfx(nx===0?'undo':nx===3?'level':'good'); if(nx===3){ const r=b.getBoundingClientRect(); confetti(r.left+r.width/2,r.top,30);} save(); render(); }
   else if(a==='stab'){ sfx('tap'); renderSubjTab(b.dataset.u,b.dataset.t); }
