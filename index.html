@@ -178,6 +178,14 @@ html{scroll-behavior:smooth}
 .tt{font-weight:700}
 .due{font-size:.8rem;font-weight:800;white-space:nowrap}
 .due.late{color:var(--bad)}.due.soon{color:var(--warn)}.due.ok{color:var(--ink2)}
+.tk{display:inline-block;margin-inline-start:6px;padding:2px 9px;border-radius:999px;font-size:.74rem;font-weight:800;background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--ink)}
+.dl-alert{margin:14px 0;padding:12px 14px;border-radius:16px;border:1.5px solid color-mix(in srgb,var(--warn) 55%,transparent);border-inline-start:6px solid var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--bg))}
+.dl-h{font-weight:800;margin-bottom:6px}
+.dl-i{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:5px 0}
+.dl-i.late{--w:var(--bad)}
+.dl-k{padding:2px 9px;border-radius:999px;font-size:.74rem;font-weight:800;background:var(--warn);color:#fff}
+.dl-i.late .dl-k{background:var(--bad)}
+.dl-t{flex:1 1 200px;min-width:0;font-weight:600}
 .add{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .add input,.add select,.in,select.in{font:inherit;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-width:0;transition:border-color .25s,box-shadow .25s}
 .add input:focus,.in:focus{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent);outline:0}
@@ -1198,7 +1206,7 @@ function ctxLines(){
   const nm=nearestMid(), d=daysBetween(now,nm.d);
   if(d>=0) out.push('فاضل '+d+' يوم على الميد'+(nm.est?' (تقديري)':'')+'. مش تهويل، بس كل يوم ليه نصيبه من المذاكرة.');
   const open=allTasks().filter(t=>!S.done[t.id]);
-  if(open.length){ const t=open.slice().sort((a,b)=>dueInfo(a.due).n-dueInfo(b.due).n)[0]; out.push('عندك '+open.length+' مهمة مفتوحة، وأقربهم «'+t.t.slice(0,48)+'». ابدأ بيها.'); }
+  if(open.length){ const t=open.slice().sort(taskCmp)[0]; out.push('عندك '+open.length+' مهمة مفتوحة، وأقربهم «'+t.t.slice(0,48)+'». ابدأ بيها.'); }
   const rem=GPA.map(u=>({u,r:progress(u).n-progress(u).d})).filter(x=>x.r>0).sort((a,b)=>b.r-a.r);
   if(rem.length){ const x=pick(rem.slice(0,3)); out.push(SUBJ[x.u].n+': لسه '+x.r+' موضوع مش «فهمته». خد واحد منهم النهارده.'); }
   const st=streak(); out.push(st>=2?st+' يوم ورا بعض. ماتكسرش السلسلة.':'ابدأ سلسلة جديدة النهارده، يوم واحد بيكفي كبداية.');
@@ -1229,6 +1237,22 @@ function dueInfo(due){
   const dd=toD(due), n=daysBetween(new Date(),dd);
   if(due===dayKey(OOP_DUE)){ const h=Math.round((OOP_DUE-new Date())/36e5); if(h>0&&h<72) return {t:'فاضل '+h+' ساعة',c:'late',n}; }
   if(n<0) return {t:'متأخر '+(-n)+' يوم',c:'late',n}; if(n===0) return {t:'النهارده',c:'late',n}; if(n===1) return {t:'بكرة',c:'soon',n}; if(n<=3) return {t:'بعد '+n+' أيام',c:'soon',n}; return {t:fmtDate(dd,{day:'numeric',month:'long'}),c:'ok',n};
+}
+/* task kind: q = quiz, a = assignment, x = exam. These always come first in the task list. */
+const TKIND={q:'كويز',a:'أسايمنت',x:'امتحان'};
+function taskKind(t){
+  if(t.k!==undefined) return t.k; const s=t.t||'';
+  if(/Quiz|كويز/i.test(s)) return 'q';
+  if(/Assignment|اسايمنت|أسايمنت|اسايمينت/i.test(s)) return 'a';
+  if(/ميدتيرم|الميد|للميد|ميد\b|Midterm|فاينل|امتحان/i.test(s)) return 'x';
+  return '';
+}
+function taskCmp(a,b){ const ka=taskKind(a)?0:1, kb=taskKind(b)?0:1; return ka-kb||dueInfo(a.due).n-dueInfo(b.due).n; }
+/* alerts at the top of a course page: open quiz/assignment/exam tasks due within 14 days; they vanish after the due date */
+function deadlineAlerts(u){
+  const a=allTasks().filter(t=>t.u===u&&!S.done[t.id]&&taskKind(t)&&t.due).map(t=>({t,d:dueInfo(t.due)})).filter(x=>x.d.n>=0&&x.d.n<=14).sort((p,q)=>p.d.n-q.d.n);
+  if(!a.length) return '';
+  return '<div class="dl-alert" role="status"><div class="dl-h">تنبيه: عندك مواعيد قريبة في المادة دي</div>'+a.map(x=>'<div class="dl-i '+x.d.c+'"><span class="dl-k">'+TKIND[taskKind(x.t)]+'</span><span class="dl-t">'+esc(x.t.t)+'</span><span class="due '+x.d.c+'">'+x.d.t+'</span></div>').join('')+'</div>';
 }
 function doneLeft(id){ return Math.max(0,Math.ceil((WEEKMS-(Date.now()-S.done[id]))/864e5)); }
 
@@ -1407,7 +1431,7 @@ function linksFor(u){ return (S.my.links[u]||[]); }
 function taskRow(t){
   let d=dueInfo(t.due); const done=!!S.done[t.id];
   if(done) d={t:'تختفي بعد '+doneLeft(t.id)+' يوم',c:'ok'};
-  return '<div class="task'+(done?' is-done':'')+'" style="--c:'+col(t.u)+'"><button class="chk" aria-pressed="'+done+'" data-act="task" data-id="'+t.id+'" aria-label="تم">'+CHECK+'</button><div><div class="tt">'+esc(t.t)+'</div><span class="chip" style="--c:'+col(t.u)+'">'+SUBJ[t.u].n+'</span></div><span class="due '+d.c+'">'+d.t+'</span></div>';
+  return '<div class="task'+(done?' is-done':'')+'" style="--c:'+col(t.u)+'"><button class="chk" aria-pressed="'+done+'" data-act="task" data-id="'+t.id+'" aria-label="تم">'+CHECK+'</button><div><div class="tt">'+esc(t.t)+'</div><span class="chip" style="--c:'+col(t.u)+'">'+SUBJ[t.u].n+'</span>'+(taskKind(t)?' <span class="tk">'+TKIND[taskKind(t)]+'</span>':'')+'</div><span class="due '+d.c+'">'+d.t+'</span></div>';
 }
 function todayHTML(){
   const now=new Date(), dow=now.getDay(), mins=now.getHours()*60+now.getMinutes(), st=slotT();
@@ -1425,7 +1449,7 @@ function todayHTML(){
 }
 let SHOWALLT=false;
 function priorityHTML(){
-  const allOpen=allTasks().filter(t=>!S.done[t.id]).map(t=>({t,n:dueInfo(t.due).n})).sort((a,b)=>a.n-b.n).map(x=>x.t); const list=SHOWALLT?allOpen:allOpen.slice(0,6); const moreBtn=allOpen.length>6?'<button class="btn sm ghost" type="button" data-act="showall" style="margin-top:10px;width:100%">'+(SHOWALLT?'عرض أقل':'عرض كل المهام ('+allOpen.length+')')+'</button>':'';
+  const allOpen=allTasks().filter(t=>!S.done[t.id]).sort(taskCmp); const list=SHOWALLT?allOpen:allOpen.slice(0,6); const moreBtn=allOpen.length>6?'<button class="btn sm ghost" type="button" data-act="showall" style="margin-top:10px;width:100%">'+(SHOWALLT?'عرض أقل':'عرض كل المهام ('+allOpen.length+')')+'</button>':'';
   const doneL=allTasks().filter(t=>S.done[t.id]&&Date.now()-S.done[t.id]<WEEKMS).sort((a,b)=>S.done[b.id]-S.done[a.id]);
   const dn=doneL.length;
   const opts=ORDER.map(u=>'<option value="'+u+'">'+SUBJ[u].n+'</option>').join('');
@@ -1508,6 +1532,7 @@ function viewSubject(u){
   const mid=S.mid[u]?daysBetween(new Date(),toD(S.mid[u])):null;
   const head='<section class="sh" style="--c:'+col(u)+'"><span class="blob"></span><span class="blob b2"></span><a href="#subjects" style="opacity:.9;font-weight:700">المواد</a><h1>'+s.n+'</h1><p class="sub">'+s.ar+'</p><div class="chips"><span class="stat">'+esc(s.staff)+'</span>'+(pr.n?'<span class="stat"><b>'+pr.p+'%</b>فاهمه</span>':'')+'<span class="stat"><b>'+mins+'</b>دقيقة تركيز</span>'+(mid!=null?'<span class="stat"><b>'+mid+'</b>يوم على الميد</span>':'')+attChip(u)+(s.gpa?'':'<span class="stat">مش في الـGPA</span>')+'</div></section>';
   let body='';
+  const dla=deadlineAlerts(u);
   if(tab==='info'){
     const mine=cells().filter(c=>c.u===u).sort((a,b)=>DAYS.indexOf(a.d)-DAYS.indexOf(b.d)||a.s-b.s);
     const sched=mine.length?'<ul class="rules">'+mine.map(c=>'<li>'+DAYN[c.d]+' '+t12(slotT()[c.s][0])+' · '+TYPE[c.t]+' · '+esc(c.p||'')+(c.w?' · '+esc(c.w):'')+(c.chk?' <span class="flag">(راجع)</span>':'')+'</li>').join('')+'</ul>':'<p class="sub">مفيش مواعيد في الجدول.</p>';
@@ -1538,7 +1563,7 @@ function viewSubject(u){
   else if(tab==='news'){ const a=newsFor(u); body=(a.length?newsList(a,true):'<div class="empty">مفيش أخبار.</div>')+'<div class="row" style="margin-top:12px"><button class="btn sm" data-act="addnews" data-u="'+u+'">+ أضف خبر</button><button class="btn soft sm" data-act="showhid">'+(SHOWHID?'إخفاء المخفي':'عرض المخفي')+'</button></div>'; }
   else if(tab==='res'){ body=s.res.length?'<div class="links" style="--c:'+col(u)+'">'+s.res.map(r=>'<a href="'+r[1]+'" target="_blank" rel="noopener"><span>'+esc(r[0])+(r[2]?'<br><small>'+esc(r[2])+'</small>':'')+'</span><span aria-hidden="true">↗</span></a>').join('')+'</div>':'<div class="empty">مفيش مصادر لسه.</div>'; }
   else if(tab==='notes'){ body='<div class="card"><h3>ملاحظاتي على '+s.n+'</h3><textarea class="in" id="notes" data-u="'+u+'" placeholder="اكتب أو الصق أي حاجة: ملخص، سؤال للدكتور، خطأ اتكرر معاك...">'+esc(S.notes[u]||'')+'</textarea><p class="sub" style="margin-top:8px">بتتحفظ تلقائياً.</p></div>'; }
-  return head+tabsH+'<div id="tabbody" style="--c:'+col(u)+'">'+body+'</div>';
+  return head+dla+tabsH+'<div id="tabbody" style="--c:'+col(u)+'">'+body+'</div>';
 }
 function quizHTML(u){
   const all=quizAll(u), qs=quizFor(u);
@@ -5087,6 +5112,24 @@ The board also lists Wireshark among the tools to try in the lab.`),
   en:['Stat 2: Section 4 questions and examples from lecture 12 (sampling distribution) and lecture 13 (confidence intervals), plus new MCQs.',
   'OR: the Section 4 example (graphical and step-by-step simplex). Entrepreneurship: Business Model Canvas questions. OOP: concept questions (deep copy, operator overloading, recursion).']});
 })();
+/* Update 2026-11-07. Source: messages the owner sent in chat (OOP Thursday 12/11 cancelled, OOP Assignment 2 Part 2 postponed to 9/11 11:59 PM).
+   Also sets task kinds (q quiz / a assignment / x exam) so they always sort first, and adds the exact times to the Stat/OOP assignment tasks. */
+(function(){
+ const N=(u,d,k,t,en)=>({u,d,k,t,en});
+ NEWS.push(
+  N('oop','2026-11-07','change',`محاضرة OOP يوم الخميس 12 نوفمبر اتلغت عشان تحضروا للميدتيرم، يعني مفيش محاضرة الخميس الجاي.`,`The OOP lecture on Thursday 12 November is cancelled so you can prepare for the midterm. No lecture next Thursday.`),
+  N('oop','2026-11-07','deadline',`تسليم Assignment 2 Part 2 في OOP اتأجل لحد يوم الاثنين 9 نوفمبر الساعة 11:59 بليل.`,`The OOP Assignment 2 Part 2 deadline was postponed to Monday 9 November at 11:59 PM.`)
+ );
+ NEWS.forEach((n,i)=>{ if(!n.id) n.id='n'+i; });
+
+ const set=(id,o)=>{ const t=TASKS0.find(x=>x.id===id); if(t) Object.assign(t,o); };
+ set('p05-oop-a2',{t:`OOP: سلّم Assignment 2 Part 2 يوم الاثنين 9/11 الساعة 11:59 بليل (zip بالاسم الصح + TEAM.txt + GitHub + فيديو)`,due:'2026-11-09',k:'a'});
+ set('p05-stat-a1',{t:`Stat 2: سلّم Assignment 1 يوم السبت 7/11 الساعة 11:59 بليل (تسليم واحد بس، PDF أول سؤالين + MCQ في الفورم)`,k:'a'});
+ set('p05-math-a1',{k:'a'}); set('p05-or-a1',{k:'a'}); set('p05-stat-q1',{k:'q'});
+  {const i=TASKS0.findIndex(x=>x.id==='p20-oop-a2p2'); if(i>=0) TASKS0.splice(i,1);} /* replaced by p05-oop-a2 (same deadline, now 9/11) */
+ set('p25-oop-lect',{k:''});
+ set('p05-net-mid',{k:'x'}); set('p05-math-mid',{k:'x'}); set('p05-oop-mid',{k:'x'});
+})();
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
    ===================================================================== */
@@ -5349,7 +5392,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.7.1';
+const APP_VERSION='1.8.0';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -5585,11 +5628,13 @@ const EN_DICT={
 "{0}: Assignment {1} Part {2}":"{0}: Assignment {1} Part {2}",
 "{0}: Assignment {1} Part {2} (اقراه واكتب أسئلتك)":"{0}: Assignment {1} Part {2} (read it and write down your questions)",
 "{0}: Exercises {1} و{2} (Lay {3} و{4})":"{0}: Exercises {1} and {2} (Lay {3} and {4})",
+"{0}: Quiz {1} أونلاين {2} بليل من إيميل الكلية (Descriptive وNormal وSampling)":"{0}: online Quiz {1} at {2} PM from your university email (Descriptive, Normal and Sampling)",
 "{0}: ابدأ Chapter {1} في الكتاب (Matrix Operations)":"{0}: start Chapter {1} in the book (Matrix Operations)",
 "{0}: احجز ميعاد مناقشة Assignment {1} في شيت معيدك بإيميل الكلية ومن غير ما تلمس خلايا غيرك":"{0}: book your Assignment {1} discussion slot in your TA\u0027s sheet with your college email, without touching anyone else\u0027s cells",
 "{0}: ارفع برنامجين Vole Machine شغالين على الفورم (اسم الملف فيه IDs التيم كلها)":"{0}: upload two working Vole Machine programs to the form (the file name must contain all the team IDs)",
 "{0}: استنى إعلان ميعاد تعويض السكشن اللي اتلغى":"{0}: wait for the announcement of the makeup time for the cancelled section",
 "{0}: اعمل فيديو التقرير (حوالي {1} دقايق) وحط لينكه في التقرير":"{0}: make the report video (about {1} minutes) and put its link in the report",
+"{0}: جهّز Business Model Canvas بـ {1} عناصر لفكرة واحدة":"{0}: prepare a Business Model Canvas with {1} elements for one idea",
 "{0}: جهّز مناقشة Assignment {1}: لابتوب والمشروع شغّال والكارنيه، وافهم كود كل فلاتر التيم":"{0}: prepare for the Assignment {1} discussion: laptop with the project running, your ID, and understand the code of all the team\u0027s filters",
 "{0}: حضور اللاب إجباري (غياب أكتر من {1}% يحرمك من الفاينل)":"{0}: lab attendance is mandatory (missing more than {1}% bars you from the final)",
 "{0}: حل الأسايمنت {1} و{2} كله وخلّي نسخة Hard (التسليم Hard وSoft والميعاد لسه)":"{0}: solve all of Assignments {1} and {2} and keep a Hard copy (submission is Hard and Soft, deadline not set yet)",
@@ -5598,7 +5643,14 @@ const EN_DICT={
 "{0}: ذاكر Set {1} لحد سلايد {2} (Virtual Functions وDefault Class Functions)":"{0}: study Set {1} up to slide {2} (Virtual Functions and Default Class Functions)",
 "{0}: ذاكر الأول فكرة Sampling Distribution قبل المحاضرة الجاية (مهمة جدًا لباقي المنهج)":"{0}: first study the idea of Sampling Distribution before the next lecture (very important for the rest of the course)",
 "{0}: ذاكر اللي خلصناه مع الدكتور: Chapter {1} ({2} و{3}) وChapter {4} ({5})":"{0}: study what we finished with the doctor: Chapter {1} ({2} and {3}) and Chapter {4} ({5})",
+"{0}: راجع Chapter {1} و{2} و{3} (لحد ص{4})، وركز على مقارنة TCP وUDP ومسائل HTTP delay":"{0}: review Chapter {1}, {2} and {3} (up to page {4}) and focus on the TCP vs UDP comparison and HTTP delay problems",
 "{0}: راجع Grouped Data (جدول التكرار وHistogram وPolygon وOgive والمتوسط والوسيط والمنوال)":"{0}: review Grouped Data (frequency table, histogram, polygon, ogive, mean, median and mode)",
+"{0}: راجع دروس {1} لـ {2} فقط ({3} لـ {4}) للميد":"{0}: review lessons {1} to {2} only ({3} to {4}) for the midterm",
+"{0}: راجع لحد Lecture {1} (Backtracking) + مواضيع الميد المهمة (copy constructor وrecursion)":"{0}: review up to Lecture {1} (Backtracking) + the important midterm topics (copy constructor and recursion)",
+"{0}: سلّم Assignment {1} (PDF واحد: حلك + لقطات Excel، اسمه ID-Name)":"{0}: submit Assignment {1} (one PDF: your solution + Excel screenshots, named ID-Name)",
+"{0}: سلّم Assignment {1} Part {2} يوم {3} {4} الساعة {5} بليل (zip بالاسم الصح + TEAM.txt + GitHub + فيديو)":"{0}: submit Assignment {1} Part {2} on {3} {4} at {5} PM (zip with the right name + TEAM.txt + GitHub + video)",
+"{0}: سلّم Assignment {1} على الفورم (ورق وسكان، اسمك وID على كل صفحة)":"{0}: submit Assignment {1} through the form (on paper, scanned, with your name and ID on every page)",
+"{0}: سلّم Assignment {1} يوم {2} {3} الساعة {4} بليل (تسليم واحد بس، PDF أول سؤالين + MCQ في الفورم)":"{0}: submit Assignment {1} on {2} {3} at {4} PM (one submission only, PDF of the first two questions + MCQs in the form)",
 "{0}: سلّم تقرير Assignment {1} Part {2} على الكلاسروم (PDF بالاسم المطلوب وكل الأقسام وإلا يترفض)":"{0}: submit the Assignment {1} Part {2} report on Classroom (a PDF with the required name and all sections, or it is rejected)",
 "{0}: كوّن تيم Assignment {1} من نفس السكشن (أو استأذن المعيد/ة لو من سكشن تاني)":"{0}: form your Assignment {1} team from the same section (or ask your TA\u0027s permission if from another section)",
 "{0}: لو اتأخرت عن أول أسايمنت مع م. محمد خالد ارفعه على فورم المتأخرين":"{0}: if you were late with the first assignment with Eng. Mohamed Khaled, upload it through the late-submission form",
@@ -5718,6 +5770,7 @@ const EN_DICT={
 "Operations Research and Decision Support · فيه محتوى جاهز":"Operations Research and Decision Support · content ready",
 "OR: اتفرج على فيديو الـExcel للـSimplex واتمرن بيه":"OR: watch the Excel video for Simplex and practise with it",
 "OR: حل مثال Beaver Creek بالـSimplex بإيدك من غير ما تبص على الحل":"OR: solve the Beaver Creek example with the Simplex method by hand without looking at the solution",
+"OR: سلّم Assignment {0} (PDF واحد: حلك + لقطات Excel، اسمه ID-Name)":"OR: submit Assignment {0} (one PDF: your solution + Excel screenshots, named ID-Name)",
 "OR: فعّل Solver في Excel (فيديو الشرح على الجروب)":"OR: activate Solver in Excel (the how-to video is in the group)",
 "OR: كويز {0} {1} في ميعاد المحاضرة على كل المنهج لحد دلوقتي (استنى إعلان المجموعات والتوقيت)":"OR: quiz on {0} {1} at lecture time on everything so far (wait for the groups and timing announcement)",
 "Part {0} · تسليم {1}":"Part {0} · due {1}",
@@ -5787,6 +5840,7 @@ const EN_DICT={
 "ارسم كل قيد كخط، ظلّل المنطقة المسموحة (feasible region)، حدد نقاط الأركان، عوّض بكل ركن في دالة الهدف، وخد الأحسن.":"Draw each constraint as a line, shade the feasible region, find the corner points, plug each corner into the objective function, and take the best.",
 "أرقام جديدة كل مرة":"New numbers every time",
 "إزاي تقرأ مسألة كلامية":"How to read a word problem",
+"أسايمنت":"Assignment",
 "أسايمنت {0}":"Assignment {0}",
 "أسايمنت وعرض":"Assignment and presentation",
 "أسايمنتات وكويزات":"Assignments and quizzes",
@@ -5968,6 +6022,7 @@ const EN_DICT={
 "النوع":"Type",
 "الهدف":"The target",
 "اليوم":"Day",
+"امتحان":"Exam",
 "أمثلة كتاب Lay":"Lay book examples",
 "أمثلة كتاب Taylor":"Taylor book examples",
 "أمثلة وتمارين اللاب":"Lab examples and exercises",
@@ -6051,6 +6106,7 @@ const EN_DICT={
 "تلقائي":"automatic",
 "تم":"Done",
 "تمام":"OK",
+"تنبيه: عندك مواعيد قريبة في المادة دي":"Heads up: you have upcoming deadlines in this course",
 "تهديدات: packet sniffing (Wireshark)، IP spoofing، DoS (botnet). دفاعات: authentication، encryption للسرية، digital signatures للـintegrity، VPN وaccess restrictions، firewalls.":"Threats: packet sniffing (Wireshark), IP spoofing, DoS (botnet). Defenses: authentication, encryption for confidentiality, digital signatures for integrity, VPN and access restrictions, firewalls.",
 "تواصل مع صاحب الموقع":"Contact the site owner",
 "توزيع المعاينة هو توزيع قيمة إحصائية (زي المتوسط x̄) لو سحبنا عينات كتير بنفس الحجم من نفس المجتمع. متوسط x̄ بيساوي μ، والانحراف المعياري له (الـstandard error) بيساوي σ على جذر n، فكل ما زادت n قل الـstandard error. ولو n كبيرة ({0} أو أكتر) بيبقى x̄ تقريبًا طبيعي حتى لو المجتمع مش طبيعي (Central Limit Theorem). ده تمهيد من معرفة عامة قبل المحاضرة، راجعه مع سلايدات الدكتور.":"A sampling distribution is the distribution of a statistic (such as the mean x̄) if we draw many samples of the same size from the same population. The mean of x̄ equals μ, and its standard deviation (the standard error) equals σ divided by the square root of n, so the larger n is, the smaller the standard error. And if n is large ({0} or more), x̄ is approximately normal even if the population is not (Central Limit Theorem). This is a general-knowledge preview before the lecture, so check it against the doctor\u0027s slides.",
@@ -6117,6 +6173,7 @@ const EN_DICT={
 "رقم سكشنك":"Your section number",
 "روابطك":"Your links",
 "ريادة الأعمال":"Entrepreneurship",
+"ريادة الأعمال: جهّز Business Model Canvas بـ {0} عناصر لفكرة واحدة":"Entrepreneurship: prepare a Business Model Canvas with {0} elements for one idea",
 "ريادة الأعمال: حضّر مناقشة المشروع مع المعيد/ة، ولو عندك عذر ابعته قبل الميعاد":"Entrepreneurship: prepare for the project discussion with your TA, and if you have an excuse send it before the slot",
 "ريادة الأعمال: لو تيمك مش متسجل عند معيد مناقشة في الإكسل املا الفورم (آخر فرصة)":"Entrepreneurship: if your team is not registered with a discussion TA in the Excel sheet, fill the form (last chance)",
 "ريبو الأسايمنت":"Assignment repo",
@@ -6226,6 +6283,7 @@ const EN_DICT={
 "كلمة final بعد اسم الـclass بتمنع أي حد يورّث منه. وfinal بعد توقيع دالة virtual بتمنع إعادة تعريفها (override) في الـclasses اللي تحت. راجعه مع سلايدات Set {0}.":"The word final after a class name stops anyone from inheriting from it. And final after a virtual function\u0027s signature stops it being overridden in the classes below. Check it against the Set {0} slides.",
 "كلمة final بعد اسم الـclass بتمنع أي حد يورّث منه. وfinal بعد توقيع دالة virtual بتمنع إعادة تعريفها (override) في الـclasses اللي تحت. راجعه مع سلايدات Set 7.":"The word final after a class name stops anyone from inheriting from it. And final after a virtual function\u0027s signature stops it being overridden in the classes below. Check it against the Set 7 slides.",
 "كلمة تانية":"Another line",
+"كويز":"Quiz",
 "كويز في كل محاضرة على اللي اتشرح قبلها.":"A quiz in every lecture on what was covered before it.",
 "كويزين":"Two quizzes",
 "لـ":"to",

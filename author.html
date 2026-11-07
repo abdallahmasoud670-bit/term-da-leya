@@ -180,6 +180,14 @@ html{scroll-behavior:smooth}
 .tt{font-weight:700}
 .due{font-size:.8rem;font-weight:800;white-space:nowrap}
 .due.late{color:var(--bad)}.due.soon{color:var(--warn)}.due.ok{color:var(--ink2)}
+.tk{display:inline-block;margin-inline-start:6px;padding:2px 9px;border-radius:999px;font-size:.74rem;font-weight:800;background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--ink)}
+.dl-alert{margin:14px 0;padding:12px 14px;border-radius:16px;border:1.5px solid color-mix(in srgb,var(--warn) 55%,transparent);border-inline-start:6px solid var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--bg))}
+.dl-h{font-weight:800;margin-bottom:6px}
+.dl-i{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:5px 0}
+.dl-i.late{--w:var(--bad)}
+.dl-k{padding:2px 9px;border-radius:999px;font-size:.74rem;font-weight:800;background:var(--warn);color:#fff}
+.dl-i.late .dl-k{background:var(--bad)}
+.dl-t{flex:1 1 200px;min-width:0;font-weight:600}
 .add{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .add input,.add select,.in,select.in{font:inherit;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-width:0;transition:border-color .25s,box-shadow .25s}
 .add input:focus,.in:focus{border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 18%,transparent);outline:0}
