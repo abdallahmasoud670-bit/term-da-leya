@@ -421,6 +421,12 @@ main#main{position:relative;z-index:1}
 .gtbl{display:grid;gap:6px}.gr{display:grid;grid-template-columns:26px 1fr auto auto auto;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:.9rem}
 .gr .rk{font-weight:800;color:var(--brand)}
 @media (max-width:560px){.ghead,.grow{grid-template-columns:minmax(0,1fr) 50px 76px 62px 30px;gap:5px}.gr{grid-template-columns:22px 1fr auto;}.gr>span:nth-child(n+4){display:none}.bnav a{font-size:.66rem}}
+
+.ic{direction:ltr;unicode-bidi:isolate;font-family:ui-monospace,Consolas,'Courier New',monospace;font-size:.92em;background:color-mix(in srgb,var(--c,var(--brand)) 12%,var(--card));padding:0 6px;border-radius:7px;white-space:pre-wrap;font-weight:500}
+pre.code{tab-size:4;-moz-tab-size:4}
+.qbody{width:100%}
+.qcard pre.code,.qans pre.code,.rcard pre.code,.bubble pre.code{box-sizing:border-box;width:100%;font-weight:500;text-align:left;margin:8px 0;font-size:.82rem}
+.qcard pre.code{background:color-mix(in srgb,var(--c) 6%,var(--bg2))}
 </style></head><body>
 
 <div id="root" dir="rtl" lang="ar">
@@ -1275,6 +1281,119 @@ function tick(){
   } else { document.title=window.LANG_EN?'This term is mine.':'الترم ده ليا'; }
 }
 setInterval(tick,500);
+/* Code display helpers: every piece of code (any subject) is shown in a monospace font, left-to-right,
+   with real indentation. fmtCode = tiny C-like pretty printer; codeify = prose+code text -> HTML;
+   richText = Claude's markdown-ish answers (``` fences + `inline`); a DOM pass turns long bdi.f snippets into blocks. */
+const CODE_IND='    ';
+function fmtCode(src){
+  src=String(src).replace(/\s+/g,' ').trim();
+  const out=[]; let line='', ind=0, par=0, i=0; const n=src.length;
+  const push=()=>{ const t=line.trim(); if(t) out.push(CODE_IND.repeat(Math.max(ind,0))+t); line=''; };
+  const matchBrace=(s,k)=>{ let d=0; for(let j=k;j<s.length;j++){ const ch=s[j];
+    if(ch==='"'||ch==="'"){ j++; while(j<s.length&&s[j]!==ch){ if(s[j]==='\\') j++; j++; } continue; }
+    if(ch==='{') d++; else if(ch==='}'){ d--; if(d===0) return j; } } return s.length-1; };
+  while(i<n){
+    const c=src[i];
+    if(c==='"'||c==="'"){ let j=i+1; while(j<n&&src[j]!==c){ if(src[j]==='\\') j++; j++; } line+=src.slice(i,j+1); i=j+1; continue; }
+    if(c==='#'&&par<=0&&line.trim()===''){ const m=/^#\s*include\s*(<[^>]*>|"[^"]*")/.exec(src.slice(i)); if(m){ line+=m[0]; i+=m[0].length; push(); continue; } }
+    if(c==='('||c==='[') par++;
+    else if(c===')'||c===']') par--;
+    if(c==='{'){
+      const before=line.trim();
+      const isBlock=par<=0&&(before===''||/\)\s*(?:const|override|noexcept|final|\s)*$/.test(before)||/(?:^|\s)(?:else|do|try)$/.test(before)||/\b(?:class|struct|namespace|enum|union)\b/.test(before));
+      if(!isBlock){ const e=matchBrace(src,i); line+=src.slice(i,e+1); i=e+1; continue; }
+      line=before?before+' {':'{'; push(); ind++; i++; continue;
+    }
+    if(c==='}'&&par<=0){
+      push(); ind--; line='}'; i++;
+      const rest=src.slice(i).replace(/^\s+/,'');
+      if(rest[0]===';'){ line+=';'; i=src.indexOf(';',i)+1; push(); }
+      else if(/^(?:else|while|catch)\b/.test(rest)){ line+=' '; }
+      else push();
+      continue;
+    }
+    if(c===';'&&par<=0){ line+=';'; push(); i++; continue; }
+    if(c===':'&&par<=0&&/^(?:public|private|protected)$/.test(line.trim())&&src[i+1]!==':'){ const sv=ind; ind=Math.max(ind-1,0); line+=':'; push(); ind=sv; i++; continue; }
+    line+=c; i++;
+  }
+  push();
+  return out.join('\n');
+}
+const _sp=s=>/[؀-ۿ]/.test(s);
+const _FW='Which|What|Same|The|If|After|When|How|Given|Consider|In|For|Suppose|Assume|Why|Is|Are|Does|Do|Can|Note|Output|Find|Choose|Select|Write|Trace|Compare|Explain|Define|Describe|Identify|Complete|Fill|Correct|Rewrite|Convert|Calculate|State|Answer|Question|Using|With|From|Let|This|That|These|Those|Both|Each|Every|All|Only|Any|None|There|Then|Before|Here|Draw|Show|Give|Name|List|Create|Implement|Add|Remove|Suppose|Case|Part|Exercise|Example|Problem|Task|Hint|Tip|Why|Where|Who|Whose|Whom|Would|Should|Could|Will|May|Might|Must|Not|True|False|Yes|No';
+const CODE_START=new RegExp('^\\s*(?:template\\b|#\\s*include|(?:class|struct|namespace|enum|union)\\s+\\w|using\\s+(?:namespace|\\w+\\s*=)|typedef\\b|(?:public|private|protected)\\s*:|(?:virtual|static|const|inline|explicit|friend|unsigned|signed|auto|int|char|double|float|long|short|void|bool|string|size_t)\\b[^.?!]*[;(){=]|(?:std::)?(?:vector|set|map|multiset|multimap|unordered_\\w+|deque|list|queue|stack|array|pair|unique_ptr|shared_ptr|function)\\s*<|(?:cout|cin|cerr)\\b|(?:for|while|if|switch)\\s*\\(|(?:do|try|else|return|delete|throw|break|continue)\\b|[{}]\\s*;?\\s*$|(?!(?:'+_FW+')\\b)[A-Za-z_][\\w:]*(?:<[^<>]*>)?[*&\\s]+[*&]?[A-Za-z_]\\w*\\s*(?:=[^=]|\\(|\\{|;)|(?!(?:'+_FW+')\\b)[A-Za-z_]\\w*(?:\\[[^\\]]*\\])?\\s*(?:->|\\.|::)\\w+|(?!(?:'+_FW+')\\b)[A-Za-z_]\\w*\\s*(?:\\+\\+|--|[-+*/%]?=)[^=])');
+const _INL=/`([^`\n]+)`|\b(?:cout|cin|cerr)\s*(?:<<|>>)[^;]*;|\b[\w:]+(?:<[\w:,\s*&]+>)?[*&]?\s+\w+\s*=\s*new\b[^;]*;|\b[A-Za-z_][\w:]*(?:<[\w:,\s*&]+>)\s+\w+(?:\s*=\s*\{[^}]*\}|\s*\{[^}]*\}|\s*=\s*[^;]+)?;?|\b[A-Za-z_]\w*(?:(?:->|\.|::)\w+)*(?:<[\w:,\s*&]+>)?\([^()]*\)|\b[A-Za-z_][\w:]*<[\w:,\s*&]+>/g;
+function inlineCode(s){
+  s=String(s==null?'':s); let h='', last=0, m; _INL.lastIndex=0;
+  while((m=_INL.exec(s))){ h+=esc(s.slice(last,m.index))+'<code class="ic">'+esc(m[1]!=null?m[1]:m[0])+'</code>'; last=m.index+m[0].length; if(m[0].length===0) _INL.lastIndex++; }
+  return h+esc(s.slice(last));
+}
+function codeBlock(lines){
+  let t;
+  const body=lines.join('\n'), noCom=!/\/\//.test(body);
+  const dense=lines.some(l=>(l.match(/;/g)||[]).length>1||/\{[^}]*\S[^}]*\}/.test(l)||/\{\s*\S/.test(l)||/;\s*\S/.test(l)||(/\)\s*\{/.test(l)&&/\}/.test(l)));
+  if(lines.length===1&&/[;{}]/.test(body)&&noCom) t=fmtCode(body);
+  else if(noCom&&dense&&!lines.some(l=>/^\s{2,}\S/.test(l))) t=fmtCode(lines.join(' '));
+  else { const ind=Math.min.apply(null,lines.filter(l=>l.trim()).map(l=>l.match(/^\s*/)[0].length).concat([1e9])); t=lines.map(l=>l.slice(Math.min(ind,l.length)).replace(/\s+$/,'')).join('\n').replace(/\t/g,CODE_IND); }
+  return '<pre class="code">'+esc(t)+'</pre>';
+}
+function codeify(text){
+  text=String(text==null?'':text).replace(/\r/g,'');
+  const lines=text.split('\n'), parts=[]; let blk=null, depth=0;
+  const flush=()=>{ if(blk){ parts.push({c:1,h:codeBlock(blk)}); blk=null; } };
+  const cnt=(s,ch)=>s.split(ch).length-1;
+  lines.forEach(raw=>{
+    const l=raw.replace(/\t/g,CODE_IND);
+    if(blk&&depth>0&&l.trim()){ blk.push(l); depth+=cnt(l,'{')-cnt(l,'}'); return; }
+    if(blk&&/^\s{2,}\S/.test(l)&&!_sp(l)&&/[;{}()]/.test(l)){ blk.push(l); depth+=cnt(l,'{')-cnt(l,'}'); return; }
+    if(!l.trim()){ flush(); parts.push({c:0,h:''}); return; }
+    if(!_sp(l)&&CODE_START.test(l)&&!(/\[[^\]]*;[^\]]*\]/.test(l)&&!/[(){}]/.test(l))){
+      const inc=/^\s*#\s*include\s*(?:<[^>]*>|"[^"]*")/.exec(l);
+      if(inc){ if(!blk) blk=[]; blk.push(inc[0]); const tl=l.slice(inc[0].length).trim(); if(tl){ flush(); parts.push({c:0,h:inlineCode(tl)}); } return; }
+      const k=Math.max(l.lastIndexOf(';'),l.lastIndexOf('}'));
+      const looksFull=/^\s*(?:template\b|#\s*include|(?:class|struct)\b|(?:public|private|protected)\s*:|[{}])/.test(l)||/[{;}]\s*$/.test(l);
+      if(k>=0||looksFull){
+        const end=(k>=0&&!/[{;}]\s*$/.test(l))?k+1:l.length;
+        const code=l.slice(0,end), tail=l.slice(end);
+        if(!blk) blk=[]; blk.push(code); depth=Math.max(0,(blk.join('\n').split('{').length-1)-(blk.join('\n').split('}').length-1));
+        if(tail.trim()){ flush(); parts.push({c:0,h:inlineCode(tail.trim())}); }
+        else if(depth===0&&!/^\s*template\b[^{;]*$/.test(code)&&!/^\s*(?:class|struct)\b[^;{]*$/.test(code)){ /* keep open: adjacent code lines join */ }
+        return;
+      }
+    }
+    flush(); parts.push({c:0,h:inlineCode(l)});
+  });
+  flush();
+  let h='', prevProse=false;
+  parts.forEach(p=>{ if(p.c){ h+=p.h; prevProse=false; } else { if(prevProse) h+='<br>'; h+=p.h; prevProse=true; } });
+  return h;
+}
+function optHTML(o){
+  o=String(o);
+  return /[;(){}\[\]]|->|::|<<|>>|\w<\w[^>]*>|^\s*[*&]\w|\bnew\b|\bdelete\b|\bvirtual\b|^\w+\s*[*&]\s*\w/.test(o)&&!_sp(o)&&!/^[A-Z][a-z]+(?:\s+[a-z]+){2,}/.test(o)?'<code class="ic">'+esc(o)+'</code>':inlineCode(o);
+}
+function richText(t){
+  t=String(t==null?'':t); const segs=t.split('```'); let h='';
+  segs.forEach((sg,i)=>{
+    if(i%2===1){ const code=sg.replace(/^[A-Za-z+#]*\n/,'').replace(/\n+$/,''); h+='<pre class="code">'+esc(code.replace(/\t/g,CODE_IND))+'</pre>'; }
+    else { h+=inlineCode(sg).replace(/\n/g,'<br>'); }
+  });
+  return h;
+}
+function fixCodeDom(root){
+  (root||document).querySelectorAll('bdi.f').forEach(el=>{
+    const t=el.textContent;
+    if(!/[;{}]/.test(t)||_sp(t)||t.length<30) return;
+    const pre=document.createElement('pre'); pre.className='code'; pre.textContent=/\n/.test(t)?t:fmtCode(t);
+    el.replaceWith(pre);
+  });
+}
+(function(){
+  let busy=false;
+  const run=()=>{ busy=false; try{ fixCodeDom(document.getElementById('main')||document.body); document.querySelectorAll('#modal bdi.f').length&&fixCodeDom(document.getElementById('modal')); }catch(e){} };
+  const start=()=>{ const t=document.body; if(!t||!window.MutationObserver) return; new MutationObserver(()=>{ if(!busy){ busy=true; requestAnimationFrame(run); } }).observe(t,{childList:true,subtree:true}); run(); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
 /* =====================================================================
    WEATHER at Cairo University (Giza), Open-Meteo, no key. If the network
    is blocked in the viewer the feature stays silently hidden.
@@ -1798,10 +1917,10 @@ function quizHTML(u){
   let tagH=''; if(q.src&&q.src.charAt(0)==='~') tagH='<span class="tag drill">تدريب على نمط الميد · سؤال من تأليفي</span>'; else if(q.src) tagH='<span class="tag exam">من امتحان: '+esc(q.src)+'</span>'; else if(q.gen) tagH='<span class="tag drill">أرقام جديدة كل مرة</span>'; else if(q.t==='essay'&&q.tag==='exam') tagH='<span class="tag exam">من امتحان</span>'; else if(q.mine) tagH='<span class="tag mine">منك</span>';
   let body='';
   if(q.t==='mcq'){
-    body='<div class="qcard" dir="auto">'+esc(q.q)+'</div><div class="qopts">'+q.o.map((o,i)=>{ let cl='qopt'; if(QZ.picked!=null){ if(i===q.a) cl+=' right'; else if(i===QZ.picked) cl+=' wrong'; } return '<button class="'+cl+'" data-act="qopt" data-i="'+i+'" dir="auto"'+(QZ.picked!=null?' disabled':'')+'><b>'+'ABCD'[i]+'</b><span>'+esc(o)+'</span></button>'; }).join('')+'</div>'+
-     (QZ.picked!=null?'<div class="qans">'+(QZ.picked===q.a?'<b style="color:var(--good)">صح</b>':'<b style="color:var(--bad)">غلط. الصح: '+'ABCD'[q.a]+'</b>')+(q.e?'<br>'+esc(q.e):'')+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="qnext">السؤال اللي بعده</button></div>':'');
+    body='<div class="qcard" dir="auto"><div class="qbody">'+codeify(q.q)+'</div></div><div class="qopts">'+q.o.map((o,i)=>{ let cl='qopt'; if(QZ.picked!=null){ if(i===q.a) cl+=' right'; else if(i===QZ.picked) cl+=' wrong'; } return '<button class="'+cl+'" data-act="qopt" data-i="'+i+'" dir="auto"'+(QZ.picked!=null?' disabled':'')+'><b>'+'ABCD'[i]+'</b><span>'+optHTML(o)+'</span></button>'; }).join('')+'</div>'+
+     (QZ.picked!=null?'<div class="qans">'+(QZ.picked===q.a?'<b style="color:var(--good)">صح</b>':'<b style="color:var(--bad)">غلط. الصح: '+'ABCD'[q.a]+'</b>')+(q.e?'<br>'+inlineCode(q.e):'')+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="qnext">السؤال اللي بعده</button></div>':'');
   } else {
-    body='<div class="qcard" dir="auto">'+esc(q.q)+'</div>'+(QZ.show?'<div class="qans">'+esc(q.a).replace(/\n/g,'<br>')+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn" data-act="qk">عرفتها</button><button class="btn soft" data-act="qn">محتاج أراجع</button><button class="x" data-act="'+(q.mine?'delq':'hide')+'" data-id="'+q.id+'" data-u="'+u+'">'+(q.mine?'حذف السؤال':'إخفاء')+'</button></div>':'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="qshow">جاوب في دماغك واعرض الإجابة</button></div>');
+    body='<div class="qcard" dir="auto"><div class="qbody">'+codeify(q.q)+'</div></div>'+(QZ.show?'<div class="qans">'+codeify(q.a)+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn" data-act="qk">عرفتها</button><button class="btn soft" data-act="qn">محتاج أراجع</button><button class="x" data-act="'+(q.mine?'delq':'hide')+'" data-id="'+q.id+'" data-u="'+u+'">'+(q.mine?'حذف السؤال':'إخفاء')+'</button></div>':'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="qshow">جاوب في دماغك واعرض الإجابة</button></div>');
   }
   const answered=(q.t==='mcq'&&QZ.picked!=null)||(q.t==='essay'&&QZ.show);
   const expH='';
@@ -1906,8 +2025,8 @@ function layHTML(u){
   if(!e) return '<div class="quiz" style="--c:'+col(u)+'">'+head+'<div class="empty">مفيش أمثلة في السكشن ده لسه.</div></div>';
   const done=!!S.lay[layId(e)];
   return '<div class="quiz" style="--c:'+col(u)+'">'+head+'<p class="sub" style="margin-bottom:10px">'+LB[0]+' · '+e.s+' · '+(e.k==='x'?'Exercise '+String(e.n).replace(/^E/,''):'Example '+e.n)+(e.p?' · صفحة '+e.p:'')+' · ('+(LAY.i+1)+' من '+list.length+')'+(done?' · <b style="color:var(--good)">✓ حليته</b>':'')+'</p>'+
-   '<div class="qcard" dir="ltr" style="text-align:start;white-space:pre-wrap;font-weight:600">'+esc(e.q)+'</div>'+
-   (LAY.show?'<div class="qans" dir="ltr" style="white-space:pre-wrap;text-align:start">'+esc(e.a)+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn" data-act="laysolved">'+(done?'شيل علامة حليته':'حليته صح')+'</button><button class="btn soft" data-act="laynext">المثال اللي بعده</button></div>':'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="layshow">حل لوحدك واعرض الحل</button></div>')+
+   '<div class="qcard" dir="ltr" style="text-align:start;white-space:pre-wrap;font-weight:600"><div class="qbody">'+codeify(e.q)+'</div></div>'+
+   (LAY.show?'<div class="qans" dir="ltr" style="white-space:pre-wrap;text-align:start">'+codeify(e.a)+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn" data-act="laysolved">'+(done?'شيل علامة حليته':'حليته صح')+'</button><button class="btn soft" data-act="laynext">المثال اللي بعده</button></div>':'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="layshow">حل لوحدك واعرض الحل</button></div>')+
    '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn soft sm" data-act="layprev">السابق</button><button class="btn soft sm" data-act="laynext">التالي</button></div></div>';
 }
 /* Lay exercises (k:'x'). Answers for odd and even ones were solved here and checked with an automatic RREF solver.
@@ -5600,7 +5719,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.9.2';
+const APP_VERSION='1.9.3';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
