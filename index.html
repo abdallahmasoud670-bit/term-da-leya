@@ -1321,7 +1321,7 @@ function fmtCode(src){
 }
 const _sp=s=>/[؀-ۿ]/.test(s);
 const _FW='Which|What|Same|The|If|After|When|How|Given|Consider|In|For|Suppose|Assume|Why|Is|Are|Does|Do|Can|Note|Output|Find|Choose|Select|Write|Trace|Compare|Explain|Define|Describe|Identify|Complete|Fill|Correct|Rewrite|Convert|Calculate|State|Answer|Question|Using|With|From|Let|This|That|These|Those|Both|Each|Every|All|Only|Any|None|There|Then|Before|Here|Draw|Show|Give|Name|List|Create|Implement|Add|Remove|Suppose|Case|Part|Exercise|Example|Problem|Task|Hint|Tip|Why|Where|Who|Whose|Whom|Would|Should|Could|Will|May|Might|Must|Not|True|False|Yes|No';
-const CODE_START=new RegExp('^\\s*(?:template\\b|#\\s*include|(?:class|struct|namespace|enum|union)\\s+\\w|using\\s+(?:namespace|\\w+\\s*=)|typedef\\b|(?:public|private|protected)\\s*:|(?:virtual|static|const|inline|explicit|friend|unsigned|signed|auto|int|char|double|float|long|short|void|bool|string|size_t)\\b[^.?!]*[;(){=]|(?:std::)?(?:vector|set|map|multiset|multimap|unordered_\\w+|deque|list|queue|stack|array|pair|unique_ptr|shared_ptr|function)\\s*<|(?:cout|cin|cerr)\\b|(?:for|while|if|switch)\\s*\\(|(?:do|try|else|return|delete|throw|break|continue)\\b|[{}]\\s*;?\\s*$|(?!(?:'+_FW+')\\b)[A-Za-z_][\\w:]*(?:<[^<>]*>)?[*&\\s]+[*&]?[A-Za-z_]\\w*\\s*(?:=[^=]|\\(|\\{|;)|(?!(?:'+_FW+')\\b)[A-Za-z_]\\w*(?:\\[[^\\]]*\\])?\\s*(?:->|\\.|::)\\w+|(?!(?:'+_FW+')\\b)[A-Za-z_]\\w*\\s*(?:\\+\\+|--|[-+*/%]?=)[^=])');
+const CODE_START=new RegExp('^\\s*(?:template\\b|#\\s*include|(?:class|struct|namespace|enum|union)\\s+\\w|using\\s+(?:namespace|\\w+\\s*=)|typedef\\b|(?:public|private|protected)\\s*:|(?:virtual|static|const|inline|explicit|friend|unsigned|signed|auto|int|char|double|float|long|short|void|bool|string|size_t)\\b[^.?!]*[;(){=]|(?:std::)?(?:vector|set|map|multiset|multimap|unordered_\\w+|deque|list|queue|stack|array|pair|unique_ptr|shared_ptr|function)\\s*<|(?:cout|cin|cerr)\\b|(?:for|while|if|switch)\\s*\\(|(?:do|try|else|return|delete|throw|break|continue)\\b|[{}]\\s*;?\\s*$|(?!(?:'+_FW+')\\b)[A-Za-z_][\\w:]*(?:<[^<>]*>)?[*&\\s]+[*&]?[A-Za-z_]\\w*\\s*(?:=[^=]|\\(|\\{|;)|(?!(?:'+_FW+')\\b)[A-Za-z_]\\w*(?:\\[[^\\]]*\\])?\\s*(?:->|\\.|::)\\w+|(?!(?:'+_FW+')\\b)[A-Za-z_]\\w*\\s*(?:\\+\\+|--|[-+*/%]?=)[^=]|(?!(?:'+_FW+')\\b)[A-Za-z_]\\w*\\s*\\([^()]*\\)\\s*(?:const\\s*)?\\{)');
 const _INL=/`([^`\n]+)`|\b(?:cout|cin|cerr)\s*(?:<<|>>)[^;]*;|\b[\w:]+(?:<[\w:,\s*&]+>)?[*&]?\s+\w+\s*=\s*new\b[^;]*;|\b[A-Za-z_][\w:]*(?:<[\w:,\s*&]+>)\s+\w+(?:\s*=\s*\{[^}]*\}|\s*\{[^}]*\}|\s*=\s*[^;]+)?;?|\b[A-Za-z_]\w*(?:(?:->|\.|::)\w+)*(?:<[\w:,\s*&]+>)?\([^()]*\)|\b[A-Za-z_][\w:]*<[\w:,\s*&]+>/g;
 function inlineCode(s){
   s=String(s==null?'':s); let h='', last=0, m; _INL.lastIndex=0;
@@ -5719,7 +5719,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.9.3';
+const APP_VERSION='1.9.4';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
