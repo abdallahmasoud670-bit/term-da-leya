@@ -427,6 +427,8 @@ pre.code{tab-size:4;-moz-tab-size:4}
 .qbody{width:100%}
 .qcard pre.code,.qans pre.code,.rcard pre.code,.bubble pre.code{box-sizing:border-box;width:100%;font-weight:500;text-align:left;margin:8px 0;font-size:.82rem}
 .qcard pre.code{background:color-mix(in srgb,var(--c) 6%,var(--bg2))}
+
+.ic.blk{display:block;white-space:pre;overflow-x:auto;text-align:left;padding:6px 10px;line-height:1.5}
 </style></head><body>
 
 <div id="root" dir="rtl" lang="ar">
@@ -1370,7 +1372,8 @@ function codeify(text){
 }
 function optHTML(o){
   o=String(o);
-  return /[;(){}\[\]]|->|::|<<|>>|\w<\w[^>]*>|^\s*[*&]\w|\bnew\b|\bdelete\b|\bvirtual\b|^\w+\s*[*&]\s*\w/.test(o)&&!_sp(o)&&!/^[A-Z][a-z]+(?:\s+[a-z]+){2,}/.test(o)?'<code class="ic">'+esc(o)+'</code>':inlineCode(o);
+  if(!_sp(o)&&((o.match(/;/g)||[]).length>=2||/\{[^}]*;[^}]*\}/.test(o))&&!/\/\//.test(o)&&/[;{]/.test(o)&&!/\[[^\]]*;[^\]]*\]/.test(o.replace(/\([^)]*\)/g,''))) return '<code class="ic blk">'+esc(fmtCode(o))+'</code>';
+  return/[;(){}\[\]]|->|::|<<|>>|\w<\w[^>]*>|^\s*[*&]\w|\bnew\b|\bdelete\b|\bvirtual\b|^\w+\s*[*&]\s*\w/.test(o)&&!_sp(o)&&!/^[A-Z][a-z]+(?:\s+[a-z]+){2,}/.test(o)?'<code class="ic">'+esc(o)+'</code>':inlineCode(o);
 }
 function richText(t){
   t=String(t==null?'':t); const segs=t.split('```'); let h='';
@@ -5719,7 +5722,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.9.4';
+const APP_VERSION='1.9.5';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
