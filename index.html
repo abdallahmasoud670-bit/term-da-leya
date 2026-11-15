@@ -5825,6 +5825,62 @@ B) Running sum with the carry added back: 11001100 + 01010101 = 00100010 (carry 
   'Networks: بعد ما قريت كل الملفات اللي في الشاتات اتضاف: سجلات DNS، conditional GET وHTTP/2 و3، الـcookies بتفاصيلها، SMTP وIMAP، مقارنات الفصل الأول، وامتحان تدريبي كامل (45 درجة) بحلوله، و19 سؤال MCQ.'],
   en:['Networks: after reading every file in the chats I added DNS records, conditional GET and HTTP/2 and 3, cookie details, SMTP and IMAP, Chapter 1 comparisons, a full practice exam (45 marks) with answers, and 19 MCQs.']});
 })();
+/* 2026-11-15 (3): after reading the classmates' summary files (Part1 + Parts 2-10 chapter 1 guide, Chapter 2 and Chapter 3 simple guides) and sampling the handwritten "All in details" notes
+   (they follow the slides; I viewed only a few pages of each, not all 45). Numbers re-checked by hand/code. The guides are classmates' work (some AI-made): compare with the slides. */
+(function(){
+ const fx=(x,d)=>rd(x,d==null?2:d);
+ const SX='Chapters 1-3 practice (classmates\' summary guides, answers checked)';
+ const Q=(n,q,a)=>({s:SX,n,p:0,k:'x',q,a,u:'net'});
+ EXB.net=(EXB.net||[]).concat([
+  Q(1,`Encapsulation sizes: message = 1000 bytes, transport header Ht = 20 bytes, network header Hn = 20, link header Hl = 18. Find the size of the segment, datagram and frame, and the overhead percentage in the frame.`,`Segment = 1000 + 20 = 1020 bytes. Datagram = 1020 + 20 = 1040 bytes. Frame = 1040 + 18 = 1058 bytes. Overhead = (20 + 20 + 18) / 1058 = 58 / 1058 = about 5.5%.`),
+  Q(2,`Internet structure: with N = 1000 access ISPs, how many links does a full mesh need, compared with connecting each ISP to one global ISP?`,`Full mesh: N(N-1)/2 = 1000 x 999 / 2 = 499,500 links (it grows as O(N^2), so it does not scale). One global ISP: N = 1000 links (a customer-provider relationship; competing global ISPs then need peering links and IXPs).`),
+  Q(3,`Circuit switching with TDM: a link of 1.536 Mbps uses TDM with 24 slots. A file of 640,000 bits is sent over one circuit; circuit set-up takes 500 ms. Find the total time.`,`Circuit rate = 1,536,000 / 24 = 64 kbps. Transmission = 640,000 / 64,000 = 10 s. Total = 10 + 0.5 = 10.5 s.`),
+  Q(4,`A link of 2 Mbps. Each user needs 1 Mbps when active and is active 20% of the time (p = 0.2). (a) How many users can circuit switching support? (b) With packet switching and 3 users, what is the probability that more than 2 are active (the link is congested)?`,`(a) 2 / 1 = 2 users. (b) More than 2 active = all 3 active: 0.2 x 0.2 x 0.2 = 0.008 = 0.8%. So 99.2% of the time there is no congestion and packet switching serves 3 users instead of 2.`),
+  Q(5,`Caravan analogy: 10 cars, a toll booth takes 12 s per car, the road between booths is 100 km and the cars travel at 100 km/h. How long until the whole caravan has lined up in front of the second booth? Repeat with cars at 1000 km/h.`,`d_trans = 12 x 10 = 120 s = 2 min (the booth pushes the cars out). d_prop = 100 km / 100 km/h = 1 h = 60 min. Total = 62 min. At 1000 km/h: d_prop = 6 min, total = 2 + 6 = 8 min. Lesson: the first bits can reach the next router before the whole packet has been transmitted (the first car arrives after 6 min 12 s, while the last car is still at the first booth).`),
+  Q(6,`Throughput: Rs = 2 Mbps, Rc = 1 Mbps. How long does a 32 Mbit file take? Then 10 connections share a backbone of R = 5 Mbps (Rs = 2, Rc = 1): what is the throughput of one connection, and what if R = 20 Mbps?`,`Throughput = min(2, 1) = 1 Mbps, time = 32 s. With 10 connections: min(Rc, Rs, R/10) = min(1, 2, 0.5) = 0.5 Mbps (the backbone is the bottleneck). With R = 20 Mbps: min(1, 2, 2) = 1 Mbps (the client link Rc is the bottleneck).`),
+  Q(7,`Traffic intensity: packet length 12,000 bits, link 2 Mbps, average arrival rate 150 packets/s. Compute La/R and comment.`,`La/R = 12,000 x 150 / 2,000,000 = 0.9. Close to 1, so the average queueing delay is large; at a rate above 1 (for example a = 170) it grows without bound. Design rule: keep traffic intensity below 1.`),
+  Q(8,`HTTP downloads: (a) One object, RTT = 50 ms, transmission time 10 ms, non-persistent: response time? (b) A page with 1 HTML + 5 images, RTT = 80 ms, 10 ms per object, non-persistent sequentially. (c) The same page with persistent HTTP and pipelining.`,`(a) 2 x 50 + 10 = 110 ms. (b) 6 x (2 x 80 + 10) = 1,020 ms. (c) 3 x 80 + 6 x 10 = 300 ms (RTT for TCP, RTT for the HTML, RTT for all the images requested together, plus the 6 transmissions). Persistent without pipelining would be 80 + 6 x (80 + 10) = 620 ms.`),
+  Q(9,`HTTP/1.1 vs HTTP/2: object O1 = 8 Mbits and O2, O3, O4 = 80 kbits each, link 10 Mbps. When does O2 finish with HTTP/1.1, and with HTTP/2 if the small objects are sent first (interleaved in frames)?`,`O1 takes 8,000,000 / 10,000,000 = 0.8 s; each small object takes 80,000 / 10,000,000 = 8 ms. HTTP/1.1 (first come first served): O2 finishes at 0.8 + 0.008 = 0.808 s (head-of-line blocking). HTTP/2: O2 at 8 ms, O3 at 16 ms, O4 at 24 ms, and O1 finishes at 0.824 s (delayed by only 24 ms).`),
+  Q(10,`DNS iterated query messages: how many messages are exchanged from the host until the reply returns (host - local DNS - root - TLD - authoritative)? What if the local DNS has the TLD server cached?`,`Iterated: 1 host to local, 2 local to root, 3 root to local, 4 local to TLD, 5 TLD to local, 6 local to authoritative, 7 authoritative to local, 8 local to host = 8 messages. With the TLD server cached the local DNS skips the root: 1 host to local, 2 local to TLD, 3 TLD to local, 4 local to authoritative, 5 authoritative to local, 6 local to host = 6 messages.`),
+  Q(11,`UDP header: the payload is 100 bytes. What is the UDP Length field? Also find the 16-bit checksum of 0101010101010101 and 0110011001100110.`,`Length = 8 (header) + 100 = 108 bytes (the length counts the whole segment, header included). Sum = 0101010101010101 + 0110011001100110 = 1011101110111011 (no carry); checksum = one's complement = 0100010001000100.`),
+  Q(12,`Selective Repeat with window N = 4 and rcv_base = 3: packet 4 arrives, then packet 3 arrives. What does the receiver do? For k = 3 bits, what are the largest windows of GBN and SR?`,`Packet 4 is out of order but inside the window: it is buffered and ACK4 is sent. Packet 3 is the expected one: ACK3 is sent, packets 3 and 4 are delivered to the application in order and rcv_base becomes 5. For k = 3 (sequence numbers 0-7): GBN window up to 2^3 - 1 = 7; SR window up to 2^2 = 4.`),
+  Q(13,`Web cache numbers (slide): access link 1.54 Mbps, objects of 100 kbits, 15 requests/s. Find the access-link utilization, and the traffic on the link after a cache with hit rate 0.6.`,`Load = 15 x 100,000 = 1.5 Mbps; utilization = 1.5 / 1.54 = 0.97, so the queueing delay is huge. With hit rate 0.6 only 40% of requests use the link: 0.6 Mbps, utilization 0.6 / 1.54 = 0.39. (For the response-time formula use the Sheet 2 method: access delay = delta / (1 - intensity).)`)
+ ]);
+
+ const P='~Practice / summary guides';
+ MCQB.net.push(
+  ['The UDP Length field gives:','The size of the whole UDP segment in bytes, header included',['Only the payload size','The number of segments','The window size'],'UDP header = 4 fields x 16 bits = 8 bytes: source port, destination port, length, checksum.',P],
+  ['UDP checksum: the receiver adds all words including the checksum. No error is detected if the result is:','All ones',['All zeros','00000001','Any value'],'Equal means no detected error, but errors may still exist.',P],
+  ['A router processes which layers when forwarding a packet?','Network, link and physical',['All five layers','Only link and physical','Only application and transport'],'The switch handles link + physical; hosts handle all five. The router does not open the transport header.',P],
+  ['Traceroute works by sending probes with increasing:','TTL values, so each router on the path replies',['Packet sizes','Port numbers','Window sizes'],'A * means no reply from that router, not a broken path.',P],
+  ['A firewall built on "off-by-default" means:','All incoming packets are blocked except those allowed by rules',['All packets are allowed except blocked ones','Only outgoing packets are checked','Packets are encrypted'],'Safer than allowing everything and blocking mistakes one by one.',P],
+  ['Which defence protects confidentiality and which protects integrity?','Encryption for confidentiality; digital signatures for integrity',['Firewalls for both','Digital signatures for confidentiality','VPN for integrity only'],'Other defences: authentication and access restrictions.',P],
+  ['In Selective Repeat, a packet inside the receiver window but out of order is:','Buffered and individually acknowledged',['Discarded','Ignored without an ACK','Delivered immediately to the application'],'It is delivered in order once the missing packet arrives.',P],
+  ['With k-bit sequence numbers, the largest SR window is:','2^(k-1)',['2^k - 1','2^k','k'],'GBN send window is 2^k - 1.',P],
+  ['Why does a TCP socket need the 4-tuple rather than the destination port only?','Each connection needs its own socket with its own state, even for the same port 80',['Because TCP has no ports','To save memory','Because UDP uses it'],'Clients with the same source port but different IPs still get different sockets.',P],
+  ['Third-party tracking cookies are disabled by default in:','Firefox and Safari',['Chrome only','No browser','All routers'],'The summary notes say Chrome planned to disable them too.',P],
+  ['The Internet was not designed secure because:','The original design assumed users trust each other',['Routers were too slow','Encryption was illegal','There were no hosts'],'Security was added later.',P],
+  ['Packet loss happens when:','A packet arrives and the router buffer is full',['The link is too long','The packet is too small','The transmission rate is too high'],'Lost packets may be retransmitted by the previous node or the source, or not at all.',P]
+ );
+
+ /* generators for exam mode */
+ GENX.net.push(
+  ()=>{ const m=pick([500,800,1000,1200,1460]), ht=pick([8,20,32]), hn=pick([20,40]), hl=pick([14,18,26]); const f=m+ht+hn+hl, o=(ht+hn+hl)/f*100;
+    return mkq('Pattern drill: a message of '+m+' bytes gets a transport header of '+ht+' bytes, a network header of '+hn+' bytes and a link header of '+hl+' bytes. What is the frame size?',f+' bytes',[(m+ht+hn)+' bytes',(m+ht)+' bytes',(f+hl)+' bytes'],'Message + Ht + Hn + Hl = '+f+' bytes (segment '+(m+ht)+', datagram '+(m+ht+hn)+'). Overhead = '+fx(o,1)+'%.',{src:'~Chapter 1 layering pattern'}); },
+  ()=>{ const n=pick([5,10,100,500,1000]); const v=n*(n-1)/2;
+    return mkq('Pattern drill: how many links does a full mesh of '+n+' access ISPs need?',String(v),[String(n),String(n*n),String(v*2)],'N(N-1)/2 = '+n+' x '+(n-1)+' / 2 = '+v+'. One global ISP would need only N links.',{src:'~Internet structure pattern'}); },
+  ()=>{ const p=pick([50,100,200,500,1000,1460]);
+    return mkq('Pattern drill: a UDP segment carries '+p+' bytes of application data. What is the value of its Length field?',String(p+8),[String(p),String(p+20),String(p+4)],'Length = 8-byte header + payload = '+(p+8)+' bytes.',{src:'~UDP header pattern'}); },
+  ()=>{ const slots=pick([4,8,16,24]), R=slots*pick([64,128,256])*1e3, F=pick([320,640,1280])*1e3, su=pick([0.2,0.5,1]); const cr=R/slots, t=F/cr+su;
+    return mkq('Pattern drill: a link of '+(R/1e6)+' Mbps uses TDM with '+slots+' slots. A file of '+F+' bits is sent over one circuit after a set-up of '+su+' s. Total time?',fx(t,2)+' s',[fx(F/R+su,2)+' s',fx(F/cr,2)+' s',fx(t*2,2)+' s'],'Circuit rate = R/slots = '+(cr/1000)+' kbps; transmission = F/rate = '+fx(F/cr,2)+' s; plus set-up = '+fx(t,2)+' s.',{src:'~TDM circuit pattern'}); },
+  ()=>{ const n=rnd(2,6); const pAct=pick([0.1,0.2,0.25,0.5]); const need=n-1; const v=Math.pow(pAct,n);
+    return mkq('Pattern drill: a link supports '+need+' circuit-switched users. With packet switching there are '+n+' users, each active with probability '+pAct+' (independent). What is the probability that all '+n+' are active at once (congestion)?',fx(v*100,3)+'%',[fx(pAct*100,3)+'%',fx(v*100*2,3)+'%',fx((1-v)*100,3)+'%'],'All active: p^n = '+pAct+'^'+n+' = '+fx(v,5)+'.',{src:'~packet vs circuit pattern'}); }
+ );
+
+ WHATS_NEW.unshift({d:'15 نوفمبر 2026 (٣)',de:'15 November 2026 (3)',items:[
+  'Networks: بعد ملخصات زمايلك (Chapter 1 و2 و3) اتضاف 13 مسألة محلولة (encapsulation وmesh وTDM وcaravan وthroughput وHTTP/2 وعدّ رسائل DNS وUDP length وSR)، و12 MCQ، و5 مولّدات أرقام جديدة.'],
+  en:['Networks: after the classmates\' Chapter 1, 2 and 3 summaries I added 13 solved problems (encapsulation, mesh, TDM, caravan, throughput, HTTP/2, DNS message count, UDP length, SR), 12 MCQs and 5 new number generators.']});
+})();
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
    ===================================================================== */
@@ -6087,7 +6143,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.9.9';
+const APP_VERSION='1.9.10';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
