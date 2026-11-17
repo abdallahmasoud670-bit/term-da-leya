@@ -5985,6 +5985,7 @@ B) Running sum with the carry added back: 11001100 + 01010101 = 00100010 (carry 
   ["In any LP, if the slack of a resource constraint is 5 and the resource increases by 1 unit, the objective value will:","not change",["increase by 5","increase by 1","decrease by 1"],"Unused resource: shadow price = 0.",M23+' Q1.4'],
   ["Sensitivity report (M23 Q3): Extrusion shadow price 3, RHS 48, allowable increase 6. Adding 2 units of Extrusion raises the objective by:","6",["3","2","48"],"2 ≤ 6 (inside the range), so ΔZ = 3 × 2 = 6.",M23+' Q3.2'],
   ["Same report: Packaging RHS 18, shadow price 11, allowable increase 2. If Packaging goes to 25:","the shadow price 11 is no longer valid and the problem must be re-solved",["profit rises by 11 × 7 = 77","nothing changes","profit rises by 22"],"25 is beyond 18 + 2 = 20, outside the feasibility range.",M23+' Q3.4'],
+  ["Max 10X + 30Y s.t. 3X + 7Y ≤ 17, 5X + 15Y ≤ 29, 4X + Y ≤ 45, X, Y ≥ 0. What type of irregular LP is it?","Multiple optimal solutions",["Infeasible","Unbounded","Degenerate only"],"The objective 10X + 30Y = 2(5X + 15Y), so it is parallel to constraint 2 and the whole edge on 5X + 15Y = 29 is optimal (Z = 58). Official midterm: parallel objective means multiple optima.",M23+' Q1.3'],
   ["Quiz 1 sensitivity (c1: shadow 0.55, RHS 60, allowable increase 60; c2: shadow 0.60, RHS 40). The company would prefer an extra unit of c1 than c2. (True or False)","False (c2 has the larger shadow price)",["True"],"0.60 > 0.55.",Q1F+' Q2 v1'],
   ["Same report: x2 has current coefficient 7 and allowable increase 11. If its profit rises to $19 the optimal solution will:","change",["not change","become infeasible","stay and Z does not change"],"The range is up to 7 + 11 = 18 and 19 is outside it.",Q1F+' Q2 v1'],
   ["Same report: c1 RHS goes from 60 to 100 (allowable increase 60). The total profit changes by:","+0.55 × 40 = +22",["+0.55 × 100 = +55","0","+0.60 × 40 = +24"],"100 is inside [20, 120], so ΔZ = shadow price × 40 = 22.",Q1F+' Q2 v1/v4']
@@ -6046,7 +6047,7 @@ Demand (one per destination): x11 + x21 + x31 = 5; x12 + x22 + x32 = 8; x13 + x2
 xij ≥ 0. Total supply 34 = total demand 34, so every constraint can be an equality. 12 variables and 7 constraints (one variable per arc, one constraint per node) matches Q1 item 9 (answer: all the above). Parts B-F (NWC and least-cost) are NOT in this year's midterm.`),
   Q(SP,1,`Midterm 2024 Q1 (5 marks). Profit = 3x + 4y − 200 − 5xy. (a) fixed cost? (b) how many products does the shop sell? (c) total revenue in terms of x, y? (d) variable cost in terms of x, y? (e) Is the model linear or non-linear (graded on the explanation ONLY)?`,
 `My solution: (a) 200 (the constant term). (b) Two products, x and y. (c) The positive terms: 3x + 4y. (d) The remaining term 5xy. (e) NON-linear because the term 5xy multiplies two decision variables: in a linear model each variable appears alone, multiplied by a constant and added or subtracted.`),
-  Q(SP,2,`Midterm 2024 Q2 (10 marks). Max Z = 60x + 50y s.t. 10x + 20y ≤ 200 (c1), 8x + 5y ≤ 80 (c2), x ≥ 2 (c3), y ≥ 5 (c4), x, y ≥ 0 (c3 and c4 read as ≥ as in the classmates' summary; the symbols were lost in the PDF). (a) Shade the feasible area. (b) Optimum. (c) Slacks/surpluses. (d) The allowable increase of RHS 1 is 30: what happens if it becomes 400? (e) What if the ≤ in c1 and c2 become ≥? (f) A new variable is added: how do you get the optimum?`,
+  Q(SP,2,`Midterm 2024 Q2 (10 marks). Max Z = 60x + 50y s.t. 10x + 20y ≤ 200 (c1), 8x + 5y ≤ 80 (c2), x ≥ 2 (c3), y ≥ 5 (c4), x, y ≥ 0 (the exam paper on Drive confirms x ≥ 2 and y ≥ 5). (a) Shade the feasible area. (b) Optimum. (c) Slacks/surpluses. (d) The allowable increase of RHS 1 is 30: what happens if it becomes 400? (e) What if the ≤ in c1 and c2 become ≥? (f) A new variable is added: how do you get the optimum?`,
 `My solution:
 (a) Plot x + 2y = 20 (intercepts (20,0), (0,10)); 8x + 5y = 80 ((10,0), (0,16)); x = 2; y = 5. The feasible area is the polygon with corners (2,5), (6.875,5), (5.4545,7.2727), (2,9).
 (b) Z at the corners: (2,5) = 370; (6.875,5) = 662.5; (5.4545,7.2727) = 690.9; (2,9) = 570. Optimum x = 5.45, y = 7.27 (c1 and c2 meet: x + 2y = 20 and 8x + 5y = 80), Z = 690.91.
@@ -6055,13 +6056,10 @@ xij ≥ 0. Total supply 34 = total demand 34, so every constraint can be an equa
 (e) With all constraints ≥ (and x ≥ 2, y ≥ 5) the feasible region is open towards higher x and y, so a MAX problem is unbounded.
 (f) Add the variable and re-solve the model (or check its reduced cost cj − zj using the shadow prices: if it is positive the new variable improves the solution).`),
   Q(SP,3,`Midterm 2023 Q2 (6 marks). Products X and Y. Each X needs 4 h in department 1 and 6 h in department 2; each Y needs 3 h and 8 h. Available: 1000 h in dept 1, 1200 h in dept 2, plus 400 h of cross-trained workers who can be assigned to either department (or split). Profit 50 per X and 60 per Y. Formulate (hint: other decision variables).`,
-`My solution: X, Y = units produced; c1, c2 = cross-trained hours assigned to department 1 and 2.
-Max Z = 50X + 60Y
-s.t. 4X + 3Y ≤ 1000 + c1 (department 1)
-6X + 8Y ≤ 1200 + c2 (department 2)
-c1 + c2 ≤ 400 (cross-trained hours)
-X, Y, c1, c2 ≥ 0.
-(0.5 mark was given for defining the variables.)`),
+`Official model answer (Midterm 2023): X, Y = units sold; C1, C2 = cross-trained hours allocated to department 1 and 2.
+Maximize 50X + 60Y [1 mark]
+subject to 4X + 3Y − C1 ≤ 1000 [1 mark, even if C1 is wrong or missing]; 6X + 8Y − C2 ≤ 1200 [1 mark]; C1 + C2 ≤ 400; X, Y ≥ 0.
+Anything correct about C1 and C2 gets 1 mark; if all that relates to C1 and C2 is correct, 2 marks.`),
   Q(SP,4,`Midterm 2023 Q3 (5 marks, sensitivity report). Variables: x1 final 3, coef 34, increase 6, decrease 7.33; x2 final 6, coef 40, increase 11, decrease 6. Constraints: Extrusion used 48, shadow 3, RHS 48, increase 6, decrease 8; Packaging used 18, shadow 11, RHS 18, increase 2, decrease 2; Additive used 12, shadow 0, RHS 16, increase 1E+30, decrease 4. Assume 1E+30 = 0 in row 17. (1) number of constraints (2) objective increase if 2 units of Extrusion are added (3) can you solve it graphically? explain (4) what happens if Packaging used increases to 25?`,
 `My solution: (1) 3 constraints (Extrusion, Packaging, Additive). (2) 3 × 2 = 6, because 2 is inside the allowable increase 6. (3) Yes: the model has only two decision variables (x1 and x2), so it can be drawn in two dimensions (the number of constraints does not matter). (4) The allowable increase of Packaging is 2, so the range is [16, 20]. 25 is outside it: the shadow price 11 is no longer valid, the constraint set that is binding changes and the optimal mix will change, so the model has to be solved again; we cannot say that the profit rises by 11 × 7.`),
   Q(SP,5,`Quiz 1 Sensitivity Q2, version 2. c1: shadow 1.050, lower limit 66,666.667, RHS 95,000, allowable increase 16,111.111, decrease 28,333.333. c2: shadow 0.833, lower limit 17,100, RHS 20,000, increase 8,500, decrease 2,900. (b) If the c2 resource goes to 25,000, by how much does the profit change? (c) True or False: the constraint c1 is binding.`,
@@ -6095,10 +6093,12 @@ From node 2 branch on x2: Node 4: x2 ≤ 0 → (3, 0), Z = 15 integer (LB = 15).
 Optimal: x1 = 3, x2 = 0, Z = 15. Graph: the line 3x1 + 4x2 = 10 with its integer points; the vertical lines x1 = 3 and x2 = 0/1 cut off the fractional corner.`),
   Q(SB,3,`Final 2024 Q14. Max Z = x1 + 5x2 s.t. x1 + 10x2 ≤ 20, x1 ≤ 2, x1, x2 ≥ 0 and integer. Find the optimal Z (options 7, 6, 10, 11).`,
 `LP relaxation: x1 = 2, x2 = 1.8, Z = 2 + 9 = 11 (UB). Branch on x2: x2 ≤ 1 → (2, 1), Z = 7; x2 ≥ 2 → x1 + 20 ≤ 20 so x1 = 0 → (0, 2), Z = 10. Best integer = 10 (option C). 11 is only the relaxation bound.`),
-  Q(SB,4,`Midterm 2021 Q2 (7 marks). Maximize z = 2x + 4y s.t. 3x + 5y ≤ 37, 5x + 3y ≤ 30, −3x + y ≤ −9, x, y ≥ 0 (as in the Quiz 1 model B). Solve (1) graphically (2) with the simplex method.`,
-`My solution (symbols read as ≤, lost in the PDF):
-(1) Third constraint: y ≤ 3x − 9. Corner points: (3,0) → 6; (6,0) → 12; (4.07, 3.21) (5x + 3y = 30 meets y = 3x − 9) → 21; the other candidate (2.44, 5.94) violates y ≤ 3x − 9, so the feasible region is the small triangle (3,0), (6,0), (57/14, 45/14). Optimum x = 57/14 = 4.07, y = 45/14 = 3.21, Z = 21.
-(2) Simplex: write −3x + y ≤ −9 as 3x − y ≥ 9, so it needs a surplus and an artificial variable (the Big M method of Module A): max 2x + 4y − M·A. This is the only kind of case where the exam used ≥ constraints in simplex; this year's rule says only Maximum simplex problems (with slack variables) come, so know the pivot steps from the Beaver Creek tableau.`),
+  Q(SB,4,`Midterm 2021 Q2 (7 marks, model answer on Drive). Maximize z = 2x + 4y s.t. 3x + 5y ≤ 37 (c1), 5x + 3y ≤ 30 (c2), −3x + y ≥ −9 (c3), x, y ≥ 0. Solve (1) graphically (2) with the simplex method.`,
+`Model answer (handwritten key, Drive: Midterm 2021 with Answers):
+(1) Graphical: c3 is the same as 3x − y ≤ 9. Corner points: (0,0) → 0; (3,0) → 6; (4.07, 3.21) (c2 meets c3) → 21; (2.4, 5.9) (c1 meets c2) → 28.6; (0, 7.4) (c1 meets the y-axis) → 29.6. The largest value is at (0, 7.4): x* = 0, y* = 7.4, Z* = 29.6.
+(2) Simplex: write 3x − y + s3 = 9 (slacks s1, s2, s3). Tableau 0: basis s1, s2, s3 with Qty 37, 30, 9; cj − zj = 2, 4. y enters. Ratios: 37/5 = 7.4, 30/3 = 10, the s3 row has −1 in the y column (ignored). So s1 leaves (pivot 5).
+Tableau 1: y row: x 3/5, y 1, s1 1/5 | 7.4; s2 row: x 16/5, s1 −3/5, s2 1 | 7.8; s3 row: x 18/5, s1 1/5, s3 1 | 16.4. zj: x 12/5, y 4, s1 4/5; cj − zj: x = −2/5, s1 = −4/5, all ≤ 0 so it is OPTIMAL. x = 0, y = 7.4, Z = 29.6.
+Note: all three constraints are written as ≤ after the sign change, so this is an ordinary maximization simplex (only slack variables).`),
   Q(SS,1,`Sensitivity handout: Max 40x1 + 30x2 s.t. 2x1 + x2 ≤ 40 (labor), x1 + 2x2 ≤ 50 (wood). Solve with the simplex method.`,
 `Add slacks s1, s2. Tableau 0 (basis s1, s2; Qty 40, 50): cj − zj = 40, 30. x1 enters; ratios 40/2 = 20, 50/1 = 50, so s1 leaves (pivot 2).
 Tableau 1: x1 row: 1, 1/2, 1/2, 0 | 20; s2 row: 0, 3/2, −1/2, 1 | 30; cj − zj: x2 = 10, s1 = −20. x2 enters; ratios 20/(1/2) = 40, 30/(3/2) = 20, so s2 leaves (pivot 3/2).
@@ -6414,7 +6414,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.0';
+const APP_VERSION='1.10.1';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
