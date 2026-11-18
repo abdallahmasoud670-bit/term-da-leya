@@ -7764,7 +7764,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.18';
+const APP_VERSION='1.10.19';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -9160,7 +9160,7 @@ function render(anim){
 window.addEventListener('hashchange',()=>{ render(true); scrollTo(0,0); });
 window.addEventListener('resize',()=>renderNav());
 /* Previous/Next: stay exactly where the page was (no jump to the top, no tab-bar scroll) */
-document.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest('[data-act="qnext"],[data-act="qprev"],[data-act="qn"],[data-act="qk"]'); window.__qkeep=!!t; window.__qy=window.scrollY; },true);
+document.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest('[data-act="qnext"],[data-act="qprev"],[data-act="qn"],[data-act="qk"],[data-act="qopt"],[data-act="qshow"]'); window.__qkeep=!!t; window.__qy=window.scrollY; },true);
 function qzScroll(){ const y=window.__qy||0, go=()=>window.scrollTo({top:y,behavior:'auto'}); go(); setTimeout(()=>{ go(); window.__qkeep=false; },90); }
 function renderSubjTab(u,t){
   ST[u]=t; const m=$('#main');
@@ -9203,7 +9203,7 @@ else if(a==='goexam'){ QF=b.dataset.m||'exam'; QZ.cur=null; LAY.show=false; QZ.e
   else if(a==='laynext'||a==='layprev'){ const n=layList().length||1; LAY.i=(LAY.i+(a==='laynext'?1:n-1))%n; LAY.show=false; sfx('tap'); renderSubjTab(curSub(),'quiz'); }
   else if(a==='laysolved'){ const e=layList()[LAY.i]; if(e){ S.lay=S.lay||{}; const id=layId(e); if(S.lay[id]){ delete S.lay[id]; awardXP(id,0,'مثال'); sfx('undo'); } else { S.lay[id]=1; awardXP(id,10,'مثال Lay'); sfx('good'); } save(); } renderSubjTab(curSub(),'quiz'); }
   else if(a==='qunc'){ SHOWUNC=!SHOWUNC; QZ.cur=null; sfx('tap'); renderSubjTab(curSub(),'quiz'); }
-  else if(a==='qshow'){ QZ.show=true; BUMP='.qans'; sfx('soft'); renderSubjTab(curSub(),'quiz'); }  else if(a==='qopt'){ quizChoose(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); }  else if(a==='qfin'){ sfx('good'); qzSave(); QZ.fin=true; renderSubjTab(curSub(),'quiz'); window.scrollTo({top:0,behavior:'auto'}); } else if(a==='qresume'){ sfx('tap'); QZ.fin=false; renderSubjTab(curSub(),'quiz'); } else if(a==='qnew'){ sfx('tap'); QZ.h=[]; QZ.hi=-1; QZ.hk=''; QZ.seen={}; QZ.sg={}; QZ.tg={}; QZ.cur=null; QZ.fin=false; QZ.ok=0; QZ.bad=0; renderSubjTab(curSub(),'quiz'); } else if(a==='qprev'){ sfx('tap'); quizPrev(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qgo'){ sfx('tap'); QZ.fin=false; quizGo(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qnext'||a==='qn'){ sfx('tap'); if(a==='qn'&&!(QZ.h[QZ.hi]&&QZ.h[QZ.hi].res)) qzMark('bad'); quizNext(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); }  else if(a==='qk'){ const u=curSub(), q=QZ.cur; const _d=QZ.h[QZ.hi]&&QZ.h[QZ.hi].res; qzMark('ok'); if(q&&!_d){ const c=(S.cards[q.id]||0); S.cards[q.id]=c+1; if(c<2){ addAct(0); addXP(3,'سؤال '+SUBJ[u].n); } QZ.ok++; sfx('good'); save(); } quizNext(u); renderSubjTab(u,'quiz'); qzScroll(); }
+  else if(a==='qshow'){ QZ.show=true; BUMP='.qans'; sfx('soft'); renderSubjTab(curSub(),'quiz'); qzScroll(); }  else if(a==='qopt'){ quizChoose(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); qzScroll(); }  else if(a==='qfin'){ sfx('good'); qzSave(); QZ.fin=true; renderSubjTab(curSub(),'quiz'); window.scrollTo({top:0,behavior:'auto'}); } else if(a==='qresume'){ sfx('tap'); QZ.fin=false; renderSubjTab(curSub(),'quiz'); } else if(a==='qnew'){ sfx('tap'); QZ.h=[]; QZ.hi=-1; QZ.hk=''; QZ.seen={}; QZ.sg={}; QZ.tg={}; QZ.cur=null; QZ.fin=false; QZ.ok=0; QZ.bad=0; renderSubjTab(curSub(),'quiz'); } else if(a==='qprev'){ sfx('tap'); quizPrev(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qgo'){ sfx('tap'); QZ.fin=false; quizGo(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qnext'||a==='qn'){ sfx('tap'); if(a==='qn'&&!(QZ.h[QZ.hi]&&QZ.h[QZ.hi].res)) qzMark('bad'); quizNext(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); }  else if(a==='qk'){ const u=curSub(), q=QZ.cur; const _d=QZ.h[QZ.hi]&&QZ.h[QZ.hi].res; qzMark('ok'); if(q&&!_d){ const c=(S.cards[q.id]||0); S.cards[q.id]=c+1; if(c<2){ addAct(0); addXP(3,'سؤال '+SUBJ[u].n); } QZ.ok++; sfx('good'); save(); } quizNext(u); renderSubjTab(u,'quiz'); qzScroll(); }
   else if(a==='fdone'){ const n=b.dataset.n, f=OOPF.find(x=>x[0]==n), o=S.oopf[n]||(S.oopf[n]={}); const cur=o.done!=null?o.done:!!f[3]; o.done=!cur; BUMP='[data-act="fdone"][data-n="'+n+'"]'; if(!f[3]) awardXP('f'+n,o.done?10:0,'فلتر '+n); sfx(o.done?'done':'undo'); save(); render(); }
   else if(a==='fex'){ const n=b.dataset.n, o=S.oopf[n]||(S.oopf[n]={}); o.ex=!o.ex; BUMP='[data-act="fex"][data-n="'+n+'"]'; awardXP('x'+n,o.ex?5:0,'أشرح فلتر '+n); sfx(o.ex?'good':'undo'); save(); render(); }
   else if(a==='ru'){ openRescue(b.dataset.u); }
