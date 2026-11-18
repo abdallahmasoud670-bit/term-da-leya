@@ -2210,13 +2210,13 @@ function quizHTML(u){
   let body='';
   if(q.t==='mcq'){
     body='<div class="qcard" dir="auto"><div class="qbody">'+codeify(q.q)+'</div></div><div class="qopts">'+q.o.map((o,i)=>{ let cl='qopt'; if(QZ.picked!=null){ if(i===q.a) cl+=' right'; else if(i===QZ.picked) cl+=' wrong'; } return '<button class="'+cl+'" data-act="qopt" data-i="'+i+'" dir="auto"'+(QZ.picked!=null?' disabled':'')+'><b>'+'ABCD'[i]+'</b><span>'+optHTML(o)+'</span></button>'; }).join('')+'</div>'+
-     (QZ.picked!=null?'<div class="qans">'+(QZ.picked===q.a?'<b style="color:var(--good)">صح</b>':'<b style="color:var(--bad)">غلط. الصح: '+'ABCD'[q.a]+'</b>')+(q.e?'<br>'+inlineCode(q.e):'')+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="qnext">السؤال اللي بعده</button></div>':'');
+     (QZ.picked!=null?'<div class="qans">'+(QZ.picked===q.a?'<b style="color:var(--good)">صح</b>':'<b style="color:var(--bad)">غلط. الصح: '+'ABCD'[q.a]+'</b>')+(q.e?'<br>'+inlineCode(q.e):'')+'</div>':'');
   } else {
     body='<div class="qcard" dir="auto"><div class="qbody">'+codeify(q.q)+'</div></div>'+(QZ.show?'<div class="qans" dir="auto">'+codeify(q.a)+'</div><div class="row" style="justify-content:center;margin-top:14px"><button class="btn" data-act="qk">عرفتها</button><button class="btn soft" data-act="qn">محتاج أراجع</button><button class="x" data-act="'+(q.mine?'delq':'hide')+'" data-id="'+q.id+'" data-u="'+u+'">'+(q.mine?'حذف السؤال':'إخفاء')+'</button></div>':'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun" data-act="qshow">جاوب في دماغك واعرض الإجابة</button></div>');
   }
   const answered=(q.t==='mcq'&&QZ.picked!=null)||(q.t==='essay'&&QZ.show);
   const expH='';
-  return '<div class="quiz" style="--c:'+col(u)+'">'+filt+score+qzNavHTML()+(tagH?'<p style="text-align:center;margin:0 0 8px">'+tagH+'</p>':'')+body+expH+add+'</div>';
+  return '<div class="quiz" style="--c:'+col(u)+'">'+filt+score+qzNavHTML()+(tagH?'<p style="text-align:center;margin:0 0 8px">'+tagH+'</p>':'')+body+qzBtnsHTML(q)+expH+add+'</div>';
 }
 /* ---- session history: Previous / Next + list of solved questions (resets when the page is closed, by design) ---- */
 QZ.h=[]; QZ.hi=-1; QZ.hk='';
@@ -2232,9 +2232,14 @@ function quizNext(u){ qzSave(); if(QZ.hi<QZ.h.length-1){ qzLoad(QZ.hi+1); return
   if(QZ.cur){ QZ.h.push({q:QZ.cur}); QZ.hi=QZ.h.length-1; } }
 function quizPrev(u){ qzSave(); if(QZ.hi>0) qzLoad(QZ.hi-1); }
 function quizGo(u,i){ qzSave(); if(i>=0&&i<QZ.h.length) qzLoad(i); }
+function qzBtnsHTML(q){
+  const canPrev=QZ.hi>0, canNext=QZ.hi<QZ.h.length-1||(q.t==='mcq'&&QZ.picked!=null);
+  if(!canPrev&&!canNext) return '';
+  return '<div class="row" style="justify-content:center;gap:10px;margin-top:14px">'+(canPrev?'<button class="btn soft" data-act="qprev">→ السابق</button>':'')+(canNext?'<button class="btn sun" data-act="qnext">التالي ←</button>':'')+'</div>';
+}
 function qzNavHTML(){
   const n=QZ.h.length; if(!n) return '';
-  const nav='<div class="row" style="justify-content:center;gap:8px;margin:0 0 10px"><button class="btn soft sm" data-act="qprev"'+(QZ.hi<=0?' disabled':'')+'>→ السابق</button><span class="sub" style="align-self:center">سؤال '+(QZ.hi+1)+' من '+n+'</span><button class="btn soft sm" data-act="qnext">التالي ←</button></div>';
+  const nav='<p class="sub" style="text-align:center;margin:0 0 8px">سؤال '+(QZ.hi+1)+' من '+n+'</p>';
   const done=QZ.h.map((e,i)=>({e,i,r:qzRes(e)})).filter(x=>x.r);
   const list=done.length?'<details class="qmore" style="margin:0 0 10px"><summary>الأسئلة اللي حليتها ('+done.length+')</summary><div style="margin-top:8px">'+done.map(x=>{ const t=String(x.e.q.q||'').replace(/\s+/g,' ').slice(0,70); return '<button class="x" data-act="qgo" data-i="'+x.i+'" style="display:block;width:100%;text-align:start;margin:3px 0" dir="auto"><b style="color:var(--'+(x.r==='ok'?'good':'bad')+')">'+(x.r==='ok'?'✓':'✗')+'</b> '+(x.i+1)+'. '+esc(t)+'</button>'; }).join('')+'</div><p class="sub">الجلسة بس: لو قفلت الموقع بتتصفّر.</p></details>':'';
   return nav+list;
@@ -7751,7 +7756,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.14';
+const APP_VERSION='1.10.15';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
