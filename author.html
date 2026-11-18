@@ -469,7 +469,7 @@ bdi.f .mth .fr,.qans .mth .fr,.qbody .mth .fr{font-size:1.05em}
 .fm-n{font-weight:800;font-size:1rem}
 .fm-bd{font-size:.7rem;font-weight:800;padding:2px 9px;border-radius:999px;background:#e0589a;color:#fff;white-space:nowrap}
 .fm-box{direction:ltr;text-align:left;overflow-x:auto;padding:8px 14px;border-radius:14px;background:color-mix(in srgb,var(--c,var(--brand)) 9%,var(--card))}
-.fm-ln{padding:6px 0;font-size:1.28rem;line-height:2.3;white-space:nowrap}
+.fm-ln{padding:6px 0;font-size:calc(1.28rem*var(--s,1));line-height:2.3;white-space:nowrap}
 .fm-ln+.fm-ln{border-top:1px dashed color-mix(in srgb,var(--c,var(--brand)) 25%,transparent)}
 .fm-ln bdi.f{font-family:'Cambria Math','STIX Two Math','Times New Roman',serif;font-size:1em;background:none;padding:0;white-space:nowrap}
 .fm-l{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
@@ -502,6 +502,12 @@ bdi.f .mth .fr,.qans .mth .fr,.qbody .mth .fr{font-size:1.05em}
 .fg text{direction:ltr;unicode-bidi:isolate}
 
 .fg text{font-size:11px}.fg text.fg-s{font-size:10px}
+
+.fm-ln.txt{white-space:normal;font-size:1.02rem;line-height:1.9}.fm-ln.txt bdi.f{white-space:normal;font-family:inherit}
+
+.fm-box.wrapall .fm-ln,.fm-box.wrapall .fm-ln bdi.f{white-space:normal}
+
+.fm-w{text-align:left}.fm-l{justify-content:flex-start}
 
 html{overflow-x:clip}body{overflow-x:clip}
 .links3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:12px}

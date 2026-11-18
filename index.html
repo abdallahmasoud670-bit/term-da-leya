@@ -467,7 +467,7 @@ bdi.f .mth .fr,.qans .mth .fr,.qbody .mth .fr{font-size:1.05em}
 .fm-n{font-weight:800;font-size:1rem}
 .fm-bd{font-size:.7rem;font-weight:800;padding:2px 9px;border-radius:999px;background:#e0589a;color:#fff;white-space:nowrap}
 .fm-box{direction:ltr;text-align:left;overflow-x:auto;padding:8px 14px;border-radius:14px;background:color-mix(in srgb,var(--c,var(--brand)) 9%,var(--card))}
-.fm-ln{padding:6px 0;font-size:1.28rem;line-height:2.3;white-space:nowrap}
+.fm-ln{padding:6px 0;font-size:calc(1.28rem*var(--s,1));line-height:2.3;white-space:nowrap}
 .fm-ln+.fm-ln{border-top:1px dashed color-mix(in srgb,var(--c,var(--brand)) 25%,transparent)}
 .fm-ln bdi.f{font-family:'Cambria Math','STIX Two Math','Times New Roman',serif;font-size:1em;background:none;padding:0;white-space:nowrap}
 .fm-l{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
@@ -500,6 +500,12 @@ bdi.f .mth .fr,.qans .mth .fr,.qbody .mth .fr{font-size:1.05em}
 .fg text{direction:ltr;unicode-bidi:isolate}
 
 .fg text{font-size:11px}.fg text.fg-s{font-size:10px}
+
+.fm-ln.txt{white-space:normal;font-size:1.02rem;line-height:1.9}.fm-ln.txt bdi.f{white-space:normal;font-family:inherit}
+
+.fm-box.wrapall .fm-ln,.fm-box.wrapall .fm-ln bdi.f{white-space:normal}
+
+.fm-w{text-align:left}.fm-l{justify-content:flex-start}
 </style></head><body>
 
 <div id="root" dir="rtl" lang="ar">
@@ -1485,6 +1491,7 @@ function _mRight(s,i){
     } else break;
     while(j<s.length&&_SUPS.indexOf(s[j])>=0) j++;
     if(s[j]==='_'){ const e=_mSubEnd(s,j); if(e>0) j=e; }
+    if(s[j]==='!') j++;
     if(s[j]==='^'&&/[\d{]/.test(s[j+1]||'')){ j++; if(s[j]==='{'){ const e=s.indexOf('}',j); j=e<0?j:e+1; } else { while(/\d/.test(s[j]||'')) j++; } }
     if(s[j]==='·'&&s[j+1]&&s[j+1]!==' '){ j++; continue; }
     if(s[j]!==undefined&&(s[j]==='('||s[j]==='√'||(_mTokCh.test(s[j])&&!(s[j]==='.'&&!/\d/.test(s[j+1]||''))))) continue;
@@ -1496,6 +1503,7 @@ function _mLeft(s,i){
   let j=i, any=false;
   for(;;){
     let k=j;
+    if(s[k-1]==='!') k--;
     while(k>0&&_SUPS.indexOf(s[k-1])>=0) k--;
     if(s[k-1]===')'){ const b=_mBack(s,k-1); if(b<0) break; k=b; any=true; }
     else if(s[k-1]==='}'){ const b=s.lastIndexOf('{',k-1); if(b<2||s[b-1]!=='_') break; k=b-1; while(k>0&&(_mTokCh.test(s[k-1])||_SUPS.indexOf(s[k-1])>=0)) k--; any=true; }
@@ -1526,9 +1534,9 @@ function _mPlain(s){
       else { let j=st; while(j<s.length&&_mTokCh.test(s[j])&&!(s[j]==='.'&&!/\d/.test(s[j+1]||''))) j++; if(j>st){ e=j; out+='<span class="sq">√<span class="rd">'+_mPlain(s.slice(st,j))+'</span></span>'; } }
       if(e>0){ i=e; continue; }
     }
-    if(ch==='_'&&i>0&&(_mTokCh.test(s[i-1]||'')||_SUPS.indexOf(s[i-1])>=0||s[i-1]===')')&&!(/[A-Za-z_]/.test(s[i-2]||'')&&/[A-Za-z0-9]/.test(s[i-1]))&&!/^[A-Z]{2,}/.test(s.slice(i+1,i+4))){ const e=_mSubEnd(s,i); if(e>0){ const c=s[i+1]==='{'?s.slice(i+2,e-1):s.slice(i+1,e); out+='<sub>'+_mEsc(c)+'</sub>'; i=e; continue; } }
-    if(ch==='^'&&/[\d{-]/.test(s[i+1]||'')){
-      let e,c; if(s[i+1]==='{'){ const q=s.indexOf('}',i); c=q<0?null:s.slice(i+2,q); e=q+1; } else { let j=i+1; if(s[j]==='-') j++; while(/\d/.test(s[j]||'')) j++; c=s.slice(i+1,j); e=j; }
+    if(ch==='_'&&i>0&&(s.slice(Math.max(0,i-3),i)==='log'||(i>0&&(_mTokCh.test(s[i-1]||'')||_SUPS.indexOf(s[i-1])>=0||s[i-1]===')')&&!(/[A-Za-z_]/.test(s[i-2]||'')&&/[A-Za-z0-9]/.test(s[i-1]))&&!/^[A-Z]{2,}/.test(s.slice(i+1,i+4))))) { const e=_mSubEnd(s,i); if(e>0){ const c=s[i+1]==='{'?s.slice(i+2,e-1):s.slice(i+1,e); out+='<sub>'+_mEsc(c)+'</sub>'; i=e; continue; } }
+    if(ch==='^'&&(/[\d{-]/.test(s[i+1]||'')||(/[A-Za-z]/.test(s[i+1]||'')&&!/[A-Za-z]/.test(s[i+2]||'')))){
+      let e,c; if(s[i+1]==='{'){ const q=s.indexOf('}',i); c=q<0?null:s.slice(i+2,q); e=q+1; } else if(/[A-Za-z]/.test(s[i+1]||'')){ c=s[i+1]; e=i+2; } else { let j=i+1; if(s[j]==='-') j++; while(/\d/.test(s[j]||'')) j++; c=s.slice(i+1,j); e=j; }
       if(c){ out+='<sup>'+_mEsc(c)+'</sup>'; i=e; continue; }
     }
     if((ch==='t'||ch==='z'||ch==='f'||ch==='χ')&&!/[A-Za-z0-9]/.test(s[i-1]||' ')){
@@ -1586,21 +1594,33 @@ function _glBuild(){
 }
 function fixGlossDom(root){
   if(!root||(!_glRe&&!_glBuild())) return;
-  root.querySelectorAll('.rcard').forEach(card=>{
+  root.querySelectorAll('.rcard,.fm').forEach(card=>{
     const w=document.createTreeWalker(card,NodeFilter.SHOW_TEXT), nodes=[]; let n;
     while((n=w.nextNode())) nodes.push(n);
     nodes.forEach(n=>{
-      const p=n.parentElement; if(!p||p.closest('code,pre,.ic,.code,.gl,bdi.f,button')) return;
+      const p=n.parentElement; if(!p||p.closest('code,pre,.ic,.code,.gl,bdi.f,button,.fm-box,.fm-fig,.fm-n,.fm-bd,.fm-s>b')||(p.closest('.fm')&&!p.closest('.fm-s'))) return;
       const t=n.nodeValue; if(!t||!/[\u0600-\u06FF]/.test(t)) return;
       let changed=false;
       const html=_mEsc(t).replace(_glRe,(m,pre,term,off,str)=>{
-        const before=str.slice(Math.max(0,off-3),off); if(/[A-Za-z]\s*\(?\s*$/.test(before)) return m;
+        const before=str.slice(Math.max(0,off-14),off); if(/[A-Za-z0-9.,;:!?)]\s*\(?\s*$/.test(before)&&/\(/.test(before)||/[A-Za-z]\s*\(?\s*$/.test(before.slice(-3))) return m;
         const en=_glMap[term]; if(!en) return m; changed=true;
         return (pre?pre+' ':'')+'<span class="gl"><bdi class="en">'+en+'</bdi> ('+m.slice(pre.length)+')</span>';
       });
       if(!changed) return;
       const sp=document.createElement('span'); sp.innerHTML=html; n.replaceWith(sp);
     });
+  });
+}
+
+
+function fixAbbrDom(root){
+  if(!root||typeof FABBR==='undefined') return;
+  root.querySelectorAll('.rcard').forEach(card=>{
+    if(card.dataset.abbr) return; card.dataset.abbr='1'; const seen=new Set();
+    const w=document.createTreeWalker(card,NodeFilter.SHOW_TEXT), nodes=[]; let n; while((n=w.nextNode())) nodes.push(n);
+    nodes.forEach(n=>{ const p=n.parentElement; if(!p||p.closest('code,pre,.ic,.code,bdi.f,button')) return; let v=n.nodeValue, ch=false;
+      Object.keys(FABBR).forEach(k=>{ if(seen.has(k)) return; const re=new RegExp('(^|[^A-Za-z0-9_])'+k+'(?![A-Za-z0-9_])'); const m=re.exec(v); if(!m) return; seen.add(k); const after=v.slice(m.index+m[0].length); if(/^\s*\(/.test(after)) return; v=v.slice(0,m.index)+m[1]+k+' ('+FABBR[k]+')'+after; ch=true; });
+      if(ch) n.nodeValue=v; });
   });
 }
 
@@ -1614,7 +1634,7 @@ function fixCodeDom(root){
 }
 (function(){
   let busy=false;
-  const run=()=>{ busy=false; try{ fixCodeDom(document.getElementById('main')||document.body); fixGlossDom(document.getElementById('main')); fixGlossDom(document.getElementById('modal')); fixMathDom(document.getElementById('main')); fixMathDom(document.getElementById('modal')); document.querySelectorAll('#modal bdi.f').length&&fixCodeDom(document.getElementById('modal')); }catch(e){} };
+  const run=()=>{ busy=false; try{ fixCodeDom(document.getElementById('main')||document.body); fixAbbrDom(document.getElementById('main')); fixAbbrDom(document.getElementById('modal')); fixGlossDom(document.getElementById('main')); fixGlossDom(document.getElementById('modal')); fixMathDom(document.getElementById('main')); fixMathDom(document.getElementById('modal')); if(typeof _fmFit==='function') _fmFit(document.getElementById('main')); document.querySelectorAll('#modal bdi.f').length&&fixCodeDom(document.getElementById('modal')); }catch(e){} };
   const start=()=>{ const t=document.body; if(!t||!window.MutationObserver) return; new MutationObserver(()=>{ if(!busy){ busy=true; requestAnimationFrame(run); } }).observe(t,{childList:true,subtree:true}); run(); };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
@@ -6842,36 +6862,482 @@ function _fmMk(t){ /* text with «math» -> html. «Arabic» = plain quote. Lati
     if(k.l&&a&&!a.l&&/^\s*$/.test(a.h)&&b&&b.l){ out.pop(); out.pop(); out.push({l:1,h:'<bdi dir="ltr">'+b.h+a.h+k.h+'</bdi>'}); } else out.push(k); });
   return out.map(k=>k.h).join('');
 }
+function _fmEn(t){ /* English-first text: Arabic parentheticals isolated as RTL */ return esc(t).replace(/\(([^()]*[؀-ۿ][^()]*)\)/g,'(<bdi dir="rtl">$1</bdi>)').replace(/«([^»]*)»/g,'<bdi class="f">$1</bdi>'); }
 function _fmLines(t){ return String(t).split(/\.\s+(?![^\u00ab]*\u00bb)/).map(x=>'<div>'+_fmMk(x.replace(/\.$/,'')+(/\.$/.test(x)?'.':''))+'</div>').join(''); }
 function _fmCard(f,u){
   if(Array.isArray(f)) f={n:f[0],f:f[1],w:f[2]};
-  const lines=String(f.f).split(' , ').map(x=>'<div class="fm-ln"><bdi class="f">'+esc(x)+'</bdi></div>').join('');
-  const leg=f.l?'<div class="fm-l" dir="rtl">'+String(f.l).split(' ; ').map(x=>{ const k=x.indexOf(' = '); return k>0?'<span><bdi dir="ltr" class="sy">'+esc(x.slice(0,k))+'</bdi> : '+_fmMk(x.slice(k+3))+'</span>':'<span>'+_fmMk(x)+'</span>'; }).join('')+'</div>':'';
+  const seen=new Set(); const AB=t=>_fmAbbr(t,seen);
+  const lines=String(f.f).split(' , ').map(x=>'<div class="fm-ln'+(/[a-z]{3,}\s+[a-z]{2,}\s+[a-z]{2,}/.test(x)?' txt':'')+'"><bdi class="f">'+esc(x)+'</bdi></div>').join('');
+  const allL=[f.l,_fmAutoLegend(f).join(' ; ')].filter(Boolean).join(' ; '); const leg=allL?'<div class="fm-l" dir="ltr">'+String(allL).split(' ; ').map(x=>{ const k=x.indexOf(' = '); return k>0?'<span><bdi dir="ltr" class="sy">'+esc(x.slice(0,k))+'</bdi> = '+_fmEn(x.slice(k+3))+'</span>':'<span>'+_fmEn(x)+'</span>'; }).join('')+'</div>':'';
   return '<div class="fm'+(f.hard?' hard':'')+'" id="fm-'+u+'-'+esc(String(f.n).replace(/[^A-Za-z0-9]+/g,'-').slice(0,40))+'">'+
-   '<div class="fm-h"><span class="fm-n" dir="ltr">'+esc(f.n).replace(/\([^)]*[؀-ۿ][^)]*\)/g,m=>'<bdi dir="rtl">'+m+'</bdi>')+'</span>'+(f.hard?'<span class="fm-bd">صعب الحفظ</span>':'')+'</div>'+
+   '<div class="fm-h"><span class="fm-n" dir="ltr">'+esc(f.n).replace(/\([^)]*[؀-ۿ][^)]*\)/g,m=>'<bdi dir="rtl">'+m+'</bdi>')+'</span>'+(f.hard?'<span class="fm-bd">Hard to memorize · صعب الحفظ</span>':'')+'</div>'+
    '<div class="fm-box">'+lines+'</div>'+leg+
-   (f.w?'<div class="fm-w" dir="rtl">'+_fmMk(f.w)+'</div>':'')+
+   (f.w?'<div class="fm-w" dir="ltr">'+_fmEn(AB(f.w))+'</div>':'')+
    (f.g&&FIGS[f.g]?'<div class="fm-fig">'+FIGS[f.g]()+'</div>':'')+
-   (f.h?'<div class="fm-s hook" dir="rtl"><b>احفظها كده</b>'+_fmLines(f.h)+'</div>':'')+
-   (f.e?'<div class="fm-s ex" dir="rtl"><b>مثال</b>'+_fmLines(f.e)+'</div>':'')+
-   (f.t?'<div class="fm-s trap" dir="rtl"><b>انتبه</b>'+_fmLines(f.t)+'</div>':'')+
+   (f.h?'<div class="fm-s hook" dir="rtl"><b>Memory hook · احفظها كده</b>'+_fmLines(AB(f.h))+'</div>':'')+
+   (f.e?'<div class="fm-s ex" dir="rtl"><b>Example · مثال</b>'+_fmLines(AB(f.e))+'</div>':'')+
+   (f.t?'<div class="fm-s trap" dir="rtl"><b>Watch out · انتبه</b>'+_fmLines(AB(f.t))+'</div>':'')+
   '</div>';
 }
 function formulasHTML(u){
   const g=FORMS[u]||[]; const n=g.reduce((a,x)=>a+x[1].length,0);
   const nav='<div class="fm-nav">'+g.map((x,i)=>'<a href="#" data-act="fmgo" data-i="'+i+'">'+esc(x[0])+'</a>').join('')+'</div>';
-  const tree=FTREE[u]?'<div class="fm-tree" dir="rtl"><h3>'+esc(FTREE[u][0])+'</h3><ul>'+FTREE[u][1].map(x=>'<li>'+_fmMk(x)+'</li>').join('')+'</ul></div>':'';
-  return '<div class="frms" style="--c:'+col(u)+'"><p class="sub" style="margin-bottom:10px">'+n+' قانون. كل قانون: الصيغة + معنى الرموز + طريقة حفظ + مثال محلول + فخ. الأصعب عليه علامة «صعب الحفظ».</p>'+nav+tree+
+  const tree=FTREE[u]?'<div class="fm-tree" dir="rtl"><h3>'+esc(FTREE[u][0])+'</h3><ul>'+(()=>{ const sn=new Set(); return FTREE[u][1].map(x=>'<li>'+_fmMk(_fmAbbr(x,sn))+'</li>').join(''); })()+'</ul></div>':'';
+  return '<div class="frms" style="--c:'+col(u)+'"><p class="sub" style="margin-bottom:10px">'+n+' formulas (قانون). Each card: formula, symbols, memory hook, worked example, trap. The hardest ones are marked "Hard to memorize".</p>'+nav+tree+
    g.map((x,i)=>'<div class="frm-g" id="fg-'+u+'-'+i+'"><h3>'+esc(x[0])+'</h3>'+x[1].map(f=>_fmCard(f,u)).join('')+'</div>').join('')+'</div>';
 }
 const FTREE={};
 document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('[data-act="fmgo"]'); if(!a) return; e.preventDefault(); e.stopPropagation(); const u=(location.hash.match(/^#s-(\w+)/)||[])[1]; const el=document.getElementById('fg-'+u+'-'+a.getAttribute('data-i')); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },true);
-FTREE.stat=['أستخدم أنهي توزيع؟ (Z ولا t ولا χ²)',[
+FTREE.stat=['Which distribution do I use? Z, t or χ² (أستخدم أنهي توزيع؟)',[
  'سؤال احتمال عن x̄: المجتمع Normal أو n ≥ 30 ← «z = (x̄ − μ)/(σ/√n)». لو من غير إرجاع وn/N أكبر من 5% ← ضيف الـFPC.',
  'فترة ثقة للمتوسط وσ معروفة ← z.',
  'σ مجهولة وn أكبر من 30 ← z بـs. σ مجهولة وn ≤ 30 والمجتمع Normal ← t بـdf = n − 1. لو الـdf مش في الجدول ← خد أقرب df أو Z.',
  'نسبة ← z بـ«√(pq/n)». تباين أو انحراف معياري ← χ² بـdf = n − 1.',
  'حجم عينة ← قرّب لفوق دايماً.']];
+function _fmFit(root){
+  if(!root) return;
+  root.querySelectorAll('.fm-box').forEach(b=>{
+    b.style.removeProperty('--s'); b.classList.remove('wrapall'); const cw=b.clientWidth, sw=b.scrollWidth; if(cw>0&&sw>cw+2){ const r=Math.max(0.6,(cw-4)/sw); b.style.setProperty('--s',r.toFixed(3)); if(b.scrollWidth>cw+2) b.classList.add('wrapall'); }
+  });
+}
+/* ---------- symbol dictionary: every symbol/abbreviation used in a formula gets spelled out in the legend ---------- */
+const FSYM={
+ 'μ':'population mean (متوسط المجتمع)','σ':'population standard deviation (الانحراف المعياري للمجتمع)','σ²':'population variance','σ^2':'population variance',
+ 'N':'population size','n':'sample size','x̄':'sample mean (متوسط العينة)','s':'sample standard deviation','s²':'sample variance','s^2':'sample variance','x̃':'median (الوسيط)',
+ 'Σ':'sum (المجموع)','df':'degrees of freedom (درجات الحرية)','α':'significance level α = 1 − confidence level','SE':'standard error (الخطأ المعياري)',
+ 'FPC':'finite population correction (معامل التصحيح)','IQR':'interquartile range = Q3 − Q1','LL':'lower limit (fence)','UL':'upper limit (fence)','CV':'coefficient of variation','SK':'skewness coefficient',
+ 'cf':'cumulative frequency (التكرار التراكمي) = running total of f','rf':'relative frequency (التكرار النسبي) = f/n','f':'frequency (التكرار) = how many data values fall inside the class (count the tally marks)',
+ 'Q1':'first quartile (25th percentile)','Q2':'second quartile = median','Q3':'third quartile (75th percentile)','π':'population proportion (نسبة المجتمع)','p':'sample proportion (نسبة العينة)',
+ 'q':'q = 1 − p','p̄':'pooled proportion','RTT':'round-trip time','bps':'bits per second','Cf':'fixed cost','Cv':'variable cost per unit'
+};
+function _fmAutoLegend(f){
+  const txt=String(f.f); const have=String(f.l||''); const out=[]; const seen=new Set();
+  const add=(k,v)=>{ if(seen.has(k)) return; seen.add(k); if(have.indexOf(k+' =')>=0) return; out.push(k+' = '+v); };
+  const word=(k)=>new RegExp('(^|[^A-Za-z_\\u0370-\\u03ff])'+k+'(?![A-Za-z0-9_])').test(txt);
+  Object.keys(FSYM).forEach(k=>{ if(k.length>=2&&/^[A-Za-z]+$/.test(k)){ if(word(k)) add(k,FSYM[k]); } });
+  ['cf','rf','df'].forEach(k=>{ if(word(k)) add(k,FSYM[k]); });
+  ['μ','σ','x̄','x̃','Σ','π','p̄'].forEach(k=>{ if(txt.indexOf(k)>=0) add(k,FSYM[k]); });
+  if(/(^|[^A-Za-z_])N(?![A-Za-z])/.test(txt)&&!/N!/.test(txt)) add('N',FSYM['N']);
+  if(/(^|[^A-Za-z_])n(?![A-Za-z_])/.test(txt)) add('n',FSYM['n']);
+  return out;
+}
+/* abbreviations are spelled out at first use inside every card (note, hook, example, trap) */
+const FABBR={ 'FPC':'finite population correction, معامل التصحيح','CLT':'Central Limit Theorem','SE':'standard error, الخطأ المعياري','CI':'confidence interval, فترة الثقة','IQR':'interquartile range','CV':'coefficient of variation',
+ 'df':'degrees of freedom, درجات الحرية','cf':'cumulative frequency, التكرار التراكمي','rf':'relative frequency, التكرار النسبي','Q1':'first quartile','Q3':'third quartile','RTT':'round-trip time','ACK':'acknowledgment',
+ 'LP':'linear programming','RREF':'reduced row echelon form','det':'determinant','TCP':'Transmission Control Protocol','HTTP':'HyperText Transfer Protocol','DNS':'Domain Name System','UDP':'User Datagram Protocol','GPA':'grade point average','LL':'lower limit','UL':'upper limit' };
+function _fmAbbr(text,seen){
+  if(!text) return text;
+  return String(text).split(/(\u00ab[^\u00bb]*\u00bb)/).map(p=>{
+    if(p[0]==='\u00ab') return p;
+    Object.keys(FABBR).forEach(k=>{
+      if(seen.has(k)) return;
+      const re=new RegExp('(^|[^A-Za-z0-9_])'+k+'(?![A-Za-z0-9_])');
+      const m=re.exec(p); if(!m) return;
+      const after=p.slice(m.index+m[0].length);
+      seen.add(k);
+      if(/^\s*\(/.test(after)) return;
+      p=p.slice(0,m.index)+m[1]+k+' ('+FABBR[k]+')'+after;
+    });
+    return p;
+  }).join('');
+}
+/* «القوانين» additions: new figures, missing formulas, and examples/hooks/traps for the formulas that only had the bare formula. Loaded after part5f2-formulas-ui.js. */
+(function(){
+ const P=(u,name,o)=>{ let hit=0; (FORMS[u]||[]).forEach(g=>g[1].forEach(x=>{ if(x.n===name){ Object.assign(x,o); hit++; } })); if(!hit) console.warn('formula not found: '+u+' / '+name); };
+ const G=(u,title,items)=>{ FORMS[u].push([title,items]); };
+ /* ---------- extra figures ---------- */
+ FIGS.stair=()=>{ const rows=[[40,'■ * * * *'],[70,'0 ■ * * *'],[100,'0 0 0 ■ *']]; let g='<line class="fg-ax" x1="40" y1="30" x2="40" y2="112"/>';
+  [[60,30],[100,60],[160,90]].forEach((p,i)=>{ g+='<rect class="fg-fill" x="'+(p[0]-8)+'" y="'+(p[1]-12)+'" width="24" height="22"/>'; });
+  const txt=[['■','*','*','*','*'],['0','■','*','*','*'],['0','0','0','■','*']]; txt.forEach((r,i)=>r.forEach((c,j)=>{ g+=_fgT(60+j*40,38+i*30,c,c==='■'?'fg-b':''); }));
+  return _fgSvg(g+_fgT(150,122,'■ = pivot (leading entry) · each pivot is to the right of the one above','fg-s'),132); };
+ FIGS.sens=()=>{ const y=58; return _fgSvg('<line class="fg-ax" x1="20" y1="'+y+'" x2="280" y2="'+y+'"/><line class="fg-line" x1="70" y1="'+y+'" x2="235" y2="'+y+'" stroke-width="5"/><line class="fg-line" x1="70" y1="'+(y-10)+'" x2="70" y2="'+(y+10)+'"/><line class="fg-line" x1="235" y1="'+(y-10)+'" x2="235" y2="'+(y+10)+'"/><circle cx="125" cy="'+y+'" r="5" fill="currentColor"/>'+_fgT(125,y-14,'c (current)','fg-b')+_fgT(70,y+26,'c − decrease')+_fgT(235,y+26,'c + increase')+_fgT(152,100,'inside the range: same optimal mix · outside: re-solve','fg-s'),120); };
+ FIGS.ieee=()=>{ const seg=(x,w,l,sub)=>'<rect class="fg-fill" x="'+x+'" y="40" width="'+w+'" height="30" stroke="currentColor"/>'+_fgT(x+w/2,60,l,'fg-b')+_fgT(x+w/2,86,sub,'fg-s'); return _fgSvg(seg(20,24,'s','1 bit')+seg(44,100,'exponent','8 bits (bias 127)')+seg(144,136,'mantissa','23 bits')+_fgT(150,24,'value = (−1)^s × 1.m × 2^(e − bias)','fg-b')+_fgT(150,112,'double: 1 + 11 (bias 1023) + 52','fg-s'),124); };
+ FIGS.pipe=()=>{ let g=''; for(let p=0;p<3;p++) for(let l=0;l<3;l++){ const x=44+(p+l)*44, y=24+l*32; g+='<rect class="fg-fill" x="'+x+'" y="'+y+'" width="40" height="24" stroke="currentColor"/>'+_fgT(x+20,y+16,'P'+(p+1),'fg-b'); } for(let l=0;l<3;l++) g+=_fgT(24,40+l*32,'link '+(l+1),'fg-s'); g+='<line class="fg-ax" x1="40" y1="118" x2="290" y2="118"/>'; return _fgSvg(g+_fgT(160,132,'total = (N + P − 1) slots of L/R (here 3 + 3 − 1 = 5)','fg-s'),140); };
+
+ /* ---------- Math ---------- */
+ P('math','Transpose rules',{e:'«A = [1 2; 3 4]» و«B = [0 1; 1 0]»: «AB = [2 1; 4 3]» ← «(AB)^T = [2 4; 1 3]» وهو نفسه «B^T·A^T».'});
+ P('math','Inverse of a product',{e:'«A = [2 0; 0 1]» و«B = [1 1; 0 1]»: «AB = [2 2; 0 1]» ← «(AB)^{-1} = [1/2 −1; 0 1] = B^{-1}·A^{-1}».',t:'الترتيب لازم ينعكس. «A^{-1}B^{-1}» غلط في الغالب.'});
+ P('math','Inverse by row reduction',{e:'«A = [1 2; 3 7]»: «[1 2 | 1 0; 3 7 | 0 1]» ← «R2 − 3R1» ← «R1 − 2R2» ← «[1 0 | 7 −2; 0 1 | −3 1]» فالمعكوس «[7 −2; −3 1]».',t:'لو ظهر صف أصفار في A ← مفيش معكوس.'});
+ P('math','Solving Ax = b',{e:'«A^{-1} = [3 −1; −5 2]» و«b = [5; 10]»: «x = [3·5 − 10; −25 + 20] = [5; −5]».',t:'لو A مش مربعة أو det A = 0 ما تستخدمش القانون ده، استخدم row reduction.'});
+ P('math','Rank and pivots',{g:'stair',e:'مصفوفة 3×4 فيها pivotين ← «rank A = 2» و«dim Nul A = 4 − 2 = 2» ← مجهولين free في الحل.',h:'«عدد الـpivots = الـrank، والباقي من الأعمدة free».'});
+ P('math','Triangular matrix',{e:'«[2 5 1; 0 3 4; 0 0 −1]» ← «det = 2·3·(−1) = −6».',h:'مثلثية؟ اضرب القُطر وخلاص.'});
+ P('math','Product and transpose',{e:'«det A = 3» و«det B = 4» ← «det(AB) = 12» و«det A^T = 3».',t:'det(A + B) ≠ det A + det B.'});
+ P('math','Inverse via adjugate',{e:'«A = [2 1; 5 3]»: «adj A = [3 −1; −5 2]» و«det A = 1» ← «A^{-1} = adj A».'});
+ G('math','More facts that behave like formulas',[
+  F('Row-echelon form conditions','all-zero rows at the bottom , each pivot is right of the pivot above , zeros below every pivot','Reduced echelon: كل pivot = 1 وهو العنصر الوحيد غير الصفري في عموده.',{g:'stair',h:'«سلم: كل درجة أيمن من اللي فوقها».'}),
+  F('Consistency of a system','Ax = b is consistent ⇔ the augmented matrix has no row [0 0 ... 0 | b≠0]','',{h:'صف أصفار = رقم مش صفر ← مفيش حل.',e:'«[1 2 | 3; 0 0 | 5]» ← الصف التاني «0 = 5» مستحيل ← no solution.'}),
+  F('Number of solutions','no free variables ← unique solution , at least one free variable ← infinitely many','لو consistent.',{e:'3 مجاهيل و2 pivot ← متغير free واحد ← حلول لا نهائية.'}),
+  F('Linear independence test','columns of A are independent ⇔ Ax = 0 has only x = 0 ⇔ every column is a pivot column','',{}),
+  F('Sarrus rule (3×3 determinant)','det A = a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32} − a_{13}a_{22}a_{31} − a_{11}a_{23}a_{32} − a_{12}a_{21}a_{33}','اختصار للـ3×3 بس.',{e:'«[1 2 3; 0 1 4; 5 6 0]»: «0 + 40 + 0 − 15 − 24 − 0 = 1».'})
+ ]);
+
+ /* ---------- OR ---------- */
+ P('or','Standard LP',{e:'«max Z = 3x_1 + 5x_2» s.t. «x_1 ≤ 4» و«2x_2 ≤ 12» و«3x_1 + 2x_2 ≤ 18»: الركن الأمثل «(2, 6)» ← «Z = 3·2 + 5·6 = 36».'});
+ P('or','Slack and surplus',{e:'«3x + 2y ≤ 18» ← «3x + 2y + s = 18». و«2x + y ≥ 4» ← «2x + y − s = 4».',t:'الـslack والـsurplus ما بيدخلوش الـobjective (معاملهم صفر).'});
+ P('or','Row z_j',{e:'أول tableau الـbasis كله slack بـc_B = 0 ← «z_j = 0» ← «c_j − z_j = c_j».'});
+ P('or','Entering variable',{e:'«c_j − z_j = 3 و5» ← «x_2» يدخل (الأكبر).'});
+ P('or','Pivot row update',{e:'صف الـpivot «[6 4 | 24]» والـpivot = 6 ← الصف الجديد «[1 2/3 | 4]».'});
+ P('or','Other rows',{e:'صف قديم «[3 2 | 18]» وقيمته في عمود الـpivot = 3 ← «[3 − 3·1, 2 − 3·(2/3) | 18 − 3·4] = [0 0 | 6]».'});
+ P('or','Optimality',{e:'«c_j − z_j = −3 و−1» كلهم ≤ 0 ← وقف، ده الحل الأمثل.'});
+ P('or','Optimal point',{h:'أمثل نقطة دايماً ركن (corner)، مش جوّه المنطقة.'});
+ P('or','Objective coefficient range',{g:'sens',h:'«المدى حوالين المعامل»: زوّد لحد increase، ونقّص لحد decrease، والمزيج ما بيتغيرش.'});
+ P('or','Dual rule',{e:'primal: «max 3x_1 + 5x_2» بـ3 قيود ← dual: «min 4y_1 + 12y_2 + 18y_3» بـ2 قيد (واحد لكل متغير في الـprimal).'});
+ P('or','Solver Sensitivity Report',{e:'Regular: Final Value 291.67، coefficient 50، Allowable Increase 70، Decrease 20 ← الـcoefficient يمشي بين «30» و«120» من غير ما الحل يتغير.'});
+ P('or','Types',{e:'«x_1, x_2 صحيحين» = total integer · «x_1 صحيح وx_2 أي رقم» = mixed · «x ∈ {0,1}» = binary.'});
+ P('or','At most one of two',{e:'اختار موقع واحد بالكتير من 3: «x_1 + x_2 + x_3 ≤ 1».'});
+ P('or','Exactly one of two',{e:'لازم تختار موقع واحد بالظبط: «x_1 + x_2 = 1».'});
+ P('or','Conditional (2 only if 1)',{e:'مشروع 2 يتنفذ بس لو مشروع 1 اتنفذ: «x_2 ≤ x_1» (لو x_1 = 0 يبقى x_2 = 0).'});
+ P('or','Corequisite (together)',{e:'مشروعين مع بعض أو ولا واحد: «x_2 = x_1».'});
+ P('or','Fixed charge',{e:'مزرعة بتشتغل «x ≤ 100·y»: لو y = 0 ← x = 0 ومفيش تكلفة ثابتة، لو y = 1 ← بتدفع f وx لحد 100.',t:'M لازم يكون كبير كفاية (أكبر من أقصى قيمة x).'});
+ P('or','Branch and Bound (max)',{e:'الحل الأفضل الصحيح لحد دلوقتي «16». فرع حله المرتخي «14.6» ← «14.6 ≤ 16» ← اقطعه (prune).',h:'«مرتخي أقل من أحسن صحيح ← اقطع».'});
+ P('or','Rounding',{e:'«2x + 2y ≤ 12» والحل المرتخي «(2.5, 3.5)». التقريب لفوق «(3, 4)» ← «2·3 + 2·4 = 14 > 12» مش ممكن.'});
+
+ /* ---------- Networks ---------- */
+ P('net','Nodal delay',{e:'«d_proc = 0.1 ms» و«d_queue = 2 ms» و«d_trans = 1.2 ms» و«d_prop = 10 ms» ← «d_nodal = 13.3 ms».'});
+ P('net','Store-and-forward (P packets)',{g:'pipe'});
+ P('net','Persistent HTTP (no pipelining)',{e:'صفحة فيها «base + 5 objects» و«RTT = 100 ms» (من غير transmission): non-persistent «6·2·100 = 1200 ms»، وpersistent «100 + 6·100 = 700 ms».'});
+ P('net','Link utilization (cache)',{e:'«traffic = 1.5 Mbps» على link «1.54 Mbps» ← «≈ 0.97» ← الطابور طويل جداً ← الـcache بيقلل الـtraffic.'});
+ P('net','DevRTT',{e:'«Dev = 20» و«Sample = 140» و«Est = 100»: «0.75·20 + 0.25·|140 − 100| = 25».'});
+ P('net','Internet checksum',{e:'كلمتين «0110 0110 0110 0000» و«0101 0101 0101 0101»: المجموع «1011 1011 1011 0101» ← الـchecksum (complement) = «0100 0100 0100 1010».',t:'لو في carry برّه الـ16 bit لفّه وضيفه على اللي ورا.'});
+ P('net','Go-Back-N',{e:'«N = 4» والـsegment 2 ضاع: الراسل يعيد 2 و3 و4 (حتى لو 3 و4 وصلوا) لأن المستقبل بيرمي اللي برّه الترتيب.'});
+ P('net','Selective Repeat',{e:'نفس الحالة: يعيد الـsegment 2 بس، والمستقبل بيخزّن 3 و4 في الـbuffer.'});
+ P('net','Non-persistent HTTP',{e:'object واحد «RTT = 100 ms»: «2·100 + transmission» = 200 ms + وقت الإرسال.'});
+ G('net','Units and transfer time',[
+  F('Unit conversions','1 byte = 8 bits , 1 Kbps = 10^3 bps , 1 Mbps = 10^6 bps , 1 ms = 10^{−3} s','الأخطاء الشائعة كلها هنا.',{hard:1,h:'«بايت × 8 = بت، ميجا = مليون». ركّز في الـbits مقابل الـbytes.',e:'«1500 bytes = 12000 bits» و«10 Mbps = 10^7 bps» ← «12000/10^7 = 1.2 ms».'}),
+  F('File transfer time','T = F/min(R_s, R_c)','F حجم الملف، والـbottleneck هو الأبطأ.',{e:'«F = 8 Mbit» و«R_s = 2 Mbps» و«R_c = 5 Mbps» ← «T = 8/2 = 4 s».'}),
+  F('Traffic intensity regimes','La/R ≈ 0 ← small delay , La/R → 1 ← large delay , La/R > 1 ← infinite delay (loss)','',{h:'«كل ما قرّبت من 1 الطابور بيتفجر».'})
+ ]);
+
+ /* ---------- OOP ---------- */
+ P('oop','IEEE 754 single precision',{g:'ieee'});
+ P('oop','Fibonacci recursion calls',{e:'«T(0) = T(1) = 1» ← «T(2) = 3» و«T(3) = 5» و«T(4) = 9»: العدد بيتضاعف تقريباً، يعني exponential.'});
+ P('oop','Pointer arithmetic',{e:'«int* p» على العنوان 2000 ← «p + 3» على «2000 + 3·4 = 2012».',t:'الزيادة بوحدة sizeof(النوع) مش بالبايت.'});
+ P('oop','Array element address',{h:'العنوان = «البداية + رقم العنصر × حجمه».'});
+ G('oop','Complexity of recursion',[
+  F('Linear recursion','T(n) = T(n − 1) + 1 = n','factorial وsum.',{e:'«fact(5)» بيعمل 5 نداءات ← «T(5) = 5».'}),
+  F('Halving recursion','T(n) = T(n/2) + 1 = log_2 n','binary search.',{e:'«n = 1024» ← «log_2 1024 = 10» خطوة.'}),
+  F('Stack depth','stack frames = recursion depth , tail recursion + optimization ← O(1) frames','',{h:'كل نداء ياخد frame جديد على الـstack، إلا لو الـcompiler حسّن الـtail recursion.',e:'«fact(1000)» بدون tail optimization ← 1000 frame.'}),
+  F('Memory of an array','bytes = n × sizeof(type)','',{e:'«int a[10]» ← «10·4 = 40 bytes».'})
+ ]);
+
+ /* ---------- Stat: remaining examples and new formulas ---------- */
+ P('stat','Proportion SE with FPC',{e:'«N = 1000» و«n = 200» و«π = 0.5»: «σ_p = √(0.25/200)·√(800/999) = 0.0354·0.895 = 0.0316».'});
+ P('stat','CI for the variance (large n)',{e:'«n = 101» و«s^2 = 4» و95%: «400/(100 + 1.96·√200) = 3.13» و«400/(100 − 1.96·√200) = 5.53» ← «[3.13, 5.53]».'});
+ P('stat','CLT condition',{e:'مجتمع مش Normal و«n = 36» ← توزيع x̄ تقريباً Normal ← استخدم z. لو «n = 10» ما ينفعش.'});
+ P('stat','CI for μ1 − μ2 (σ known)',{e:'«n_1 = n_2 = 50» و«σ_1 = 4» و«σ_2 = 6» و«x̄_1 − x̄_2 = 3»: «SE = √(16/50 + 36/50) = 1.02» ← «3 ± 1.96·1.02 = [1.0, 5.0]».'});
+ P('stat','t for equal variances',{e:'«x̄_1 − x̄_2 = 3» و«s_p = 5.10» و«n_1 = n_2 = 10»: «t = 3/(5.10·√(1/10 + 1/10)) = 1.32» بـ«df = 18».'});
+ P('stat','t for unequal variances',{e:'«s_1 = 4» و«s_2 = 6» و«n = 10»: «t = 3/√(16/10 + 36/10) = 1.32».'});
+ P('stat','Two proportions',{e:'«p_1 = 0.6» و«p_2 = 0.5» و«n = 100»: «p̄ = 0.55» ← «z = 0.1/√(0.55·0.45·(2/100)) = 1.42».'});
+ P('stat','CI for π1 − π2',{e:'«√(0.6·0.4/100 + 0.5·0.5/100) = 0.07» ← «0.1 ± 1.96·0.07 = [−0.037, 0.237]» (فيه صفر ← مفيش فرق واضح).'});
+ P('stat','F reciprocal',{e:'«f_{0.975}(8, 12) = 1/f_{0.025}(12, 8) = 1/4.20 = 0.238».',h:'الدرجات بتتبدّل: ν1 وν2 ينعكسوا.'});
+ P('stat','CI for σ1²/σ2²',{e:'«n_1 = 16» و«n_2 = 13» و«s_1 = 0.14» و«s_2 = 0.202»: الفترة «[0.183, 1.19]» فيها 1 ← التباينين متساويين تقريباً.'});
+ G('stat','Welch, chi-square test, regression and ANOVA (لسه ما اتشرحوش، راجع السلايدات لما توصل)',[
+  F('Welch degrees of freedom','ν = (s_1^2/n_1 + s_2^2/n_2)^2/((s_1^2/n_1)^2/(n_1 − 1) + (s_2^2/n_2)^2/(n_2 − 1))','من ورقة المعادلات (unequal variances).',{hard:1,h:'البسط تربيع مجموع «التباين ÷ n»، والمقام مجموع كل واحد تربيعه ÷ (n−1).'}),
+  F('Chi-square test of independence','χ^2 = Σ(O − E)^2/E , E = (row total × column total)/grand total , df = (r − 1)(c − 1)','O = المُشاهَد، E = المتوقع.',{hard:1,h:'«المُشاهَد ناقص المتوقع، تربيع، على المتوقع».',e:'جدول 2×2: المتوقع لخلية «= (50·40)/100 = 20» والمُشاهَد 30 ← الإسهام «(30 − 20)^2/20 = 5» وdf = 1.'}),
+  F('Simple linear regression','ŷ = b_0 + b_1·x , b_1 = S_xy/S_xx , b_0 = ȳ − b_1·x̄','S_xy = Σ(x − x̄)(y − ȳ) وS_xx = Σ(x − x̄)^2.',{hard:1,h:'الميل = «تغاير x وy ÷ تباين x»، والخط دايماً بيعدّي بـ(x̄, ȳ).',e:'x = 1 2 3 وy = 2 4 5: «S_xy = 3» و«S_xx = 2» ← «b_1 = 1.5» و«b_0 = 3.67 − 1.5·2 = 0.67».'}),
+  F('Correlation and R²','r = S_xy/√(S_xx·S_yy) , R^2 = SSR/SST','r بين −1 و1.',{e:'نفس المثال: «S_yy = 4.67» ← «r = 3/√(2·4.67) = 0.98» و«R^2 = 0.96».'}),
+  F('One-way ANOVA','F = MSB/MSW , MSB = SSB/(k − 1) , MSW = SSW/(N − k)','k = عدد المجموعات وN = كل المشاهدات.',{h:'«التباين بين المجموعات ÷ التباين جوّه المجموعات»: F كبير ← المتوسطات مختلفة.'})
+ ]);
+})();
+/* English-first notes and legends for the «القوانين» tab (rule: key terms in English, Arabic in parentheses, because the exams are in English).
+   Patches the `w` (note) and `l` (legend) of existing formulas by name. Loaded after part5f3-formulas-more.js. */
+(function(){
+ const P=(u,name,o)=>{ let hit=0; (FORMS[u]||[]).forEach(g=>g[1].forEach(x=>{ if(x.n===name){ Object.assign(x,o); hit++; } })); if(!hit) console.warn('notes: not found '+u+' / '+name); };
+ const W=(u,map)=>Object.keys(map).forEach(k=>P(u,k,{w:map[k]}));
+ const L=(u,map)=>Object.keys(map).forEach(k=>P(u,k,{l:map[k]}));
+ W('stat',{
+  'Population mean (المتوسط)':'Population = every element (كل المجتمع). N = population size.',
+  'Sample mean':'Same formula on a sample (عينة). n = sample size.',
+  'Weighted mean (المتوسط الموزون)':'Use it when every value has a different weight (وزن), e.g. GPA with credit hours.',
+  'Median position (موضع الوسيط) / percentile':'P = 50 for the median, 25 for Q1 (first quartile), 75 for Q3 (third quartile).',
+  'Range (المدى)':'The simplest measure of dispersion (spread) (أبسط مقياس تشتت). Sensitive to outliers (القيم الشاذة).',
+  'Interquartile range (IQR)':'The range of the middle 50% of the data (المدى للنص اللي في النص). Resistant to outliers.',
+  'Outlier fences':'Any value outside the two limits (LL, UL) is an outlier (قيمة شاذة).',
+  'Sample variance (التباين)':'For a sample divide by n − 1 (degrees of freedom).',
+  'Population variance':'When the data are the whole population divide by N.',
+  'Standard deviation (الانحراف المعياري)':'The square root of the variance, so it has the same units as the data.',
+  'Coefficient of variation (CV)':'Relative dispersion: compares the spread of two data sets with different units (وحدات مختلفة).',
+  'Skewness (الالتواء)':'x̃ = median. Positive ← right-skewed, negative ← left-skewed.',
+  'Number of classes and width':'k = the smallest integer that satisfies the rule. Round the class width up.',
+  'Midpoint and relative frequency':'cf = cumulative frequency (running total of f).',
+  'Mean (grouped)':'m = class midpoint.',
+  'Median (grouped)':'The doctor uses (n+1) and the upper class limits.',
+  'Percentile (grouped)':'Same rule as the grouped median, only P changes.',
+  'Variance (grouped)':'Whole population ← divide by N.',
+  'Mode and range (grouped)':'The doctor computes the grouped range with midpoints.',
+  'Standardization (z-score)':'How many standard deviations a value is away from the mean.',
+  'Back-transform (من الاحتمال للقيمة)':'The inverse problem: the probability is given and you need the value x.',
+  'Probability rules':'The z-table gives the area to the left of z (cumulative probability).',
+  'Empirical rule (68–95–99.7)':'For symmetric, bell-shaped (normal) data.',
+  'Critical z values':'The z value that leaves the stated confidence level in the middle.',
+  'Number of possible samples':'N = population size, n = sample size.',
+  'Mean of x̄':'The mean of all sample means equals the population mean (unbiased estimator).',
+  'Standard error (SE)':'The standard deviation of the sampling distribution of x̄.',
+  'SE with finite population correction (FPC)':'Sampling without replacement and n/N > 5%.',
+  'z for the sample mean':'Use it after you compute the standard error.',
+  't for the sample mean (σ unknown)':'Use it when σ (the population standard deviation) is unknown.',
+  'Sampling error':'The difference between the sample statistic and the true population parameter.',
+  'CLT condition':'If the population is not normal, the sampling distribution of x̄ is about normal when n is large enough (Central Limit Theorem).',
+  'Proportion: mean and standard error':'Normal approximation holds if nπ ≥ 5 and n(1 − π) ≥ 5.',
+  'z for a proportion':'Same idea as z for the mean.',
+  'Proportion SE with FPC':'Without replacement and n/N > 5%.',
+  'Chi-square statistic':'Used for the sampling distribution of the variance.',
+  'Large-df approximation':'When df is large and missing from the chi-square table.',
+  'CI for μ (σ known)':'Confidence interval (فترة الثقة) for the population mean.',
+  'CI for μ (σ unknown, n > 30)':'Use s with the z value.',
+  'CI for μ (σ unknown, normal, n ≤ 30)':'df = n − 1.',
+  'CI with FPC':'Without replacement and n/N > 5%.',
+  'CI for a proportion':'q = 1 − p, and the standard error uses p (the sample proportion), not π.',
+  'CI for the variance':'Take the square root to get the CI for the standard deviation.',
+  'CI for the variance (large n)':'When the df is not in the chi-square table.',
+  'Margin of error':'Half the width of the confidence interval.',
+  'Sample size for a mean':'Always round up.',
+  'Sample size for a proportion':'No estimate of p ← use p = 0.5 (the worst case).',
+  't-table lookup':'The t-table gives the right-tail area.',
+  'Paired samples':'d = the difference inside each pair (paired data).',
+  'F reciprocal':'Use it when the F-table only has the right tail.',
+  'CI for σ1²/σ2²':'If the interval contains 1, the two variances are about equal.',
+  'Test statistics':'From the final-exam equation sheet.',
+  'Welch degrees of freedom':'From the equation sheet (unequal variances).',
+  'Chi-square test of independence':'O = observed, E = expected.',
+  'Simple linear regression':'S_xy = Σ(x − x̄)(y − ȳ) and S_xx = Σ(x − x̄)^2.',
+  'One-way ANOVA':'k = number of groups, N = total number of observations.'
+ });
+ L('stat',{
+  'Population mean (المتوسط)':'μ = population mean ; Σx = sum of the values ; N = population size',
+  'Sample mean':'x̄ = sample mean ; n = sample size',
+  'Weighted mean (المتوسط الموزون)':'w = weight ; x = value',
+  'Median position (موضع الوسيط) / percentile':'i = position of the value after sorting ; P = percentile ; n = number of values',
+  'Sample variance (التباين)':'x − x̄ = deviation from the mean ; n − 1 = degrees of freedom',
+  'Median (grouped)':'i = (n+1)/2 = median position ; g = the largest cf below i ; h = the next cf ; x_g, x_h = upper limits of those two classes',
+  'Standardization (z-score)':'x = value ; μ = mean ; σ = standard deviation',
+  'Standard error (SE)':'σ = population standard deviation ; n = sample size',
+  'Proportion: mean and standard error':'π = population proportion ; p = sample proportion',
+  'CI for μ (σ known)':'x̄ = sample mean ; z_{α/2} = critical value for the confidence level ; σ/√n = standard error'
+ });
+ W('math',{
+  'Matrix product entry':'The number of columns of A must equal the number of rows of B.',
+  'Inverse of a product':'The order reverses, like the transpose rule.',
+  'Inverse of a 2×2 matrix':'A = [a b; c d] and ad − bc ≠ 0 (otherwise A is singular: no inverse).',
+  'Solving Ax = b':'If A is invertible (nonsingular).',
+  'Rank and pivots':'n = number of columns.',
+  'Cofactor expansion':'Expand along any row or column; pick the one with the most zeros.',
+  'Triangular matrix':'Product of the diagonal entries.',
+  "Cramer's rule":'A_i(b) = A with column i replaced by b.'
+ });
+ W('or',{
+  'Break-even volume':'Profit is zero at this volume. Round up.',
+  'Profit at volume v':'Z = total revenue − total cost.',
+  'Optimal point':'Compare Z at every corner point (extreme point) of the feasible region.',
+  'Shadow price effect':'Valid only inside the allowable range.',
+  'Objective coefficient range':'The optimal solution (the mix) does not change inside the range.'
+ });
+ L('or',{'Break-even volume':'Cf = fixed cost ; p = selling price ; Cv = variable cost per unit ; p − Cv = unit margin'});
+ W('net',{
+  'Transmission delay':'L in bits and R in bps.',
+  'Propagation delay':'d = link length, s = propagation speed.',
+  'Traffic intensity':'a = packet arrival rate (packets/s).',
+  'End-to-end throughput':'The bottleneck link (the slowest link).',
+  'Pipelined utilization':'N = window size.',
+  'Average access delay with a cache':'h = hit rate.',
+  'Go-Back-N':'Window size N. If a segment is lost the sender retransmits it and everything after it.',
+  'Selective Repeat':'Window size N. Only the lost segment is retransmitted.'
+ });
+ L('net',{'Transmission delay':'L = packet size (bits) ; R = transmission rate (bps)'});
+ W('oop',{'IEEE 754 single precision':'1 sign bit + 8 exponent bits + 23 mantissa (fraction) bits.','Fibonacci recursion calls':'Exponential growth.'});
+})();
+(function(){
+ const P=(u,name,o)=>{ (FORMS[u]||[]).forEach(g=>g[1].forEach(x=>{ if(x.n===name) Object.assign(x,o); })); };
+ P('net','Go-Back-N',{f:'window size N , lost segment k ← resend segment k and every segment after it'});
+ P('net','Selective Repeat',{f:'window size N , lost segment k ← resend only segment k (the receiver buffers the rest)'});
+ P('stat','CLT condition',{f:'n ≥ 30 (the doctor sometimes writes 25)'});
+})();
+(function(){
+ const P=(u,name,o)=>{ (FORMS[u]||[]).forEach(g=>g[1].forEach(x=>{ if(x.n===name) Object.assign(x,o); })); };
+ P('stat','Welch degrees of freedom',{e:'«s_1 = 4» و«s_2 = 6» و«n_1 = n_2 = 10»: «s_1^2/n_1 = 1.6» و«s_2^2/n_2 = 3.6» ← «ν = (5.2)^2/(1.6^2/9 + 3.6^2/9) = 27.04/1.724 ≈ 15.7» ← خد 15 (قرّب لتحت).'});
+ P('math','Row operation effects',{e:'«det A = 6»: بدّلت صفين ← «−6». ضربت صف في 2 ← «12». ضفت مضاعف صف لصف تاني ← «6» زي ما هو.'});
+ P('math','Linear independence test',{h:'لو في عمود مش pivot ← الأعمدة dependent (واحد منهم تركيبة من الباقي).',e:'العمودين «(1, 2)» و«(2, 4)»: التاني = 2 × الأول ← dependent.'});
+ P('oop','IEEE 754 double precision',{e:'«exponent = 1033» ← «1033 − 1023 = 10» ← القيمة «1.5 × 2^{10} = 1536».'});
+})();
+/* Symbol legends for the «القوانين» tab: EVERY symbol or abbreviation that appears in a formula is spelled out (full English term, Arabic in parentheses) and,
+   where it matters, how to get it (e.g. f = count the data values that fall in the class). Merged into f.l by formula name. Auto-legend (FSYM) covers common symbols. */
+(function(){
+ const A=(u,name,add)=>{ (FORMS[u]||[]).forEach(g=>g[1].forEach(x=>{ if(x.n===name){ const have=String(x.l||''); const items=add.split(' ; ').filter(it=>{ const k=it.split(' = ')[0]; return have.indexOf(k+' =')<0; }); x.l=[have].concat(items).filter(Boolean).join(' ; '); } })); };
+ const S={
+  'Range (المدى)':'Range = max − min ; max = largest value ; min = smallest value',
+  'Number of classes and width':'k = number of classes (عدد الفئات) ; w = class width (عرض الفئة) ; Range = max − min ; n = sample size',
+  'Midpoint and relative frequency':'m = class midpoint (منتصف الفئة) ; lower, upper = the class limits ; f = frequency (التكرار): how many data values fall inside the class ; rf = relative frequency (التكرار النسبي) = f/n ; cf = cumulative frequency (التكرار التراكمي) = running total of f up to that class',
+  'Mean (grouped)':'f = frequency (التكرار) of the class: count the data values inside it ; m = class midpoint ; n = Σf = total number of values',
+  'Percentile (grouped)':'P = the percentile you want (e.g. 75) ; i = position of that percentile ; g = the largest cumulative frequency (cf) below i ; h = the next cf ; x_g, x_h = upper limits of those two classes ; x_P = the percentile value',
+  'Variance (grouped)':'f = frequency of the class (count of values) ; m = class midpoint ; x̄ = grouped mean ; n = Σf',
+  'Mode and range (grouped)':'mode = the most frequent value (المنوال) ; f = frequency of a class ; Range = spread of the data',
+  'Standardization (z-score)':'z = z-score (standard normal value)',
+  'Back-transform (من الاحتمال للقيمة)':'z = z-score read from the table ; x = the value you want ; μ = mean ; σ = standard deviation',
+  'Probability rules':'P( ) = probability ; Z = standard normal variable ; z, a, b = particular values of Z',
+  'Number of possible samples':'N! = N factorial = N·(N−1)···1',
+  'z for the sample mean':'z = z-score of x̄ ; σ_x̄ = standard error',
+  'z for a proportion':'z = z-score',
+  'Chi-square statistic':'χ² = chi-square value (قيمة كاي تربيع) ; s² = sample variance ; σ² = population variance',
+  'Large-df approximation':'z = z-score ; χ² = chi-square value',
+  'CI for a proportion':'q = 1 − p ; pq/n = estimated variance of p',
+  'CI for the variance':'χ²_{α/2}, χ²_{1−α/2} = critical chi-square values (right and left tails) ; s² = sample variance',
+  'Margin of error':'e = margin of error (هامش الخطأ) ; z_{α/2} = critical z value',
+  'Sample size for a mean':'n = required sample size ; z_{α/2} = critical z value ; σ = population standard deviation ; e = margin of error',
+  'Sample size for a proportion':'n = required sample size ; z_{α/2} = critical z value ; p = estimated proportion (0.5 if unknown) ; q = 1 − p ; e = margin of error',
+  'CI for μ1 − μ2 (σ known)':'x̄_1, x̄_2 = the two sample means ; σ_1, σ_2 = population standard deviations ; n_1, n_2 = sample sizes ; z_{α/2} = critical z value',
+  'Pooled variance':'s_1, s_2 = sample standard deviations ; n_1, n_2 = sample sizes ; s_p^2 = pooled variance',
+  't for equal variances':'x̄_1, x̄_2 = sample means ; μ_1, μ_2 = population means ; s_p = pooled standard deviation ; n_1, n_2 = sample sizes ; df = degrees of freedom',
+  't for unequal variances':'x̄_1, x̄_2 = sample means ; μ_1, μ_2 = population means ; s_1, s_2 = sample standard deviations ; n_1, n_2 = sample sizes',
+  'Paired samples':'d̄ = mean of the differences ; s_d = standard deviation of the differences ; n = number of pairs ; t_{α/2} = critical t value',
+  'Two proportions':'p_1, p_2 = sample proportions ; π_1, π_2 = population proportions ; p̄ = pooled proportion ; q̄ = 1 − p̄ ; x_1, x_2 = numbers of successes ; n_1, n_2 = sample sizes',
+  'CI for π1 − π2':'p_1, p_2 = sample proportions ; q_1, q_2 = 1 − p ; n_1, n_2 = sample sizes',
+  'F statistic':'F = F value (ratio of the two sample variances) ; s_1^2, s_2^2 = sample variances',
+  'F reciprocal':'f = critical F value from the F-table ; ν_1 = numerator degrees of freedom ; ν_2 = denominator degrees of freedom',
+  'CI for σ1²/σ2²':'f = critical F value ; ν_1, ν_2 = degrees of freedom (n_1 − 1, n_2 − 1) ; s_1^2, s_2^2 = sample variances',
+  'Test statistics':'μ_0, π_0, σ_0 = hypothesized values (القيم المفترضة) ; z, t, χ² = test statistics',
+  'Welch degrees of freedom':'ν = Welch degrees of freedom ; s_1, s_2 = sample standard deviations ; n_1, n_2 = sample sizes',
+  'Chi-square test of independence':'χ² = chi-square value ; O = observed frequency (المُشاهَد) ; E = expected frequency (المتوقع) ; r = number of rows ; c = number of columns ; grand total = sum of all cells',
+  'Simple linear regression':'ŷ = predicted y ; b_0 = intercept ; b_1 = slope ; S_xy = Σ(x − x̄)(y − ȳ) ; S_xx = Σ(x − x̄)^2',
+  'Correlation and R²':'r = correlation coefficient ; S_xy, S_xx, S_yy = sums of products/squares ; R^2 = coefficient of determination ; SSR = regression sum of squares ; SST = total sum of squares',
+  'One-way ANOVA':'F = F statistic ; MSB = mean square between groups ; MSW = mean square within groups ; SSB, SSW = sums of squares between / within ; k = number of groups ; N = total number of observations'
+ };
+ A('stat','z for a proportion','p = sample proportion (نسبة العينة) ; π = population proportion (نسبة المجتمع)');
+ A('stat','Test statistics','p = sample proportion ; π_0 = hypothesized population proportion');
+ A('net','DevRTT','SampleRTT = the latest measured round-trip time ; EstimatedRTT = smoothed RTT estimate');
+ A('net','Timeout interval','EstimatedRTT = smoothed RTT estimate ; DevRTT = estimated RTT deviation');
+ A('net','Go-Back-N','k = sequence number of the lost segment');
+ A('net','Selective Repeat','k = sequence number of the lost segment');
+ Object.keys(S).forEach(k=>A('stat',k,S[k]));
+ const M={
+  'Matrix product entry':'AB = product of A and B ; a_{ik} = entry in row i, column k of A ; b_{kj} = entry in row k, column j of B ; (AB)_{ij} = entry in row i, column j of the product',
+  'Transpose rules':'A^T = transpose of A (rows become columns) ; A, B = matrices',
+  'Inverse of a product':'A^{-1} = inverse of A ; A, B = invertible matrices',
+  'Inverse of a 2×2 matrix':'A = [a b; c d] with entries a, b, c, d ; ad − bc = the determinant ; A^{-1} = inverse of A',
+  'Inverse by row reduction':'A = the matrix ; I = identity matrix ; [A | I] = augmented matrix',
+  'Solving Ax = b':'A = coefficient matrix ; x = vector of unknowns ; b = right-hand side vector',
+  'Rank and pivots':'rank A = number of pivot columns ; dim Nul A = dimension of the null space ; n = number of columns',
+  '2×2 determinant':'det A = determinant of A ; a, b, c, d = entries of A = [a b; c d]',
+  'Cofactor expansion':'det A = determinant ; a_{ij} = entry in row i, column j ; C_{ij} = cofactor of a_{ij} ; A_{ij} = A with row i and column j deleted',
+  'Triangular matrix':'a_{11}, a_{22}, … = diagonal entries',
+  'Row operation effects':'det = determinant ; k = the scalar multiplier',
+  'Product and transpose':'det = determinant ; A, B = square matrices ; A^T = transpose',
+  'Inverse via adjugate':'adj(A) = adjugate (transpose of the cofactor matrix) ; det A = determinant',
+  "Cramer's rule":'x_i = the i-th unknown ; A_i(b) = A with column i replaced by b ; det = determinant',
+  'Consistency of a system':'b = the right-hand side (constants)',
+  'Linear independence test':'A = the matrix whose columns are the vectors',
+  'Sarrus rule (3×3 determinant)':'a_{ij} = entry in row i, column j'
+ };
+ Object.keys(M).forEach(k=>A('math',k,M[k]));
+ const O={
+  'Profit at volume v':'Z = profit (الربح) ; v = volume (number of units) ; p = selling price ; Cv = variable cost per unit ; Cf = fixed cost',
+  'Volume for a target profit':'Z = target profit ; v = volume (number of units) ; p = selling price ; Cv = variable cost per unit ; Cf = fixed cost',
+  'Standard LP':'Z = objective function (دالة الهدف) ; c_1, c_2 = objective coefficients (profit per unit) ; x_1, x_2 = decision variables ; a_{ij} = constraint coefficients ; b_i = right-hand side of constraint i',
+  'Slack and surplus':'s = slack (unused resource, for ≤) or surplus (excess over the requirement, for ≥)',
+  'Row z_j':'z_j = the z row value of column j ; c_B = objective coefficients of the basic variables ; a_{ij} = tableau entries of column j',
+  'Entering variable':'c_j = objective coefficient of variable j ; z_j = z row value ; c_j − z_j = net evaluation row',
+  'Leaving variable (ratio test)':'q_i = quantity (right-hand side) of row i ; a_{ij} = entry of the pivot column in row i',
+  'Optimality':'c_j − z_j = net evaluation row',
+  'Shadow price effect':'ΔZ = change in the objective value ; Δq = change in the resource (right-hand side)',
+  'Objective coefficient range':'c = current objective coefficient ; c_j = coefficient of variable j',
+  'Fixed charge':'x_i = quantity ; y_i = 0/1 switch (1 = pay the fixed charge) ; M = a very large number ; Z = total cost ; c_i = variable cost ; f_i = fixed charge',
+  'Branch and Bound (max)':'Z_relaxed = objective value of the relaxed (non-integer) LP at that branch'
+ };
+ Object.keys(O).forEach(k=>A('or',k,O[k]));
+ const N={
+  'Nodal delay':'d_nodal = total delay at a node ; d_proc = processing delay ; d_queue = queueing delay ; d_trans = transmission delay ; d_prop = propagation delay',
+  'Transmission delay':'d_trans = transmission delay (تأخير الإرسال)',
+  'Propagation delay':'d_prop = propagation delay (تأخير الانتشار) ; d = link length (m) ; s = propagation speed (m/s)',
+  'Traffic intensity':'L = packet size (bits) ; a = packet arrival rate (packets/s) ; R = link rate (bps)',
+  'Store-and-forward (one packet, N links)':'d_end-to-end = end-to-end delay ; N = number of links ; L = packet size (bits) ; R = link rate (bps)',
+  'Store-and-forward (P packets)':'d = total delay ; N = number of links ; P = number of packets ; L = packet size (bits) ; R = link rate (bps)',
+  'End-to-end throughput':'R_i = rate of link i',
+  'Stop-and-wait utilization':'U = utilization (fraction of time the sender is busy sending) ; L/R = transmission time of one packet ; RTT = round-trip time',
+  'Pipelined utilization':'U = utilization ; N = window size (packets in flight) ; L/R = transmission time of one packet ; RTT = round-trip time',
+  'Average access delay with a cache':'d = average access delay ; h = hit rate (fraction served by the cache) ; d_cache, d_origin = delay from the cache / from the origin server',
+  'EstimatedRTT':'EstimatedRTT = smoothed RTT estimate ; SampleRTT = the latest measured RTT ; α = weight of the new sample',
+  'DevRTT':'DevRTT = estimated deviation of the RTT ; β = weight of the new deviation',
+  'Timeout interval':'TimeoutInterval = the retransmission timer',
+  'Unit conversions':'bit, byte, bps, Kbps, Mbps, ms = units (1 byte = 8 bits)',
+  'File transfer time':'T = transfer time ; F = file size (bits) ; R_s, R_c = server / client rates (bps)',
+  'Traffic intensity regimes':'La/R = traffic intensity'
+ };
+ Object.keys(N).forEach(k=>A('net',k,N[k]));
+ const C={
+  'IEEE 754 single precision':'s = sign bit ; e = value of the exponent field ; m = mantissa (fraction) bits',
+  'IEEE 754 double precision':'s = sign bit ; e = value of the exponent field ; m = mantissa (fraction) bits',
+  'Tower of Hanoi moves':'T(n) = number of moves for n disks',
+  'Fibonacci recursion calls':'T(n) = number of calls for input n',
+  'Array element address':'i = index of the element ; base = address of element 0',
+  'Pointer arithmetic':'p = pointer ; k = integer offset',
+  'Linear recursion':'T(n) = number of steps for input n',
+  'Halving recursion':'T(n) = number of steps ; log_2 n = logarithm base 2 of n',
+  'Stack depth':'O(1) = constant (Big-O notation)',
+  'Memory of an array':'n = number of elements'
+ };
+ Object.keys(C).forEach(k=>A('oop',k,C[k]));
+})();
+/* Figures for the «القوانين» tab, rewritten after a critical review (clipped captions, labels on top of curves, shapes that did not match the numbers).
+   Every figure lives in a 320 x 150 box, uses English labels only, and is checked automatically for text outside the box / overlapping text (see data/check-figs.txt). */
+(function(){
+ const W=320,H=150;
+ const svg=(inner)=>'<svg class="fg" viewBox="0 0 '+W+' '+H+'" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" dir="ltr">'+inner+'</svg>';
+ const T=(x,y,s,c,a)=>'<text x="'+x+'" y="'+y+'" text-anchor="'+(a||'middle')+'"'+(c?' class="'+c+'"':'')+'>'+s+'</text>';
+ const sub=(b,s)=>b+'<tspan baseline-shift="sub" font-size="8">'+s+'</tspan>';
+ const line=(x1,y1,x2,y2,c,extra)=>'<line class="'+(c||'fg-ax')+'" x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(extra||'')+'/>';
+ const path=(pts,close,base)=>{ let d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L'); if(close) d+=' L'+pts[pts.length-1][0].toFixed(1)+' '+base+' L'+pts[0][0].toFixed(1)+' '+base+' Z'; return d; };
+ const curve=(f,x0,x1,base,top,step)=>{ const pts=[]; for(let x=x0;x<=x1;x+=(step||2)) pts.push([x,base-(base-top)*f(x)]); return pts; };
+ const bell=(cx,sd)=>x=>Math.exp(-0.5*Math.pow((x-cx)/sd,2));
+ const BASE=108;
+
+ FIGS.norm=()=>{ const cx=160,sd=42,zx=cx+42; const f=bell(cx,sd); const all=curve(f,40,280,BASE,26), left=curve(f,40,zx,BASE,26);
+  return svg('<path class="fg-fill" d="'+path(left,1,BASE)+'"/><path class="fg-line" d="'+path(all)+'"/>'+line(30,BASE,290,BASE)+line(zx,BASE,zx,BASE-(BASE-26)*f(zx),'fg-line')+
+   T(cx,BASE+14,'0')+T(zx,BASE+14,'z')+T(138,92,'P(Z &lt; z)','fg-b')+T(252,84,'P(Z &gt; z)','fg-s')+T(160,142,'P(Z &gt; z) = 1 − P(Z &lt; z)','fg-s')); };
+ FIGS.normtails=()=>{ const cx=160,sd=42,a=cx-66,b=cx+66; const f=bell(cx,sd); const all=curve(f,40,280,BASE,26), l=curve(f,40,a,BASE,26), r=curve(f,b,280,BASE,26);
+  return svg('<path class="fg-fill" d="'+path(l,1,BASE)+'"/><path class="fg-fill" d="'+path(r,1,BASE)+'"/><path class="fg-line" d="'+path(all)+'"/>'+line(30,BASE,290,BASE)+
+   T(a,BASE+14,'-'+sub('z','α/2'))+T(b,BASE+14,sub('z','α/2'))+T(cx,BASE+14,'0')+T(cx,76,'1 − α','fg-b')+T(a-22,BASE-14,'α/2','fg-s')+T(b+22,BASE-14,'α/2','fg-s')+T(160,142,'the confidence level 1 − α sits between −z and +z','fg-s')); };
+ FIGS.emp=()=>{ const cx=160,sd=36; const f=bell(cx,sd); const all=curve(f,40,280,BASE,22), mid=curve(f,cx-sd,cx+sd,BASE,22); let g='';
+  [-3,-2,-1,1,2,3].forEach(k=>{ const x=cx+k*sd; g+=line(x,BASE,x,BASE-(BASE-22)*f(x),'fg-ax',' stroke-dasharray="3 3"'); });
+  const lab=['-3σ','-2σ','-σ','μ','+σ','+2σ','+3σ']; lab.forEach((s,i)=>{ g+=T(cx+(i-3)*sd,BASE+14,s); });
+  return svg('<path class="fg-fill" d="'+path(mid,1,BASE)+'"/><path class="fg-line" d="'+path(all)+'"/>'+line(30,BASE,290,BASE)+g+T(cx,70,'68%','fg-b')+T(160,142,'68% within ±σ · 95% within ±2σ · 99.7% within ±3σ','fg-s')); };
+ FIGS.skew=()=>{ const shape=(ox,kind)=>{ const pts=[]; for(let i=0;i<=80;i+=2){ const t=i/80; let y; if(kind===0) y=Math.exp(-0.5*Math.pow((t-.5)/.16,2)); else { const u=kind>0?t:1-t; y=u*Math.exp(-4.2*u)/0.0876; } pts.push([ox+i,92-58*Math.min(1,y)]); } return pts; };
+  const P=[[56,-1,'Left-skewed','x̄ < Md < Mo'],[160,0,'Symmetric','x̄ = Md = Mo'],[264,1,'Right-skewed','Mo < Md < x̄']]; let g='';
+  P.forEach(p=>{ g+='<path class="fg-line" d="'+path(shape(p[0]-40,p[1]))+'"/>'+T(p[0],110,p[2])+T(p[0],126,p[3],'fg-s'); });
+  return svg(g+line(8,92,312,92)+T(160,144,'Mo = mode · Md = median · x̄ = mean (the mean is pulled toward the tail)','fg-s')); };
+ FIGS.box=()=>{ const y=64; return svg(line(24,y,296,y)+line(40,y,100,y,'fg-line')+line(200,y,250,y,'fg-line')+'<rect class="fg-fill" x="100" y="'+(y-16)+'" width="100" height="32" stroke="currentColor"/>'+line(145,y-16,145,y+16,'fg-line')+line(40,y-8,40,y+8,'fg-line')+line(250,y-8,250,y+8,'fg-line')+'<circle cx="284" cy="'+y+'" r="3.5" fill="currentColor"/>'+
+   line(28,y-30,28,y+30,'fg-ax',' stroke-dasharray="3 3"')+line(262,y-30,262,y+30,'fg-ax',' stroke-dasharray="3 3"')+
+   T(100,y+32,'Q1')+T(145,y+32,'Q2')+T(200,y+32,'Q3')+T(28,y-36,'LL','fg-s')+T(262,y-36,'UL','fg-s')+T(284,y-12,'outlier','fg-s')+T(150,y-26,'IQR = Q3 − Q1','fg-b')+line(100,y-22,200,y-22,'fg-line')+
+   T(160,128,'LL = Q1 − 1.5·IQR','fg-s')+T(160,142,'UL = Q3 + 1.5·IQR','fg-s')); };
+ FIGS.se=()=>{ const wide=curve(bell(160,70),20,300,BASE,76), narrow=curve(bell(160,24),20,300,BASE,22);
+  return svg('<path class="fg-line fg-dim" d="'+path(wide)+'" stroke-dasharray="5 3"/><path class="fg-fill" d="'+path(narrow,1,BASE)+'"/><path class="fg-line" d="'+path(narrow)+'"/>'+line(20,BASE,300,BASE)+T(160,BASE+14,'μ')+
+   line(14,14,34,14,'fg-line')+T(40,17,'larger n → smaller SE','fg-s','start')+line(14,28,34,28,'fg-line fg-dim',' stroke-dasharray="5 3"')+T(40,31,'smaller n → larger SE','fg-s','start')+T(160,142,'n × 4 → SE ÷ 2   (SE = σ/√n)','fg-s')); };
+ FIGS.tnorm=()=>{ const nrm=curve(bell(160,36),30,290,BASE,26); const t=[]; for(let x=30;x<=290;x+=2){ const z=(x-160)/36; t.push([x,BASE-(BASE-30)*0.82*Math.pow(1+z*z/3,-2)]); }
+  return svg('<path class="fg-line fg-dim" d="'+path(nrm)+'"/><path class="fg-line" d="'+path(t)+'" stroke-dasharray="5 3"/>'+line(20,BASE,300,BASE)+T(160,BASE+14,'0')+
+   line(14,14,34,14,'fg-line fg-dim')+T(40,17,'normal (Z)','fg-s','start')+line(14,28,34,28,'fg-line',' stroke-dasharray="5 3"')+T(40,31,'t: heavier tails','fg-s','start')+T(160,142,'larger df → the t curve approaches Z','fg-s')); };
+ FIGS.chi=()=>{ const f=x=>{ const t=(x-24)/30; return t<=0?0:Math.min(1,Math.pow(t,2)*Math.exp(-t*0.9)*0.64); }; const pts=curve(f,24,300,BASE,24), lo=pts.filter(p=>p[0]<=72), hi=pts.filter(p=>p[0]>=214);
+  return svg('<path class="fg-fill" d="'+path(lo,1,BASE)+'"/><path class="fg-fill" d="'+path(hi,1,BASE)+'"/><path class="fg-line" d="'+path(pts)+'"/>'+line(20,BASE,304,BASE)+
+   T(72,BASE+14,sub('χ²','1−α/2'))+T(214,BASE+14,sub('χ²','α/2'))+T(60,BASE-14,'α/2','fg-s')+T(236,BASE-14,'α/2','fg-s')+T(150,64,'1 − α','fg-b')+T(160,142,'values ≥ 0 · skewed right · df = n − 1','fg-s')); };
+ FIGS.ci=()=>{ const y=62; return svg(line(20,y,300,y)+line(80,y,240,y,'fg-line',' stroke-width="4"')+line(80,y-12,80,y+12,'fg-line')+line(240,y-12,240,y+12,'fg-line')+'<circle cx="160" cy="'+y+'" r="5" fill="currentColor"/>'+
+   T(160,y-16,'x̄ (from the sample)','fg-b')+T(80,y+28,'x̄ − e')+T(240,y+28,'x̄ + e')+T(160,y+28,'e = z · SE','fg-s')+'<path class="fg-ax" d="M190 '+(y-34)+' L190 '+(y-4)+'" stroke-dasharray="3 3"/>'+T(190,y-40,'μ (unknown)','fg-s')+T(160,142,'we are 95% confident μ is inside the interval','fg-s')); };
+ FIGS.interp=()=>{ const b=100, gx=90, hx=240, gy=78, hy=30, iy=54, ix=gx+(hx-gx)*((gy-iy)/(gy-hy));
+  return svg(line(36,b,290,b)+line(36,b,36,14)+line(gx,gy,hx,hy,'fg-line')+'<circle cx="'+gx+'" cy="'+gy+'" r="3.5" fill="currentColor"/><circle cx="'+hx+'" cy="'+hy+'" r="3.5" fill="currentColor"/><circle cx="'+ix+'" cy="'+iy+'" r="4" fill="var(--card,#fff)" stroke="currentColor" stroke-width="1.6"/>'+
+   line(36,iy,ix,iy,'fg-ax',' stroke-dasharray="3 3"')+line(ix,iy,ix,b,'fg-ax',' stroke-dasharray="3 3"')+line(36,gy,gx,gy,'fg-ax',' stroke-dasharray="3 3"')+line(gx,gy,gx,b,'fg-ax',' stroke-dasharray="3 3"')+line(36,hy,hx,hy,'fg-ax',' stroke-dasharray="3 3"')+line(hx,hy,hx,b,'fg-ax',' stroke-dasharray="3 3"')+
+   T(26,gy+4,'g','fg-b')+T(26,iy+4,'i','fg-b')+T(26,hy+4,'h','fg-b')+T(gx,b+14,sub('x','g'))+T(ix,b+14,'x̃','fg-b')+T(hx,b+14,sub('x','h'))+
+   T(160,126,'i lies between g and h,','fg-s')+T(160,139,'so x̃ lies between '+sub('x','g')+' and '+sub('x','h'),'fg-s')); };
+ FIGS.delay=()=>{ const y=56; return svg('<rect class="fg-fill" x="12" y="'+(y-18)+'" width="48" height="36" stroke="currentColor"/><rect class="fg-fill" x="260" y="'+(y-18)+'" width="48" height="36" stroke="currentColor"/>'+line(60,y,260,y,'fg-line')+'<rect x="68" y="'+(y-8)+'" width="26" height="16" fill="currentColor" opacity=".6"/>'+
+   T(36,y+4,'A')+T(284,y+4,'B')+T(81,y-16,'packet','fg-s')+T(36,y+36,sub('d','trans')+' = L/R','fg-b')+T(160,y-16,sub('d','prop')+' = d/s','fg-b')+T(160,y+22,'d = link length · s = signal speed','fg-s')+T(160,116,'transmission = pushing all the bits onto the link','fg-s')+T(160,130,'propagation = time for one bit to travel along it','fg-s')); };
+ FIGS.sw=()=>{ const lane=(y,bars,label)=>T(10,y-14,label,'fg-b','start')+bars.map(b=>'<rect x="'+b[0]+'" y="'+(y-8)+'" width="'+b[1]+'" height="16" fill="currentColor" opacity="'+(b[2]||.65)+'"/>').join('')+line(10,y+12,310,y+12,'fg-ax');
+  return svg(lane(40,[[20,16],[116,16],[212,16]],'Stop-and-wait')+T(68,64,'wait RTT','fg-s')+T(164,64,'wait RTT','fg-s')+lane(98,[[20,16],[36,16],[52,16],[68,16],[84,16],[100,16]],'Pipelined (window N)')+T(160,142,'U = busy sending time / total time','fg-s')); };
+ FIGS.feas=()=>{ return svg(line(34,112,300,112)+line(34,112,34,12)+'<polygon class="fg-fill" points="34,112 34,36 130,36 214,76 254,112" stroke="currentColor"/>'+line(140,25,270,114,'fg-line',' stroke-dasharray="4 3"')+
+   [[34,36],[130,36],[214,76],[254,112],[34,112]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="currentColor"/>').join('')+T(26,16,sub('x','2'),'fg-s','end')+T(298,126,sub('x','1'),'fg-s','end')+T(224,60,'optimum','fg-b','start')+T(160,128,'best corner = where the objective line leaves the region','fg-s')+T(160,142,'dashed = objective line (Z = constant)','fg-s')); };
+ FIGS.stair=()=>{ const rows=[['■','*','*','*','*'],['0','■','*','*','*'],['0','0','0','■','*']]; let g='';
+  rows.forEach((r,i)=>r.forEach((c,j)=>{ const x=60+j*46, y=36+i*30; if(c==='■') g+='<rect class="fg-fill" x="'+(x-14)+'" y="'+(y-14)+'" width="28" height="22"/>'; g+=T(x,y+2,c==='■'?'p':c,c==='■'?'fg-b':''); }));
+  return svg(g+T(160,126,'p = pivot (leading entry) · * = any number','fg-s')+T(160,142,'each pivot sits to the right of the pivot above it','fg-s')); };
+ FIGS.sens=()=>{ const y=60; return svg(line(20,y,300,y)+line(80,y,244,y,'fg-line',' stroke-width="5"')+line(80,y-10,80,y+10,'fg-line')+line(244,y-10,244,y+10,'fg-line')+'<circle cx="140" cy="'+y+'" r="5" fill="currentColor"/>'+
+   T(140,y-16,'c (current)','fg-b')+T(80,y+26,'c − decrease')+T(244,y+26,'c + increase')+T(160,118,'inside the range: same optimal mix','fg-s')+T(160,134,'outside the range: re-solve the problem','fg-s')); };
+ FIGS.ieee=()=>{ const seg=(x,w,l,s)=>'<rect class="fg-fill" x="'+x+'" y="48" width="'+w+'" height="30" stroke="currentColor"/>'+T(x+w/2,68,l,'fg-b')+T(x+w/2,94,s,'fg-s'); return svg(seg(16,26,'s','1 bit')+seg(42,108,'exponent','8 bits (bias 127)')+seg(150,154,'mantissa','23 bits')+T(160,28,'value = (−1)^s × 1.m × 2^(e − bias)','fg-b')+T(160,126,'double precision: 1 + 11 (bias 1023) + 52 bits','fg-s')); };
+ FIGS.pipe=()=>{ let g=''; for(let p=0;p<3;p++) for(let l=0;l<3;l++){ const x=60+(p+l)*42, y=18+l*30; g+='<rect class="fg-fill" x="'+x+'" y="'+y+'" width="38" height="22" stroke="currentColor"/>'+T(x+19,y+15,'P'+(p+1),'fg-b'); }
+  for(let l=0;l<3;l++) g+=T(10,34+l*30,'link '+(l+1),'fg-s','start'); return svg(g+line(58,112,300,112)+T(160,128,'each block = one L/R slot','fg-s')+T(160,144,'total = (N + P − 1) slots, here 3 + 3 − 1 = 5','fg-s')); };
+})();
 /* English-first glossary for the quick cards («كروت سريعة» and «أنا مزنوق»), all subjects. Exams are in English, so every Arabic term in a card is shown as
    "English term (Arabic)". Applied at display time by fixGlossDom (part4c-code.js) so card text and ids stay untouched. Add new terms here: [Arabic, English]. */
 const GLOSS=[
@@ -6904,7 +7370,11 @@ const GLOSS=[
  ['الدالة الافتراضية','virtual function'],['الدوال','functions'],['الدالة','function'],['المؤشرات','pointers'],['المؤشر','pointer'],['المرجع','reference'],['الذاكرة الديناميكية','dynamic memory'],
  ['الباني','constructor'],['الهادم','destructor'],['القالب','template'],['الاستثناء','exception'],['الحاويات','containers'],['خصائص OO السبعة','the seven OO properties'],
  /* entrepreneurship */
- ['شروط فكرة المشروع الثلاثة','the three conditions of a project idea']
+ ['شروط فكرة المشروع الثلاثة','the three conditions of a project idea'],
+ /* extra statistics terms (used in the formulas tab and cards) */
+ ['مقياس التشتت','measure of dispersion'],['التشتت','dispersion (spread)'],['تشتت','dispersion (spread)'],['البيانات','data'],['الانحرافات','deviations'],['الانحراف','deviation'],
+ ['الذيول','tails'],['الذيل','tail'],['الجرس','bell shape'],['الاحتمال','probability'],['المساحة','area'],['العينات','samples'],['المتوسطات','means'],['الحد الأدنى','lower limit'],['الحد الأعلى','upper limit'],
+ ['وحدات مختلفة','different units'],['التكرار','frequency'],['التراكمي','cumulative'],['الثقة','confidence'],['الفترة','interval'],['الأوزان','weights'],['الوزن','weight'],['الرمز','symbol'],['القانون','formula'],['الترتيب','sorting (order)'],['الفئات','classes']
 ];
 /* =====================================================================
    GPA — حاسبة المعدل (لائحة 2024): معدل الترم، التراكمي
@@ -7168,7 +7638,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.5';
+const APP_VERSION='1.10.6';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
