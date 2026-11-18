@@ -6684,6 +6684,7 @@ Problem 6 (grouped data, 500 students): 29 c (76.6) · 30 e (i = 250.5, Xg = 70,
 /* Update 2026-11-18 (Stat 2): theory questions. Built ONLY from questions already in the hub (past finals/midterms + lecture concept questions);
    no new questions were invented. Source of "the doctor loves theory": a classmate's message in the group (18/11, 1:53 pm), not the doctor himself. */
 (function(){
+ const L=t=>'<bdi dir="ltr" class="en">'+t+'</bdi>';
  NEWS.push({u:'stat',d:'2026-11-18',k:'note',
   t:'اتضاف في الكويز وضع «النظري (مفاهيم من غير حسابات)» للإحصاء، وكارت «الأسئلة النظرية» في أنا مزنوق. ملحوظة: جملة «الدكتور بيحب النظري» جت من زميل في الجروب (18/11) مش من الدكتور، لكن أول بند في محتوى الميد اللي الدكتور بعته هو Theoretical foundation for statistics, data, sampling، فالنظري داخل فعلاً.',
   en:'Added a "Theory (concepts, no calculations)" mode to the Stat quiz and a "Theory questions" card in the rescue tab. Note: "the doctor loves theory" came from a classmate in the group (18/11), not from the doctor, but the first item in the midterm scope the doctor sent is "Theoretical foundation for statistics, data, sampling", so theory is in the exam.',
@@ -6691,15 +6692,15 @@ Problem 6 (grouped data, 500 students): 29 c (76.6) · 30 e (i = 250.5, Xg = 70,
 
  SUBJ.stat.rescue.push(
   ['الأسئلة النظرية: بتيجي إزاي وإزاي تذاكرها',
-   '<b>المصدر والتأكيد:</b> أول بند في محتوى الميد اللي الدكتور بعته: <bdi class="f">Theoretical foundation for statistics, data, sampling</bdi>. وزميلك أحمد وائل كتب في الجروب (18/11) إن النظري لازم يتفهم لأن الدكتور بيحبه. يعني التأكيد على النظري جاي من الزميل، لكن وجوده في الميد مؤكد من الدكتور.<br>'+
-   '<b>شكل الأسئلة النظرية في الامتحانات القديمة (من اللي في الموقع):</b> قسم الـMCQ الأول (Q1) في الفاينلات القديمة أغلبه مفاهيم من غير حسابات، وفي الميد 2022 و2025 قسم True/False. دي <b>الأنواع</b> اللي بتتكرر:<br>'+
-   '1) <b>Type of variable / level of measurement</b> (nominal, ordinal, interval, ratio) وقديش discrete ولا continuous: أكتر نوع ظهر.<br>'+
-   '2) <b>Population, sample, parameter, statistic</b>: «إيه الـpopulation في السيناريو ده؟» و«الـparameter ولا الـstatistic».<br>'+
-   '3) <b>Sampling method</b> من قصة: simple random, systematic (كل رقم k), stratified, cluster، وsampling with/without replacement.<br>'+
-   '4) <b>Sampling distribution / SE / CLT / FPC</b>: إمتى يقل الـstandard error وإمتى الـFPC مش بتتستخدم.<br>'+
-   '5) <b>Confidence interval</b>: إيه بيأثر على عرضه (n، confidence level)، وإمتى t مش z، وأي جملة عنه غلط.<br>'+
-   '6) <b>Descriptive concepts</b>: mean vs median مع الـskewness، أنهي مقياس مش بيتأثر بالقيم المتطرفة، الـgraphs (histogram, ogive, box plot).<br>'+
-   '<b>طريقة المذاكرة:</b> افتح الكويز ← «النظري (مفاهيم من غير حسابات)» ← جاوب من غير ما تبص على الشرح، وبعد كل غلطة اكتب الجملة الصح بكلامك. الأسئلة اللي عليها علامة «من امتحان» جاية من الفاينلات القديمة، والباقي أسئلة مفاهيم من المحاضرات. وعشان المصطلحات بتيجي بالإنجليزي في الامتحان، اتعوّد على الكلمة الإنجليزي الأول.<br>'+
+   '<b>المصدر والتأكيد:</b> أول بند في محتوى الميد اللي الدكتور بعته هو '+L('Theoretical foundation for statistics, data, sampling')+'. وزميلك أحمد وائل كتب في الجروب (18/11) إن النظري لازم يتفهم لأن الدكتور بيحبه. يعني التأكيد على النظري جاي من الزميل، لكن وجوده في الميد مؤكد من الدكتور.<br>'+
+   '<b>شكل الأسئلة النظرية في الامتحانات القديمة (من اللي في الموقع):</b> قسم الاختيار من متعدد الأول في الفاينلات القديمة أغلبه مفاهيم من غير حسابات، وفي ميد 2022 و2025 فيه قسم صح وغلط. دي الأنواع اللي بتتكرر:<br>'+
+   '1) '+L('Variable type / level of measurement')+' ('+L('nominal, ordinal, interval, ratio')+') ونوع المتغير '+L('discrete')+' ولا '+L('continuous')+': أكتر نوع ظهر.<br>'+
+   '2) '+L('Population, sample, parameter, statistic')+': إيه المجتمع في السيناريو ده، والرقم ده '+L('parameter')+' ولا '+L('statistic')+'.<br>'+
+   '3) '+L('Sampling method')+' من قصة: '+L('simple random, systematic, stratified, cluster')+'، وسحب '+L('with / without replacement')+'.<br>'+
+   '4) '+L('Sampling distribution, SE, CLT, FPC')+': إمتى الخطأ المعياري يقل، وإمتى معامل التصحيح مش بيتستخدم.<br>'+
+   '5) '+L('Confidence interval')+': إيه اللي بيأثر على عرضه ('+L('n')+' ومستوى الثقة)، وإمتى بنستخدم '+L('t')+' بدل '+L('z')+'، وأي جملة عنه غلط.<br>'+
+   '6) مفاهيم الوصفي: '+L('mean vs median')+' مع الالتواء، أنهي مقياس مش بيتأثر بالقيم المتطرفة، والرسومات ('+L('histogram, ogive, box plot')+').<br>'+
+   '<b>طريقة المذاكرة:</b> افتح الكويز واختار «النظري (مفاهيم من غير حسابات)» وجاوب من غير ما تبص على الشرح، وبعد كل غلطة اكتب الجملة الصح بكلامك. الأسئلة اللي عليها علامة «من امتحان» جاية من الفاينلات القديمة، والباقي مفاهيم من المحاضرات. المصطلحات بتيجي بالإنجليزي في الامتحان، فاتعوّد على الكلمة الإنجليزي الأول.<br>'+
    '<button class="btn sun sm" data-act="goexam" data-u="stat" data-m="theory" style="margin-top:8px">ابدأ كويز النظري</button>']
  );
 
@@ -7729,7 +7730,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.12';
+const APP_VERSION='1.10.13';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
