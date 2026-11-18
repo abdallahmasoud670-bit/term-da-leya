@@ -2195,7 +2195,8 @@ function qzCount(u,k){ return qzCand(u).length; }
 /* ---------- view (overrides the old quizHTML) ---------- */
 function quizHTML(u){
   if(EXB[u]&&QF==='lay') return layHTML(u);
-  if(QZ.u!==u||!QZ.cur){ QZ.u=u; QZ.cur=qzPick(u); QZ.picked=null; QZ.show=false; }
+  if(QZ.u!==u||!QZ.cur) qzFresh(u);
+  qzSave();
   const topAll=SUBJ[u].topics, nStudied=studiedCount(u);
   const chipsH=topAll.length?'<details class="qtopics"'+((nStudied===0||QZ.topicsOpen)?' open':'')+'><summary><b>1. اختار اللي ذاكرته</b> <span class="sub">('+nStudied+' من '+topAll.length+')</span></summary><div class="filters" style="margin-top:10px">'+topAll.map((t,i)=>'<button data-act="qtopic" data-id="'+topId(u,i)+'" aria-pressed="'+topicStudied(u,i)+'">'+(topicStudied(u,i)?'✓ ':'')+esc(t)+'</button>').join('')+'</div><p class="sub">الأسئلة بتظهر على المواضيع المعلّمة بس. نفس التعليم في تاب "المواضيع".</p></details>':'';
   const hasEx=(GENX[u]||[]).length>0||(MCQB[u]||[]).some(r=>r[4])||SUBJ[u].quiz.some(q=>q[2]==='exam');
@@ -2215,9 +2216,29 @@ function quizHTML(u){
   }
   const answered=(q.t==='mcq'&&QZ.picked!=null)||(q.t==='essay'&&QZ.show);
   const expH='';
-  return '<div class="quiz" style="--c:'+col(u)+'">'+filt+score+(tagH?'<p style="text-align:center;margin:0 0 8px">'+tagH+'</p>':'')+body+expH+add+'</div>';
+  return '<div class="quiz" style="--c:'+col(u)+'">'+filt+score+qzNavHTML()+(tagH?'<p style="text-align:center;margin:0 0 8px">'+tagH+'</p>':'')+body+expH+add+'</div>';
 }
-function quizNext(u){ QZ.cur=qzPick(u); QZ.picked=null; QZ.show=false; QZ.exp=''; QZ.expBusy=false; }
+/* ---- session history: Previous / Next + list of solved questions (resets when the page is closed, by design) ---- */
+QZ.h=[]; QZ.hi=-1; QZ.hk='';
+function qzSave(){ const e=QZ.h[QZ.hi]; if(e&&QZ.cur){ e.q=QZ.cur; e.picked=QZ.picked; e.show=QZ.show; e.exp=QZ.exp; } }
+function qzLoad(i){ const e=QZ.h[i]; if(!e) return; QZ.hi=i; QZ.cur=e.q; QZ.picked=e.picked==null?null:e.picked; QZ.show=!!e.show; QZ.exp=e.exp||''; QZ.expBusy=false; }
+function qzFresh(u){ const key=u+'|'+QF; if(QZ.hk!==key){ QZ.hk=key; QZ.h=[]; QZ.hi=-1; }
+  QZ.u=u; QZ.cur=qzPick(u); QZ.picked=null; QZ.show=false; QZ.exp=''; QZ.expBusy=false;
+  if(QZ.cur){ QZ.h.push({q:QZ.cur}); QZ.hi=QZ.h.length-1; } }
+function qzMark(r){ const e=QZ.h[QZ.hi]; if(e&&!e.res) e.res=r; }
+function qzRes(e){ if(!e||!e.q) return ''; if(e.q.t==='mcq') return e.picked==null?'':(e.picked===e.q.a?'ok':'bad'); return e.res||''; }
+function quizNext(u){ qzSave(); if(QZ.hi<QZ.h.length-1){ qzLoad(QZ.hi+1); return; }
+  QZ.cur=qzPick(u); QZ.picked=null; QZ.show=false; QZ.exp=''; QZ.expBusy=false;
+  if(QZ.cur){ QZ.h.push({q:QZ.cur}); QZ.hi=QZ.h.length-1; } }
+function quizPrev(u){ qzSave(); if(QZ.hi>0) qzLoad(QZ.hi-1); }
+function quizGo(u,i){ qzSave(); if(i>=0&&i<QZ.h.length) qzLoad(i); }
+function qzNavHTML(){
+  const n=QZ.h.length; if(!n) return '';
+  const nav='<div class="row" style="justify-content:center;gap:8px;margin:0 0 10px"><button class="btn soft sm" data-act="qprev"'+(QZ.hi<=0?' disabled':'')+'>→ السابق</button><span class="sub" style="align-self:center">سؤال '+(QZ.hi+1)+' من '+n+'</span><button class="btn soft sm" data-act="qnext">التالي ←</button></div>';
+  const done=QZ.h.map((e,i)=>({e,i,r:qzRes(e)})).filter(x=>x.r);
+  const list=done.length?'<details class="qmore" style="margin:0 0 10px"><summary>الأسئلة اللي حليتها ('+done.length+')</summary><div style="margin-top:8px">'+done.map(x=>{ const t=String(x.e.q.q||'').replace(/\s+/g,' ').slice(0,70); return '<button class="x" data-act="qgo" data-i="'+x.i+'" style="display:block;width:100%;text-align:start;margin:3px 0" dir="auto"><b style="color:var(--'+(x.r==='ok'?'good':'bad')+')">'+(x.r==='ok'?'✓':'✗')+'</b> '+(x.i+1)+'. '+esc(t)+'</button>'; }).join('')+'</div><p class="sub">الجلسة بس: لو قفلت الموقع بتتصفّر.</p></details>':'';
+  return nav+list;
+}
 function quizChoose(u,i){
   const q=QZ.cur; if(!q||q.t!=='mcq'||QZ.picked!=null) return;
   QZ.picked=i;
@@ -7730,7 +7751,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.13';
+const APP_VERSION='1.10.14';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -9166,7 +9187,7 @@ else if(a==='goexam'){ QF=b.dataset.m||'exam'; QZ.cur=null; LAY.show=false; QZ.e
   else if(a==='laynext'||a==='layprev'){ const n=layList().length||1; LAY.i=(LAY.i+(a==='laynext'?1:n-1))%n; LAY.show=false; sfx('tap'); renderSubjTab(curSub(),'quiz'); }
   else if(a==='laysolved'){ const e=layList()[LAY.i]; if(e){ S.lay=S.lay||{}; const id=layId(e); if(S.lay[id]){ delete S.lay[id]; awardXP(id,0,'مثال'); sfx('undo'); } else { S.lay[id]=1; awardXP(id,10,'مثال Lay'); sfx('good'); } save(); } renderSubjTab(curSub(),'quiz'); }
   else if(a==='qunc'){ SHOWUNC=!SHOWUNC; QZ.cur=null; sfx('tap'); renderSubjTab(curSub(),'quiz'); }
-  else if(a==='qshow'){ QZ.show=true; BUMP='.qans'; sfx('soft'); renderSubjTab(curSub(),'quiz'); }  else if(a==='qopt'){ quizChoose(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); }  else if(a==='qnext'||a==='qn'){ sfx('tap'); quizNext(curSub()); renderSubjTab(curSub(),'quiz'); }  else if(a==='qk'){ const u=curSub(), q=QZ.cur; if(q){ const c=(S.cards[q.id]||0); S.cards[q.id]=c+1; if(c<2){ addAct(0); addXP(3,'سؤال '+SUBJ[u].n); } QZ.ok++; sfx('good'); save(); } quizNext(u); renderSubjTab(u,'quiz'); }
+  else if(a==='qshow'){ QZ.show=true; BUMP='.qans'; sfx('soft'); renderSubjTab(curSub(),'quiz'); }  else if(a==='qopt'){ quizChoose(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); }  else if(a==='qprev'){ sfx('tap'); quizPrev(curSub()); renderSubjTab(curSub(),'quiz'); } else if(a==='qgo'){ sfx('tap'); quizGo(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); window.scrollTo(0,0); } else if(a==='qnext'||a==='qn'){ sfx('tap'); if(a==='qn'&&!(QZ.h[QZ.hi]&&QZ.h[QZ.hi].res)) qzMark('bad'); quizNext(curSub()); renderSubjTab(curSub(),'quiz'); }  else if(a==='qk'){ const u=curSub(), q=QZ.cur; const _d=QZ.h[QZ.hi]&&QZ.h[QZ.hi].res; qzMark('ok'); if(q&&!_d){ const c=(S.cards[q.id]||0); S.cards[q.id]=c+1; if(c<2){ addAct(0); addXP(3,'سؤال '+SUBJ[u].n); } QZ.ok++; sfx('good'); save(); } quizNext(u); renderSubjTab(u,'quiz'); }
   else if(a==='fdone'){ const n=b.dataset.n, f=OOPF.find(x=>x[0]==n), o=S.oopf[n]||(S.oopf[n]={}); const cur=o.done!=null?o.done:!!f[3]; o.done=!cur; BUMP='[data-act="fdone"][data-n="'+n+'"]'; if(!f[3]) awardXP('f'+n,o.done?10:0,'فلتر '+n); sfx(o.done?'done':'undo'); save(); render(); }
   else if(a==='fex'){ const n=b.dataset.n, o=S.oopf[n]||(S.oopf[n]={}); o.ex=!o.ex; BUMP='[data-act="fex"][data-n="'+n+'"]'; awardXP('x'+n,o.ex?5:0,'أشرح فلتر '+n); sfx(o.ex?'good':'undo'); save(); render(); }
   else if(a==='ru'){ openRescue(b.dataset.u); }
