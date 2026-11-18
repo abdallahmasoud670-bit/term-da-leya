@@ -2157,26 +2157,38 @@ const uncText=q=>q.t==='mcq'?q.q+' '+q.o.join(' ')+' '+q.e:(q.q||'')+' '+(q.a||'
 
 /* ---------- picking ---------- */
 const QZ={u:null,cur:null,picked:null,show:false,seen:{},ok:0,bad:0};
+/* "Theory" = concept questions with no calculation (the kind Dr Ehab's Q1 / True-False sections use). Heuristic on the stem only. */
+function qzTheory(r){ const q=String(r[0]); return !/[=÷×√]|\b(compute|calculate|find|what is the (mean|median|variance|sd|standard deviation|probability|range|mode))\b/i.test(q)&&(q.match(/\d/g)||[]).length<=3&&!/^\s*Which (value|number)/i.test(q); }
+const qzMode=u=>(QF==='theory'&&u!=='stat')?'all':QF;
 function qzCand(u){
-  const out=[], mode=QF;
+  const out=[], mode=qzMode(u);
   const st=(MCQB[u]||[]).map((r,i)=>({k:'s',i:i,id:sidAt('m',u,i,MCQB[u],r=>r[0],'m:'+u+':'+i),ex:!!r[4],unc:!qzAllowed(u,r[0])}));
   const es=quizAll(u).map(x=>({k:'e',x:x,id:x.id,ex:x.tag==='exam',mine:x.tag==='mine',unc:x.tag!=='mine'&&!qzAllowed(u,x.q)}));
-  const want=c=> mode==='all'?true: mode==='mcq'?c.k==='s': mode==='essay'?c.k==='e'&&!c.mine: mode==='exam'?c.ex: mode==='mine'?c.mine:true;
-  st.concat(es).filter(want).filter(c=>SHOWHID||!S.hide[c.id]).forEach(c=>{ if(!c.unc||mode==='exam') out.push(c); });
+  const want=c=> mode==='all'?true: mode==='mcq'?c.k==='s': mode==='essay'?c.k==='e'&&!c.mine: mode==='exam'?c.ex: mode==='mine'?c.mine: mode==='theory'?(c.k==='s'&&qzTheory(MCQB[u][c.i])): true;
+  st.concat(es).filter(want).filter(c=>SHOWHID||!S.hide[c.id]).forEach(c=>{ if(!c.unc||mode==='exam'||mode==='theory') out.push(c); });
   return out;
 }
+/* No repeats inside a session: every static question is shown once (by id AND by its text+answer, so duplicates in different banks
+   don't come back), and every number-generator template is shown ONCE per cycle. Only when everything was shown does a new cycle start. */
 function qzPick(u){
-  const mode=QF; let pool=qzCand(u).filter(c=>!QZ.seen[c.id]);
+  const mode=qzMode(u); QZ.sg=QZ.sg||{}; QZ.tg=QZ.tg||{};
+  const sigOf=c=>String(c.k==='s'?MCQB[u][c.i][0]+'|'+MCQB[u][c.i][1]:c.x.q).replace(/\s+/g,' ').trim();
   const gens=(mode==='all'||mode==='mcq')?(GENS[u]||[]):(mode==='exam'?(GENX[u]||[]):[]);
-  if(!pool.length&&!gens.length){ qzCand(u).forEach(c=>delete QZ.seen[c.id]); pool=qzCand(u); }
-  const slots=pool.length+gens.length*3; if(!slots) return null;
-  let r=Math.floor(Math.random()*slots);
-  if(r>=pool.length){ let it=null; for(let t=0;t<60;t++){ const f=gens[Math.floor(Math.random()*gens.length)]; const c=f(); if(mode==='exam'||qzAllowed(u,c.q)){ it=c; break; } }
-    if(!it){ if(pool.length){ const c0=pool[Math.floor(Math.random()*pool.length)]; QZ.seen[c0.id]=1; if(c0.k==='s'){ const row=MCQB[u][c0.i]; return mkq(row[0],row[1],row[2],row[3],{id:c0.id,src:row[4]||''}); } return {t:'essay',id:c0.x.id,q:c0.x.q,a:c0.x.a,tag:c0.x.tag,mine:c0.x.mine}; } return null; }
-    it.id='g:'+u+':'+Math.random().toString(36).slice(2,7); it.gen=1; return it; }
-  const c=pool[r]; QZ.seen[c.id]=1;
-  if(c.k==='s'){ const row=MCQB[u][c.i]; return mkq(row[0],row[1],row[2],row[3],{id:c.id,src:row[4]||''}); }
-  return {t:'essay',id:c.x.id,q:c.x.q,a:c.x.a,tag:c.x.tag,mine:c.x.mine};
+  const gk=i=>mode+'|'+u+'|'+i;
+  const fresh=()=>qzCand(u).filter(c=>!QZ.seen[c.id]&&!QZ.sg[sigOf(c)]);
+  const freeG=()=>gens.map((f,i)=>i).filter(i=>!QZ.tg[gk(i)]);
+  let pool=fresh(), gi=freeG();
+  if(!pool.length&&!gi.length){ qzCand(u).forEach(c=>delete QZ.seen[c.id]); QZ.sg={}; gens.forEach((f,i)=>delete QZ.tg[gk(i)]); pool=fresh(); gi=freeG(); }
+  const takeStatic=c=>{ QZ.seen[c.id]=1; QZ.sg[sigOf(c)]=1;
+    if(c.k==='s'){ const row=MCQB[u][c.i]; return mkq(row[0],row[1],row[2],row[3],{id:c.id,src:row[4]||''}); }
+    return {t:'essay',id:c.x.id,q:c.x.q,a:c.x.a,tag:c.x.tag,mine:c.x.mine}; };
+  const slots=pool.length+gi.length; if(!slots) return null;
+  const r=Math.floor(Math.random()*slots);
+  if(r<pool.length) return takeStatic(pool[r]);
+  const i=gi[r-pool.length]; QZ.tg[gk(i)]=1; let it=null;
+  for(let t=0;t<60;t++){ const c=gens[i](); if(mode==='exam'||qzAllowed(u,c.q)){ it=c; break; } }
+  if(!it) return pool.length?takeStatic(pool[Math.floor(Math.random()*pool.length)]):null;
+  it.id='g:'+u+':'+Math.random().toString(36).slice(2,7); it.gen=1; return it;
 }
 function qzCount(u,k){ return qzCand(u).length; }
 
@@ -2187,8 +2199,8 @@ function quizHTML(u){
   const topAll=SUBJ[u].topics, nStudied=studiedCount(u);
   const chipsH=topAll.length?'<details class="qtopics"'+((nStudied===0||QZ.topicsOpen)?' open':'')+'><summary><b>1. اختار اللي ذاكرته</b> <span class="sub">('+nStudied+' من '+topAll.length+')</span></summary><div class="filters" style="margin-top:10px">'+topAll.map((t,i)=>'<button data-act="qtopic" data-id="'+topId(u,i)+'" aria-pressed="'+topicStudied(u,i)+'">'+(topicStudied(u,i)?'✓ ':'')+esc(t)+'</button>').join('')+'</div><p class="sub">الأسئلة بتظهر على المواضيع المعلّمة بس. نفس التعليم في تاب "المواضيع".</p></details>':'';
   const hasEx=(GENX[u]||[]).length>0||(MCQB[u]||[]).some(r=>r[4])||SUBJ[u].quiz.some(q=>q[2]==='exam');
-  const modes=[['all','كل الأنواع'],['mcq','اختيار من متعدد'],['essay','مقالي']].concat(hasEx?[['exam','الامتحانات والنمط (كل المواضيع)']]:[]).concat(EXB[u]?[['lay',(EXLBL[u]||EXLBL.math)[0]]]:[]);
-  const modeH='<div class="qmode"><span class="sub"><b>2. نوع الأسئلة</b></span><div class="filters" style="margin:6px 0 0">'+modes.map(m=>'<button data-act="qf" data-k="'+m[0]+'" data-u="'+u+'" aria-pressed="'+((['all','mcq','essay','exam','lay'].indexOf(QF)>=0?QF:'all')===m[0])+'">'+m[1]+'</button>').join('')+'</div></div>';
+  const modes=[['all','كل الأنواع'],['mcq','اختيار من متعدد'],['essay','مقالي']].concat(hasEx?[['exam','الامتحانات والنمط (كل المواضيع)']]:[]).concat(u==='stat'?[['theory','النظري (مفاهيم من غير حسابات)']]:[]).concat(EXB[u]?[['lay',(EXLBL[u]||EXLBL.math)[0]]]:[]);
+  const modeH='<div class="qmode"><span class="sub"><b>2. نوع الأسئلة</b></span><div class="filters" style="margin:6px 0 0">'+modes.map(m=>'<button data-act="qf" data-k="'+m[0]+'" data-u="'+u+'" aria-pressed="'+((['all','mcq','essay','exam','lay','theory'].indexOf(QF)>=0?QF:'all')===m[0])+'">'+m[1]+'</button>').join('')+'</div></div>';
   const filt='<div class="qhead">'+chipsH+modeH+'</div>';
   const add='<details class="qmore"><summary>خيارات تانية</summary><div class="row" style="margin-top:8px;justify-content:center"><button class="btn soft sm" data-act="addq" data-u="'+u+'">+ أضف سؤال</button><button class="btn soft sm" data-act="showhid">'+(SHOWHID?'إخفاء المخفي':'عرض المخفي')+'</button></div></details>';
   const q=QZ.cur; if(!q) return '<div class="quiz" style="--c:'+col(u)+'">'+filt+'<div class="empty">'+(topAll.length&&nStudied===0?'علّم الأول المواضيع اللي ذاكرتها فوق، وأسئلتها هتظهر هنا.':'مفيش أسئلة للمواضيع المعلّمة دلوقتي. علّم موضوع زيادة أو غيّر نوع الأسئلة.')+'</div>'+add+'</div>';
@@ -6669,6 +6681,48 @@ Problem 6 (grouped data, 500 students): 29 c (76.6) · 30 e (i = 250.5, Xg = 70,
   ['A grouped table (class 0-<1 ... 5-<6): the distribution of appointments is:','right-skewed',['left-skewed','normal','exponential bell'],'Mean 1.887 > median 1.667.','Midterm 2022 P1']
  ].forEach(add);
 })();
+/* Update 2026-11-18 (Stat 2): theory questions. Built ONLY from questions already in the hub (past finals/midterms + lecture concept questions);
+   no new questions were invented. Source of "the doctor loves theory": a classmate's message in the group (18/11, 1:53 pm), not the doctor himself. */
+(function(){
+ NEWS.push({u:'stat',d:'2026-11-18',k:'note',
+  t:'اتضاف في الكويز وضع «النظري (مفاهيم من غير حسابات)» للإحصاء، وكارت «الأسئلة النظرية» في أنا مزنوق. ملحوظة: جملة «الدكتور بيحب النظري» جت من زميل في الجروب (18/11) مش من الدكتور، لكن أول بند في محتوى الميد اللي الدكتور بعته هو Theoretical foundation for statistics, data, sampling، فالنظري داخل فعلاً.',
+  en:'Added a "Theory (concepts, no calculations)" mode to the Stat quiz and a "Theory questions" card in the rescue tab. Note: "the doctor loves theory" came from a classmate in the group (18/11), not from the doctor, but the first item in the midterm scope the doctor sent is "Theoretical foundation for statistics, data, sampling", so theory is in the exam.',
+  id:'n-stat-theory-1118'});
+
+ SUBJ.stat.rescue.push(
+  ['الأسئلة النظرية: بتيجي إزاي وإزاي تذاكرها',
+   '<b>المصدر والتأكيد:</b> أول بند في محتوى الميد اللي الدكتور بعته: <bdi class="f">Theoretical foundation for statistics, data, sampling</bdi>. وزميلك أحمد وائل كتب في الجروب (18/11) إن النظري لازم يتفهم لأن الدكتور بيحبه. يعني التأكيد على النظري جاي من الزميل، لكن وجوده في الميد مؤكد من الدكتور.<br>'+
+   '<b>شكل الأسئلة النظرية في الامتحانات القديمة (من اللي في الموقع):</b> قسم الـMCQ الأول (Q1) في الفاينلات القديمة أغلبه مفاهيم من غير حسابات، وفي الميد 2022 و2025 قسم True/False. دي <b>الأنواع</b> اللي بتتكرر:<br>'+
+   '1) <b>Type of variable / level of measurement</b> (nominal, ordinal, interval, ratio) وقديش discrete ولا continuous: أكتر نوع ظهر.<br>'+
+   '2) <b>Population, sample, parameter, statistic</b>: «إيه الـpopulation في السيناريو ده؟» و«الـparameter ولا الـstatistic».<br>'+
+   '3) <b>Sampling method</b> من قصة: simple random, systematic (كل رقم k), stratified, cluster، وsampling with/without replacement.<br>'+
+   '4) <b>Sampling distribution / SE / CLT / FPC</b>: إمتى يقل الـstandard error وإمتى الـFPC مش بتتستخدم.<br>'+
+   '5) <b>Confidence interval</b>: إيه بيأثر على عرضه (n، confidence level)، وإمتى t مش z، وأي جملة عنه غلط.<br>'+
+   '6) <b>Descriptive concepts</b>: mean vs median مع الـskewness، أنهي مقياس مش بيتأثر بالقيم المتطرفة، الـgraphs (histogram, ogive, box plot).<br>'+
+   '<b>طريقة المذاكرة:</b> افتح الكويز ← «النظري (مفاهيم من غير حسابات)» ← جاوب من غير ما تبص على الشرح، وبعد كل غلطة اكتب الجملة الصح بكلامك. الأسئلة اللي عليها علامة «من امتحان» جاية من الفاينلات القديمة، والباقي أسئلة مفاهيم من المحاضرات. وعشان المصطلحات بتيجي بالإنجليزي في الامتحان، اتعوّد على الكلمة الإنجليزي الأول.<br>'+
+   '<button class="btn sun sm" data-act="goexam" data-u="stat" data-m="theory" style="margin-top:8px">ابدأ كويز النظري</button>']
+ );
+
+ /* One place: every theory question that comes from a past exam (already in the hub), grouped by family, with its answer and explanation. */
+ const fam=[
+  ['Variable types and levels of measurement',/qualitative|quantitative|discrete|continuous|nominal|ordinal|interval|ratio|scale|measurement|categor|labels|cross-section|time series|variable|data (is|are|for)/i],
+  ['Population, sample, parameter, statistic',/population|parameter|statistic|census|inferen|descriptive|point estimat/i],
+  ['Sampling methods',/sampl(e|ing)? (method|with|without)|systematic|stratified|cluster|simple random|convenience|replacement|every \d|randomly/i],
+  ['Sampling distribution, standard error, CLT, FPC',/sampling distribution|standard error|central limit|finite population|correction/i],
+  ['Confidence intervals and estimation',/confidence|interval|margin|estimat|t distribution|degrees/i],
+  ['Descriptive concepts: tables, graphs, mean vs median, spread',/histogram|ogive|frequency|class|bar|pie|stem|scatter|boxplot|skew|symmetric|tabular|mean|median|mode|variance|standard deviation|range|percentile|quartile|outlier|z.score|sensitive|coefficient|normal|bell|empirical/i]
+ ];
+ const E=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ const groups=fam.map(f=>({n:f[0],rx:f[1],rows:[]})); const other={n:'Other concepts',rows:[]};
+ MCQB.stat.forEach(r=>{ if(!r[4]||!qzTheory(r)) return; const g=groups.find(x=>x.rx.test(r[0]))||other; g.rows.push(r); });
+ const all=groups.concat([other]).filter(g=>g.rows.length);
+ const tot=all.reduce((a,g)=>a+g.rows.length,0);
+ const body=all.map(g=>'<details style="margin:8px 0"><summary><b>'+E(g.n)+'</b> <span class="sub">('+g.rows.length+')</span></summary>'+
+   g.rows.map(r=>'<div style="margin:8px 0;padding:8px 10px;border-inline-start:3px solid var(--c,#888)" dir="auto"><span class="tag exam">'+E(r[4])+'</span><br><b>'+E(r[0])+'</b><br><span>الإجابة: <b>'+E(r[1])+'</b></span>'+(r[3]?'<br><span class="sub">'+E(r[3])+'</span>':'')+'</div>').join('')+'</details>').join('');
+ SUBJ.stat.rescue.push(['كل الأسئلة النظرية من الامتحانات القديمة (مجمّعة بالنوع)',
+  '<b>'+tot+' سؤال نظري</b> من الفاينلات والميدات القديمة اللي في الموقع، متقسمة على أنواع الأسئلة، ومع كل سؤال إجابته وتفسيره ومصدره. افتح نوع نوع. عشان تتدرب عليهم كاختبار: الكويز ← «النظري».'+body+
+  '<p class="sub">التقسيم بيتم أوتوماتيك على كلمات السؤال، فممكن سؤال يقع في نوع قريب. الإجابات من مفاتيح الامتحانات الرسمية لما كانت متاحة.</p>']);
+})();
 /* «القوانين» tab data (see part5f2-formulas-ui.js for the renderer). RULE (memory hub-formulas-tab-rule): every formula of the syllabus lives here; whenever new
    material arrives, extract its formulas and add them. Entry = {n:name (English first), f:formula (plain text math; ' , ' = new line), w:note, l:legend ('A = x ; B = y'),
    h:memory hook, e:worked example, t:trap, g:figure key, hard:1}. Text between « » is typeset as math. Math syntax: x_g, x_{g}, a/b, √, ^2, sqrt( ). */
@@ -7675,7 +7729,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.11';
+const APP_VERSION='1.10.12';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -9102,7 +9156,7 @@ document.addEventListener('click',async e=>{
   else if(a==='nfu'){ NF.u=b.dataset.u; sfx('tap'); render(true); }
   else if(a==='nfk'){ NF.k=b.dataset.k; sfx('tap'); render(true); }
 else if(a==='goexam'){ QF=b.dataset.m||'exam'; QZ.cur=null; LAY.show=false; QZ.exp=''; sfx('tap'); renderSubjTab(b.dataset.u,'quiz'); } else if(a==='qf'){ QF=b.dataset.k; QZ.cur=null; LAY.show=false; QZ.exp=""; sfx("tap"); renderSubjTab(b.dataset.u,'quiz'); } 
-  else if(a==='qtopic'){ const id=b.dataset.id, cur=lvl(id); if(cur>=2){ toast('الموضوع ده عندك «'+['لسه','شفته','فهمته','حليت عليه'][cur]+'». غيّره من تاب المواضيع'); return; } const nx=cur>=1?0:1; S.topics[id]=nx; awardXP('l'+id,[0,5,15,30][nx],'موضوع'); sfx(nx?'good':'undo'); save(); QZ.cur=null; QZ.seen={}; QZ.topicsOpen=true; renderSubjTab(curSub(),'quiz'); }
+  else if(a==='qtopic'){ const id=b.dataset.id, cur=lvl(id); if(cur>=2){ toast('الموضوع ده عندك «'+['لسه','شفته','فهمته','حليت عليه'][cur]+'». غيّره من تاب المواضيع'); return; } const nx=cur>=1?0:1; S.topics[id]=nx; awardXP('l'+id,[0,5,15,30][nx],'موضوع'); sfx(nx?'good':'undo'); save(); QZ.cur=null; QZ.topicsOpen=true; renderSubjTab(curSub(),'quiz'); }
   else if(a==='wxset'){ wxSetManual(b.dataset.k); closeModal(); sfx('good'); }
   else if(a==='wxsnd'){ S.wxsnd=!S.wxsnd; save(); if(S.wxsnd){ WXGESTURE=true; wxAmbStart(); sfx('good'); } else wxAmbStop(); closeModal(); toast(S.wxsnd?'صوت الجو شغال':'صوت الجو اتقفل'); }
   else if(a==='laykind'){ LAY.kind=b.dataset.k; LAY.i=0; LAY.show=false; sfx('tap'); renderSubjTab(curSub(),'quiz'); }
