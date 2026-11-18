@@ -7764,7 +7764,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.19';
+const APP_VERSION='1.10.20';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -9161,7 +9161,14 @@ window.addEventListener('hashchange',()=>{ render(true); scrollTo(0,0); });
 window.addEventListener('resize',()=>renderNav());
 /* Previous/Next: stay exactly where the page was (no jump to the top, no tab-bar scroll) */
 document.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest('[data-act="qnext"],[data-act="qprev"],[data-act="qn"],[data-act="qk"],[data-act="qopt"],[data-act="qshow"]'); window.__qkeep=!!t; window.__qy=window.scrollY; },true);
-function qzScroll(){ const y=window.__qy||0, go=()=>window.scrollTo({top:y,behavior:'auto'}); go(); setTimeout(()=>{ go(); window.__qkeep=false; },90); }
+function qzScroll(){
+  const y=window.__qy||0, de=document.documentElement, sb=de.style.scrollBehavior; de.style.scrollBehavior='auto';
+  const go=()=>{ if(Math.abs(window.scrollY-y)>1) window.scrollTo(0,y); };
+  let done=false; const stop=()=>{ if(done) return; done=true; clearInterval(iv); window.removeEventListener('scroll',go); ['touchstart','wheel','keydown'].forEach(n=>window.removeEventListener(n,stop,true)); de.style.scrollBehavior=sb; window.__qkeep=false; };
+  go(); window.addEventListener('scroll',go,{passive:true}); const iv=setInterval(go,25);
+  ['touchstart','wheel','keydown'].forEach(n=>window.addEventListener(n,stop,{capture:true,passive:true,once:true}));
+  setTimeout(stop,600);   /* guard: for 0.6 s anything that moves the page is undone, unless the user touches/scrolls himself */
+}
 function renderSubjTab(u,t){
   ST[u]=t; const m=$('#main');
   if(!route().startsWith('s-')||route().slice(2)!==u){ render(true); return; }
