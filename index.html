@@ -7059,7 +7059,7 @@ function _fmAbbr(text,seen){
  P('stat','CI for π1 − π2',{e:'«√(0.6·0.4/100 + 0.5·0.5/100) = 0.07» ← «0.1 ± 1.96·0.07 = [−0.037, 0.237]» (فيه صفر ← مفيش فرق واضح).'});
  P('stat','F reciprocal',{e:'«f_{0.975}(8, 12) = 1/f_{0.025}(12, 8) = 1/4.20 = 0.238».',h:'الدرجات بتتبدّل: ν1 وν2 ينعكسوا.'});
  P('stat','CI for σ1²/σ2²',{e:'«n_1 = 16» و«n_2 = 13» و«s_1 = 0.14» و«s_2 = 0.202»: الفترة «[0.183, 1.19]» فيها 1 ← التباينين متساويين تقريباً.'});
- G('stat','Welch, chi-square test, regression and ANOVA (لسه ما اتشرحوش، راجع السلايدات لما توصل)',[
+ G('stat','Welch, chi-square test, regression and ANOVA',[
   F('Welch degrees of freedom','ν = (s_1^2/n_1 + s_2^2/n_2)^2/((s_1^2/n_1)^2/(n_1 − 1) + (s_2^2/n_2)^2/(n_2 − 1))','من ورقة المعادلات (unequal variances).',{hard:1,h:'البسط تربيع مجموع «التباين ÷ n»، والمقام مجموع كل واحد تربيعه ÷ (n−1).'}),
   F('Chi-square test of independence','χ^2 = Σ(O − E)^2/E , E = (row total × column total)/grand total , df = (r − 1)(c − 1)','O = المُشاهَد، E = المتوقع.',{hard:1,h:'«المُشاهَد ناقص المتوقع، تربيع، على المتوقع».',e:'جدول 2×2: المتوقع لخلية «= (50·40)/100 = 20» والمُشاهَد 30 ← الإسهام «(30 − 20)^2/20 = 5» وdf = 1.'}),
   F('Simple linear regression','ŷ = b_0 + b_1·x , b_1 = S_xy/S_xx , b_0 = ȳ − b_1·x̄','S_xy = Σ(x − x̄)(y − ȳ) وS_xx = Σ(x − x̄)^2.',{hard:1,h:'الميل = «تغاير x وy ÷ تباين x»، والخط دايماً بيعدّي بـ(x̄, ȳ).',e:'x = 1 2 3 وy = 2 4 5: «S_xy = 3» و«S_xx = 2» ← «b_1 = 1.5» و«b_0 = 3.67 − 1.5·2 = 0.67».'}),
@@ -7666,7 +7666,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.8';
+const APP_VERSION='1.10.9';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
