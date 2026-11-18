@@ -2197,6 +2197,7 @@ function quizHTML(u){
   if(EXB[u]&&QF==='lay') return layHTML(u);
   if(QZ.u!==u||!QZ.cur) qzFresh(u);
   qzSave();
+  if(QZ.fin) return qzResultHTML(u);
   const topAll=SUBJ[u].topics, nStudied=studiedCount(u);
   const chipsH=topAll.length?'<details class="qtopics"'+((nStudied===0||QZ.topicsOpen)?' open':'')+'><summary><b>1. اختار اللي ذاكرته</b> <span class="sub">('+nStudied+' من '+topAll.length+')</span></summary><div class="filters" style="margin-top:10px">'+topAll.map((t,i)=>'<button data-act="qtopic" data-id="'+topId(u,i)+'" aria-pressed="'+topicStudied(u,i)+'">'+(topicStudied(u,i)?'✓ ':'')+esc(t)+'</button>').join('')+'</div><p class="sub">الأسئلة بتظهر على المواضيع المعلّمة بس. نفس التعليم في تاب "المواضيع".</p></details>':'';
   const hasEx=(GENX[u]||[]).length>0||(MCQB[u]||[]).some(r=>r[4])||SUBJ[u].quiz.some(q=>q[2]==='exam');
@@ -2205,7 +2206,7 @@ function quizHTML(u){
   const filt='<div class="qhead">'+chipsH+modeH+'</div>';
   const add='<details class="qmore"><summary>خيارات تانية</summary><div class="row" style="margin-top:8px;justify-content:center"><button class="btn soft sm" data-act="addq" data-u="'+u+'">+ أضف سؤال</button><button class="btn soft sm" data-act="showhid">'+(SHOWHID?'إخفاء المخفي':'عرض المخفي')+'</button></div></details>';
   const q=QZ.cur; if(!q) return '<div class="quiz" style="--c:'+col(u)+'">'+filt+'<div class="empty">'+(topAll.length&&nStudied===0?'علّم الأول المواضيع اللي ذاكرتها فوق، وأسئلتها هتظهر هنا.':'مفيش أسئلة للمواضيع المعلّمة دلوقتي. علّم موضوع زيادة أو غيّر نوع الأسئلة.')+'</div>'+add+'</div>';
-  const score='<p class="sub" style="margin-bottom:10px">الجلسة دي: <b style="color:var(--good)">✓ '+QZ.ok+'</b> · <b style="color:var(--bad)">✗ '+QZ.bad+'</b></p>';
+  const score=qzScoreHTML();
   let tagH=''; if(q.src&&q.src.charAt(0)==='~') tagH='<span class="tag drill">تدريب على نمط الميد · سؤال من تأليفي</span>'; else if(q.src) tagH='<span class="tag exam">من امتحان: '+esc(q.src)+'</span>'; else if(q.gen) tagH='<span class="tag drill">أرقام جديدة كل مرة</span>'; else if(q.t==='essay'&&q.tag==='exam') tagH='<span class="tag exam">من امتحان</span>'; else if(q.mine) tagH='<span class="tag mine">منك</span>';
   let body='';
   if(q.t==='mcq'){
@@ -2222,7 +2223,7 @@ function quizHTML(u){
 QZ.h=[]; QZ.hi=-1; QZ.hk='';
 function qzSave(){ const e=QZ.h[QZ.hi]; if(e&&QZ.cur){ e.q=QZ.cur; e.picked=QZ.picked; e.show=QZ.show; e.exp=QZ.exp; } }
 function qzLoad(i){ const e=QZ.h[i]; if(!e) return; QZ.hi=i; QZ.cur=e.q; QZ.picked=e.picked==null?null:e.picked; QZ.show=!!e.show; QZ.exp=e.exp||''; QZ.expBusy=false; }
-function qzFresh(u){ const key=u+'|'+QF; if(QZ.hk!==key){ QZ.hk=key; QZ.h=[]; QZ.hi=-1; }
+function qzFresh(u){ const key=u+'|'+QF; if(QZ.hk!==key){ QZ.hk=key; QZ.h=[]; QZ.hi=-1; QZ.fin=false; }
   QZ.u=u; QZ.cur=qzPick(u); QZ.picked=null; QZ.show=false; QZ.exp=''; QZ.expBusy=false;
   if(QZ.cur){ QZ.h.push({q:QZ.cur}); QZ.hi=QZ.h.length-1; } }
 function qzMark(r){ const e=QZ.h[QZ.hi]; if(e&&!e.res) e.res=r; }
@@ -2236,6 +2237,14 @@ function qzBtnsHTML(q){
   const canPrev=QZ.hi>0, canNext=true;  /* Next is always there (it skips an unanswered question); Previous only hides on the first one */
   return '<div class="row" style="justify-content:center;gap:10px;margin-top:14px">'+(canPrev?'<button class="btn soft" data-act="qprev">→ السابق</button>':'')+(canNext?'<button class="btn sun" data-act="qnext">التالي ←</button>':'')+'</div>';
 }
+function qzTally(){ let ok=0,n=0; QZ.h.forEach(e=>{ const r=qzRes(e); if(r){ n++; if(r==='ok') ok++; } }); return {ok,n}; }
+const qzMsg=(ok,n)=>{ if(!n) return 'جاوب أول سؤال وابدأ تجميع الدرجة.'; const p=ok/n; return p===1?'ممتاز، كله صح لحد دلوقتي. كمّل كده.':p>=.8?'قوي جداً، كمّل.':p>=.6?'كويس، وكل غلطة دلوقتي هتتصلح قبل الامتحان.':p>=.4?'ماشي. راجع الغلط وكمّل، بتتحسن مع كل سؤال.':'البداية دايماً كده. افهم الغلط من التفسير، والدرجة هتطلع.'; };
+function qzScoreHTML(){ const t=qzTally(), pct=t.n?Math.round(t.ok/t.n*100):0;
+  return '<div class="qscore" style="text-align:center;margin:0 0 10px"><div style="font-size:1.25em"><b style="color:var(--good)">'+t.ok+'</b> من <b>'+t.n+'</b>'+(t.n?' <span class="sub">('+pct+'%)</span>':'')+'</div><div style="height:6px;border-radius:4px;background:var(--line,#ddd);margin:6px auto;max-width:260px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--good)"></div></div><div class="sub">'+qzMsg(t.ok,t.n)+'</div>'+(t.n?'<button class="btn soft sm" data-act="qfin" style="margin-top:8px">إنهاء وعرض الدرجة</button>':'')+'</div>'; }
+function qzResultHTML(u){ const t=qzTally(), pct=t.n?Math.round(t.ok/t.n*100):0;
+  const wrong=QZ.h.map((e,i)=>({e,i,r:qzRes(e)})).filter(x=>x.r==='bad');
+  const wl=wrong.length?'<h3 style="margin:14px 0 6px">اللي غلطت فيه ('+wrong.length+')</h3>'+wrong.map(x=>'<button class="x" data-act="qgo" data-i="'+x.i+'" style="display:block;width:100%;text-align:start;margin:3px 0" dir="auto"><b style="color:var(--bad)">✗</b> '+(x.i+1)+'. '+esc(String(x.e.q.q||'').replace(/\s+/g,' ').slice(0,80))+'</button>').join(''):'<p class="sub" style="margin-top:10px">مفيش ولا غلطة.</p>';
+  return '<div class="quiz" style="--c:'+col(u)+'"><div class="qcard" style="text-align:center"><div class="sub">درجة الكويز</div><div style="font-size:2.4em;font-weight:800;margin:6px 0"><span style="color:var(--good)">'+t.ok+'</span> / '+t.n+'</div><div style="font-size:1.2em">'+pct+'%</div><p class="sub" style="margin-top:8px">'+qzMsg(t.ok,t.n)+'</p></div>'+wl+'<div class="row" style="justify-content:center;gap:10px;margin-top:16px"><button class="btn soft" data-act="qresume">كمّل الكويز</button><button class="btn sun" data-act="qnew">كويز جديد من الأول</button></div></div>'; }
 function qzNavHTML(){
   const n=QZ.h.length; if(!n) return '';
   const nav='<p class="sub" style="text-align:center;margin:0 0 8px">سؤال '+(QZ.hi+1)+' من '+n+'</p>';
@@ -7755,7 +7764,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.16';
+const APP_VERSION='1.10.17';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
@@ -9193,7 +9202,7 @@ else if(a==='goexam'){ QF=b.dataset.m||'exam'; QZ.cur=null; LAY.show=false; QZ.e
   else if(a==='laynext'||a==='layprev'){ const n=layList().length||1; LAY.i=(LAY.i+(a==='laynext'?1:n-1))%n; LAY.show=false; sfx('tap'); renderSubjTab(curSub(),'quiz'); }
   else if(a==='laysolved'){ const e=layList()[LAY.i]; if(e){ S.lay=S.lay||{}; const id=layId(e); if(S.lay[id]){ delete S.lay[id]; awardXP(id,0,'مثال'); sfx('undo'); } else { S.lay[id]=1; awardXP(id,10,'مثال Lay'); sfx('good'); } save(); } renderSubjTab(curSub(),'quiz'); }
   else if(a==='qunc'){ SHOWUNC=!SHOWUNC; QZ.cur=null; sfx('tap'); renderSubjTab(curSub(),'quiz'); }
-  else if(a==='qshow'){ QZ.show=true; BUMP='.qans'; sfx('soft'); renderSubjTab(curSub(),'quiz'); }  else if(a==='qopt'){ quizChoose(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); }  else if(a==='qprev'){ sfx('tap'); quizPrev(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qgo'){ sfx('tap'); quizGo(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qnext'||a==='qn'){ sfx('tap'); if(a==='qn'&&!(QZ.h[QZ.hi]&&QZ.h[QZ.hi].res)) qzMark('bad'); quizNext(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); }  else if(a==='qk'){ const u=curSub(), q=QZ.cur; const _d=QZ.h[QZ.hi]&&QZ.h[QZ.hi].res; qzMark('ok'); if(q&&!_d){ const c=(S.cards[q.id]||0); S.cards[q.id]=c+1; if(c<2){ addAct(0); addXP(3,'سؤال '+SUBJ[u].n); } QZ.ok++; sfx('good'); save(); } quizNext(u); renderSubjTab(u,'quiz'); qzScroll(); }
+  else if(a==='qshow'){ QZ.show=true; BUMP='.qans'; sfx('soft'); renderSubjTab(curSub(),'quiz'); }  else if(a==='qopt'){ quizChoose(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); }  else if(a==='qfin'){ sfx('good'); qzSave(); QZ.fin=true; renderSubjTab(curSub(),'quiz'); window.scrollTo({top:0,behavior:'auto'}); } else if(a==='qresume'){ sfx('tap'); QZ.fin=false; renderSubjTab(curSub(),'quiz'); } else if(a==='qnew'){ sfx('tap'); QZ.h=[]; QZ.hi=-1; QZ.hk=''; QZ.seen={}; QZ.sg={}; QZ.tg={}; QZ.cur=null; QZ.fin=false; QZ.ok=0; QZ.bad=0; renderSubjTab(curSub(),'quiz'); } else if(a==='qprev'){ sfx('tap'); quizPrev(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qgo'){ sfx('tap'); QZ.fin=false; quizGo(curSub(),+b.dataset.i); renderSubjTab(curSub(),'quiz'); qzScroll(); } else if(a==='qnext'||a==='qn'){ sfx('tap'); if(a==='qn'&&!(QZ.h[QZ.hi]&&QZ.h[QZ.hi].res)) qzMark('bad'); quizNext(curSub()); renderSubjTab(curSub(),'quiz'); qzScroll(); }  else if(a==='qk'){ const u=curSub(), q=QZ.cur; const _d=QZ.h[QZ.hi]&&QZ.h[QZ.hi].res; qzMark('ok'); if(q&&!_d){ const c=(S.cards[q.id]||0); S.cards[q.id]=c+1; if(c<2){ addAct(0); addXP(3,'سؤال '+SUBJ[u].n); } QZ.ok++; sfx('good'); save(); } quizNext(u); renderSubjTab(u,'quiz'); qzScroll(); }
   else if(a==='fdone'){ const n=b.dataset.n, f=OOPF.find(x=>x[0]==n), o=S.oopf[n]||(S.oopf[n]={}); const cur=o.done!=null?o.done:!!f[3]; o.done=!cur; BUMP='[data-act="fdone"][data-n="'+n+'"]'; if(!f[3]) awardXP('f'+n,o.done?10:0,'فلتر '+n); sfx(o.done?'done':'undo'); save(); render(); }
   else if(a==='fex'){ const n=b.dataset.n, o=S.oopf[n]||(S.oopf[n]={}); o.ex=!o.ex; BUMP='[data-act="fex"][data-n="'+n+'"]'; awardXP('x'+n,o.ex?5:0,'أشرح فلتر '+n); sfx(o.ex?'good':'undo'); save(); render(); }
   else if(a==='ru'){ openRescue(b.dataset.u); }
