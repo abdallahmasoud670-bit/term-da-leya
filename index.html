@@ -514,6 +514,22 @@ bdi.f .mth .fr,.qans .mth .fr,.qbody .mth .fr{font-size:1.05em}
 .mth .fr .fr>.de{padding:.08em .25em 0}
 .mth .sq>.rd{border-top-width:1px;padding:0 .1em}
 .mth .fr .sq>.rd{border-top-width:1px}
+.fm-tree bdi.f{background:none;padding:0 .15em;font-family:'Cambria Math','STIX Two Math','Times New Roman',serif;font-size:1.1em;display:inline-block;vertical-align:middle;line-height:1.25;white-space:nowrap;border-radius:0}
+.fm-tree li{line-height:2.4;margin:10px 0}
+.fm-tree .mth .fr{margin:0 .25em}
+
+.fm-tt{width:100%;border-collapse:collapse;direction:ltr;text-align:left;font-size:.92rem}
+.fm-tt th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;opacity:.7;text-align:left;padding:6px 8px;border-bottom:2px solid color-mix(in srgb,var(--c,var(--brand)) 40%,transparent)}
+.fm-tt td{padding:9px 8px;border-bottom:1px solid color-mix(in srgb,var(--c,var(--brand)) 18%,transparent);vertical-align:middle;line-height:2}
+.fm-tt td:first-child{font-weight:700;width:42%}
+
+.fm-rows{direction:ltr;text-align:left}
+.fm-tr{padding:10px 0;border-top:1px solid color-mix(in srgb,var(--c,var(--brand)) 18%,transparent)}
+.fm-tr:first-child{border-top:0}
+.fm-tr .s{font-weight:800;margin-bottom:6px}
+.fm-tr .chip{display:inline-block;font-weight:800;font-size:.85rem;padding:2px 12px;border-radius:999px;background:var(--c,var(--brand));color:#fff;margin-bottom:6px}
+.fm-tr .n{font-size:.88rem;opacity:.85;margin-top:6px}
+.fm-tr .fm-box{margin-top:4px}
 </style></head><body>
 
 <div id="root" dir="rtl" lang="ar">
@@ -6890,18 +6906,22 @@ function _fmCard(f,u){
 function formulasHTML(u){
   const g=FORMS[u]||[]; const n=g.reduce((a,x)=>a+x[1].length,0);
   const nav='<div class="fm-nav">'+g.map((x,i)=>'<a href="#" data-act="fmgo" data-i="'+i+'">'+esc(x[0])+'</a>').join('')+'</div>';
-  const tree=FTREE[u]?'<div class="fm-tree" dir="rtl"><h3>'+esc(FTREE[u][0])+'</h3><ul>'+(()=>{ const sn=new Set(); return FTREE[u][1].map(x=>'<li>'+_fmMk(_fmAbbr(x,sn))+'</li>').join(''); })()+'</ul></div>':'';
-  return '<div class="frms" style="--c:'+col(u)+'"><p class="sub" style="margin-bottom:10px">'+n+' formulas (قانون). Each card: formula, symbols, memory hook, worked example, trap. The hardest ones are marked "Hard to memorize".</p>'+nav+tree+
+  const tree=FTREE[u]?'<div class="fm-tree" dir="ltr"><h3>'+esc(FTREE[u][0])+'</h3><div class="fm-rows">'+(()=>{ const sn=new Set(); return FTREE[u][1].map(r=>'<div class="fm-tr"><div class="s">'+esc(r[0])+'</div><div class="u"><span class="chip">Use: '+_fmMk(r[1])+'</span></div><div class="fm-box"><div class="fm-ln"><bdi class="f">'+esc(r[2])+'</bdi></div></div>'+(r[3]?'<div class="n">'+_fmEn(_fmAbbr(r[3],sn))+'</div>':'')+'</div>').join(''); })()+'</div></div>':'';
+  return '<div class="frms" style="--c:'+col(u)+'"><p class="sub" dir="ltr" style="margin-bottom:10px;text-align:left">'+n+' formulas (قانون). Each card: formula, symbols, memory hook, worked example, trap. The hardest ones are marked "Hard to memorize".</p>'+nav+tree+
    g.map((x,i)=>'<div class="frm-g" id="fg-'+u+'-'+i+'"><h3>'+esc(x[0])+'</h3>'+x[1].map(f=>_fmCard(f,u)).join('')+'</div>').join('')+'</div>';
 }
 const FTREE={};
 document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('[data-act="fmgo"]'); if(!a) return; e.preventDefault(); e.stopPropagation(); const u=(location.hash.match(/^#s-(\w+)/)||[])[1]; const el=document.getElementById('fg-'+u+'-'+a.getAttribute('data-i')); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },true);
 FTREE.stat=['Which distribution do I use? Z, t or χ² (أستخدم أنهي توزيع؟)',[
- 'سؤال احتمال عن x̄: المجتمع Normal أو n ≥ 30 ← «z = (x̄ − μ)/(σ/√n)». لو من غير إرجاع وn/N أكبر من 5% ← ضيف الـFPC.',
- 'فترة ثقة للمتوسط وσ معروفة ← z.',
- 'σ مجهولة وn أكبر من 30 ← z بـs. σ مجهولة وn ≤ 30 والمجتمع Normal ← t بـdf = n − 1. لو الـdf مش في الجدول ← خد أقرب df أو Z.',
- 'نسبة ← z بـ«√(pq/n)». تباين أو انحراف معياري ← χ² بـdf = n − 1.',
- 'حجم عينة ← قرّب لفوق دايماً.']];
+ ['Probability about x̄ (population normal, or n ≥ 30)','z','z = (x̄ − μ)/(σ/√n)','Add the FPC if you sample without replacement and n/N > 5%.'],
+ ['Confidence interval for μ, σ known','z','x̄ ± z_{α/2}·σ/√n',''],
+ ['Confidence interval for μ, σ unknown, n > 30','z (use s)','x̄ ± z_{α/2}·s/√n',''],
+ ['Confidence interval for μ, σ unknown, n ≤ 30, normal population','t, df = n − 1','x̄ ± t_{α/2, n−1}·s/√n','If the df is missing from the table use the nearest df, or z.'],
+ ['Confidence interval for a proportion','z','p ± z_{α/2}·√(pq/n)',''],
+ ['Confidence interval for a variance (or standard deviation)','χ², df = n − 1','(n − 1)s²/χ²_{α/2} < σ² < (n − 1)s²/χ²_{1−α/2}','Take the square root for σ.'],
+ ['Sample size','round up','n = (z_{α/2}·σ/e)^2','Always round up to the next whole number.']]];
+
+
 function _fmFit(root){
   if(!root) return;
   root.querySelectorAll('.fm-box').forEach(b=>{
@@ -7646,7 +7666,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.7';
+const APP_VERSION='1.10.8';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
