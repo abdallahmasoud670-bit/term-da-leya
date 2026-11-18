@@ -6291,6 +6291,7 @@ My enumeration: best selection projects 1, 4, 5 (Web site, Computer department, 
 (function(){
  const Q=(s,n,q,a)=>({s,n,p:0,k:'x',q,a,u:'stat'});
 
+ EXLBL.stat=[EXLBL.stat[0],'—','—']; /* hide the type filter: every Stat item is solved, and the 'solved' filter hid the newer items */
  /* ---- corrections from the official Final 2024 key ---- */
  const tv=MCQB.stat.find(r=>r[0].indexOf('A TV program asks viewers to vote')===0);
  if(tv){ tv[1]='All viewers of the news program'; tv[2]=['Only viewers who voted in that specific poll','All visitors to the website','All viewers who have voted in any of the polls']; tv[3]='Official key (Final 2024 Model A) circles "all viewers of the news program". Statistically a voluntary-response poll only describes those who voted, but follow the key in this exam.'; }
@@ -6658,7 +6659,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.2';
+const APP_VERSION='1.10.3';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');
