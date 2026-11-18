@@ -506,6 +506,14 @@ bdi.f .mth .fr,.qans .mth .fr,.qbody .mth .fr{font-size:1.05em}
 .fm-box.wrapall .fm-ln,.fm-box.wrapall .fm-ln bdi.f{white-space:normal}
 
 .fm-w{text-align:left}.fm-l{justify-content:flex-start}
+/* clearer fractions: the main bar is thick and long, nested fractions are smaller with a thin bar, the root bar is thin and attached to the radical */
+.mth .fr>.nu{border-bottom:2px solid currentColor;padding:0 .4em .2em}
+.mth .fr>.de{padding:.2em .4em 0}
+.mth .fr .fr{font-size:.8em;margin:0 .12em}
+.mth .fr .fr>.nu{border-bottom-width:1px;padding:0 .25em .08em}
+.mth .fr .fr>.de{padding:.08em .25em 0}
+.mth .sq>.rd{border-top-width:1px;padding:0 .1em}
+.mth .fr .sq>.rd{border-top-width:1px}
 </style></head><body>
 
 <div id="root" dir="rtl" lang="ar">
@@ -7638,7 +7646,7 @@ viewSubject=function(u){ return u==='act'?viewSubjects():_viewSubject(u); };
    PUBLIC OVERLAY (only in the public build): welcome/first-run, course picker, schema migration,
    local-only storage, export, About, version/update notice. Placed after part5adv and before part6-app.
    ===================================================================== */
-const APP_VERSION='1.10.6';
+const APP_VERSION='1.10.7';
 const SCHEMA=1;            /* bump when the saved-state shape changes, and add MIGS[n] below */
 let AB=null;               /* referenced by closeModal() */
 const PUB_CATALOG=ORDER.filter(k=>k!=='gd');

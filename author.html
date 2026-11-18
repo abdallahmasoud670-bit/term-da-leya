@@ -508,6 +508,14 @@ bdi.f .mth .fr,.qans .mth .fr,.qbody .mth .fr{font-size:1.05em}
 .fm-box.wrapall .fm-ln,.fm-box.wrapall .fm-ln bdi.f{white-space:normal}
 
 .fm-w{text-align:left}.fm-l{justify-content:flex-start}
+/* clearer fractions: the main bar is thick and long, nested fractions are smaller with a thin bar, the root bar is thin and attached to the radical */
+.mth .fr>.nu{border-bottom:2px solid currentColor;padding:0 .4em .2em}
+.mth .fr>.de{padding:.2em .4em 0}
+.mth .fr .fr{font-size:.8em;margin:0 .12em}
+.mth .fr .fr>.nu{border-bottom-width:1px;padding:0 .25em .08em}
+.mth .fr .fr>.de{padding:.08em .25em 0}
+.mth .sq>.rd{border-top-width:1px;padding:0 .1em}
+.mth .fr .sq>.rd{border-top-width:1px}
 
 html{overflow-x:clip}body{overflow-x:clip}
 .links3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:12px}
